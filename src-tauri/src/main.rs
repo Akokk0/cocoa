@@ -1,15 +1,21 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+mod command;
+use cocoa::set_up_func;
+use command::*;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .setup(set_up_func)
+        .invoke_handler(tauri::generate_handler![
+            save_cookies,
+            request,
+            is_login,
+            logout,
+            check_cookies_status,
+            save_refresh_token
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
