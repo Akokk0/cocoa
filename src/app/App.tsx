@@ -15,20 +15,25 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api";
+import { CocoaSettings } from "@/type/settings";
 
 function App() {
-  const [loginStatus, setLoginStatus] = useState<boolean>(false)
+  const [loginStatus, setLoginStatus] = useState<boolean>()
   const [autoLogin, setAutoLogin] = useState<boolean>(false)
 
   useEffect(() => {
     // Define function for getting login status
     const getAllStatus = async () => {
-      setLoginStatus(await invoke('is_login'))
+      const loginFlag = await invoke('is_login') as boolean
+      setLoginStatus(loginFlag)
+      const config = await invoke('get_config') as CocoaSettings
+      setAutoLogin(config.auto_login)
     }
     getAllStatus()
   }, [])
 
   return (
+    
     <div className="flex justify-center items-center h-screen">
       <Card className={cn("w-[380px]")}>
         <CardHeader>
@@ -46,8 +51,15 @@ function App() {
                 是否开启自动登录
               </p>
             </div>
-            <Switch checked={autoLogin} onCheckedChange={() => {
+            <Switch checked={autoLogin} onCheckedChange={async () => {
+              // Set auto login
               setAutoLogin(!autoLogin)
+              // Change settings
+              await invoke('change_settings', {
+                settings: {
+                  auto_login: true,
+                }
+              })
             }} />
           </div>
           <div>

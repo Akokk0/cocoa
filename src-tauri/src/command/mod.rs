@@ -1,11 +1,11 @@
-use std::io::Write;
+use std::io::{BufWriter, Write};
 
-use cocoa::{create_headers, AppState, RequestType};
+use cocoa::{create_headers, AppState, CocoaConfig, RequestType};
 use tauri::State;
 
 // Save cookies to disk
 #[tauri::command]
-pub fn save_cookies(app_state: State<AppState>) -> Result<String, String> {
+pub fn save_cookies(app_state: State<AppState>) -> Result<(), String> {
     // Define auth_folder_path
     let auth_folder_path = format!("{}/auth/", app_state.app_data_path);
     // Define the cookies_file_path to save cookies
@@ -27,7 +27,35 @@ pub fn save_cookies(app_state: State<AppState>) -> Result<String, String> {
     let mut is_login_lock = app_state.is_login.lock().unwrap();
     *is_login_lock = true;
     // Return success information
-    Ok(String::from("Success!"))
+    Ok(())
+}
+
+#[tauri::command]
+pub fn change_settings(
+    settings: CocoaConfig,
+    app_state: State<AppState>
+) -> Result<(), &str> {
+    // Get config string
+    let toml_string = match toml::to_string(&settings) {
+        Ok(str) => str,
+        Err(_) => {
+            println!("Convert toml failed");
+            return Err("Save config failed");
+        }
+    };
+    // Get config file path
+    let config_file_path = format!("{}/config.toml", app_state.app_config_path);
+    // Get file
+    let mut config_file = std::fs::File::create(config_file_path)
+        .map(BufWriter::new)
+        .unwrap();    // Save new config to disk
+    // Write config to file
+    config_file.write_all(toml_string.as_bytes()).unwrap();
+    // Change config in app_state
+    let mut config_lock = app_state.config.lock().unwrap();
+    *config_lock = settings;
+    // Return ok
+    Ok(())
 }
 
 // Common request function todo!
@@ -118,4 +146,10 @@ pub fn save_refresh_token(refresh_token: String, app_state: State<AppState>) {
         .unwrap()
         .write_all(refresh_token.as_bytes())
         .unwrap();
+}
+
+#[tauri::command]
+pub fn get_config(app_state: State<AppState>) -> CocoaConfig {
+    let config = app_state.config.lock().unwrap();
+    config.clone()
 }

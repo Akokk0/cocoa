@@ -14,7 +14,9 @@ fn main() {
             is_login,
             logout,
             check_cookies_status,
-            save_refresh_token
+            save_refresh_token,
+            change_settings,
+            get_config
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

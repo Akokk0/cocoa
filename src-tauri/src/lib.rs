@@ -1,5 +1,7 @@
 use std::error::Error;
-use std::fs;
+use std::fs::{self, File};
+use std::io::{BufReader, BufWriter, Write};
+use std::path::Path;
 use std::sync::{Arc, Mutex};
 
 use reqwest::header::{HeaderMap, HeaderValue, ORIGIN, REFERER, USER_AGENT};
@@ -28,9 +30,9 @@ pub fn create_headers() -> HeaderMap {
 }
 
 // Load cookies
-fn load_cookies(app_data_path: &String) -> Arc<CookieStoreMutex> {
+fn load_cookies(data_path: &String) -> Arc<CookieStoreMutex> {
     // Define cookies file path
-    let cookies_file_path = format!("{}/auth/cookies.json", app_data_path);
+    let cookies_file_path = format!("{}/cookies.json", data_path);
     // Load cookies from file
     let cookie_store = 
         // Check if path is a file
@@ -39,8 +41,12 @@ fn load_cookies(app_data_path: &String) -> Arc<CookieStoreMutex> {
             let file = fs::File::open(&cookies_file_path)
             .map(std::io::BufReader::new)
             .unwrap();
+            // Load cookie store
+            let cookie_store = CookieStore::load_json(file).unwrap();
+            // Print successful loading information
+            println!("load cookies");
             // Return the loaded cookie_store
-            CookieStore::load_json(file).unwrap()
+            cookie_store
         } else {
             // Path is not a file, returned a default cookie_store
             CookieStore::default()
@@ -48,16 +54,45 @@ fn load_cookies(app_data_path: &String) -> Arc<CookieStoreMutex> {
     // Wrap cookie_store as Arc<CookieStoreMutex<CookieStore>>
     let cookie_store = CookieStoreMutex::new(cookie_store);
     let cookie_store = Arc::new(cookie_store);
-    // Print successful loading information
-    println!("load cookies");
-    /* {
-        let store = cookie_store.lock().unwrap();
-        for c in store.iter_any() {
-            println!("{:?}", c)
-        }
-    } */
     // Return the wrapped CookieStore
-    return cookie_store;
+    cookie_store
+}
+
+// Load config
+fn load_config(app_config_path: &String) -> Arc<Mutex<CocoaConfig>> {
+    let config_file_path = format!("{}/config.toml", app_config_path);
+    // Define path
+    let config_path = Path::new(&config_file_path);
+    // Check if file is exist
+    let config: CocoaConfig = if config_path.is_dir() && !is_file_empty(&config_file_path).unwrap() {
+        // Load config file
+        // Build config file reader
+        let config_file_reader = File::open(config_path)
+            .map(BufReader::new)
+            .unwrap();
+        // Get config from config file
+        let config: CocoaConfig = serde_json::from_reader(config_file_reader).unwrap();
+        // Convert SerializableCocoaConfig to CocoaConfig
+        config.into()
+    } else {
+        // Default config
+        let config = CocoaConfig::default();
+        // Get config toml string
+        let toml_string = toml::to_string(&config).unwrap();
+        // Create config file
+        let mut config_file = File::create(config_path).map(BufWriter::new).unwrap();
+        // Write string to file
+        if let Err(_) = config_file.write_all(toml_string.as_bytes()) {
+            println!("Write config failed")
+        }
+        // Return config
+        config
+    };
+    // Wrap config as Arc<Mutex<CocoaConfig>>
+    let config = Mutex::new(config);
+    let config = Arc::new(config);
+    // Return config
+    config
 }
 
 // Get app path
@@ -83,26 +118,42 @@ fn is_file_empty(path: &str) -> std::io::Result<bool> {
 
 // Tauri setup function(manage state object)
 pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
-    // Get AppConfig Path
-    let app_data_path = get_app_path(AppPath::DATA, &app.config()).unwrap();
-    // Check if app folder exist
-    let app_file_path = std::path::Path::new(&app_data_path);
+    // Get app data Path
+    let app_data_path = format!("{}/auth",
+        get_app_path(AppPath::DATA, &app.config()).unwrap()
+    );
+    // Check if app data folder exist
+    let data_path = std::path::Path::new(&app_data_path);
     // Get CookieStore
-    let cookie_store = if app_file_path.is_dir() { // Path is a folder
+    let cookie_store = if data_path.is_dir() { // Path is a folder
         // Load cookies
         load_cookies(&app_data_path)
     } else {
-        // Create app folder
-        if let Err(_) = std::fs::create_dir_all(app_file_path) {
-            println!("error occured")
-        }
         // Create auth folder
-        if let Err(_) = std::fs::create_dir(format!("{}/auth", app_data_path)) {
-            println!("error occured")
+        if let Err(_) = fs::create_dir_all(data_path) {
+            println!("Create auth folder failed")
         }
         let cookie_store = CookieStore::default();
         let cookie_store = CookieStoreMutex::new(cookie_store);
         Arc::new(cookie_store)
+    };
+    // Get app config path
+    let app_config_path = format!("{}/config",
+        get_app_path(AppPath::CONFIG, &app.config()).unwrap()
+    );
+    // Check if app config folder exist
+    let config_path = std::path::Path::new(&app_config_path);
+    // Check if folder is empty
+    let config = if config_path.is_dir() {
+        // Load config file
+        load_config(&app_config_path)
+    } else {
+        // Create config folder
+        if let Err(_) = fs::create_dir_all(config_path) {
+            println!("Create config folder failed");
+        }
+        // Create new config
+        Arc::new(Mutex::new(CocoaConfig::default()))
     };
     // Create reqwest Client
     let client = Client::builder()
@@ -115,16 +166,18 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     let client = Arc::new(client);
     // Get login status and wrap it as Arc<Mutex<bool>>
     let is_login =
-        !is_file_empty(format!("{}/auth/cookies.json", &app_data_path).as_str()).unwrap();
+        !is_file_empty(format!("{}/cookies.json", &app_data_path).as_str()).unwrap();
     let is_login = Mutex::new(is_login);
     let is_login = Arc::new(is_login);
     // Manage state object
     app.manage(AppState {
         // Manage request client、CookieStore、config file path
         client,
+        config,
         cookie_store,
         is_login,
         app_data_path,
+        app_config_path
     });
     // Return success
     Ok(())
