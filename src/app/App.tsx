@@ -86,7 +86,7 @@ function App() {
         </CardContent>
         <CardFooter>
           <Button disabled={!loginStatus} className="w-full">
-            <Link to='/main' className="w-full">欢迎使用</Link>
+            <Link to='/login' className="w-full">欢迎使用</Link>
           </Button>
         </CardFooter>
       </Card>
