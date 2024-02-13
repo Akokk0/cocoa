@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fs::{self, File};
-use std::io::{BufReader, BufWriter, Write};
+use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
@@ -32,19 +32,29 @@ pub fn create_headers() -> HeaderMap {
 // Load cookies
 fn load_cookies(data_path: &String) -> Arc<CookieStoreMutex> {
     // Define cookies file path
-    let cookies_file_path = format!("{}/cookies.json", data_path);
+    let cookies_file_path = format!("{}/auth/cookies.json", data_path);
+    // Define cookies file Path
+    let cookies_path = std::path::Path::new(&cookies_file_path);
     // Load cookies from file
     let cookie_store = 
         // Check if path is a file
-        if std::path::Path::new(&cookies_file_path).is_file() {
+        if cookies_path.is_file() {
             // Path is a file, reading file content and load cookies
-            let file = fs::File::open(&cookies_file_path)
-            .map(std::io::BufReader::new)
-            .unwrap();
+            let cookie_file_reader = fs::File::open(cookies_path)
+                .map(std::io::BufReader::new)
+                .unwrap();
             // Load cookie store
-            let cookie_store = CookieStore::load_json(file).unwrap();
+            let cookie_store = match CookieStore::load_json(cookie_file_reader) {
+                Ok(cs) => cs,
+                Err(_) => { // File has been tampered with
+                    // remove cookies file
+                    fs::remove_file(cookies_path).unwrap();
+                    // Create new cookie_store
+                    CookieStore::default()
+                },
+            }; 
             // Print successful loading information
-            println!("load cookies");
+            println!("loaded cookies");
             // Return the loaded cookie_store
             cookie_store
         } else {
@@ -60,20 +70,52 @@ fn load_cookies(data_path: &String) -> Arc<CookieStoreMutex> {
 
 // Load config
 fn load_config(app_config_path: &String) -> Arc<Mutex<CocoaConfig>> {
+    // Define config_file_path
     let config_file_path = format!("{}/config.toml", app_config_path);
     // Define path
     let config_path = Path::new(&config_file_path);
+
+    // function
+    let create_default_config_and_save = || -> CocoaConfig {
+        // Create default config
+        let config = CocoaConfig::default();
+        // Build config_writer
+        let mut config_file_writer = fs::File::create(config_path)
+            .map(BufWriter::new)
+            .unwrap();
+        // Convert config to toml string
+        let toml_string = toml::to_string(&config).unwrap();
+        // Write config to file
+        config_file_writer.write_all(toml_string.as_bytes()).unwrap();
+        // Return config
+        config
+    };
+
     // Check if file is exist
-    let config: CocoaConfig = if config_path.is_dir() && !is_file_empty(&config_file_path).unwrap() {
+    let config: CocoaConfig = if config_path.is_file() && !is_file_empty(&config_file_path).unwrap() {
         // Load config file
         // Build config file reader
-        let config_file_reader = File::open(config_path)
+        let mut config_file_reader = File::open(config_path)
             .map(BufReader::new)
             .unwrap();
-        // Get config from config file
-        let config: CocoaConfig = serde_json::from_reader(config_file_reader).unwrap();
-        // Convert SerializableCocoaConfig to CocoaConfig
-        config.into()
+        // Define string buffer
+        let mut config_str = String::default();
+        // Read to string from file
+        if let Err(_) = config_file_reader.read_to_string(&mut config_str) { // The file is corrupted
+            let config = create_default_config_and_save();
+            // Return config
+            return Arc::new(Mutex::new(config));
+        }
+        // Convert string to CococaConfig
+        match toml::from_str(&config_str) {
+            Ok(config) => config,
+            Err(_) => { // File has been tampered with
+                // Create default config
+                let config = create_default_config_and_save();
+                // Return config
+                config
+            }
+        }
     } else {
         // Default config
         let config = CocoaConfig::default();
@@ -109,7 +151,7 @@ fn get_app_path(path_type: AppPath, config: &tauri::Config) -> Option<String> {
 // Check if file is empty
 fn is_file_empty(path: &str) -> std::io::Result<bool> {
     // Check if path is a file
-    if !std::path::Path::new(&path).is_file() { return Ok(true); }
+    if !std::path::Path::new(path).is_file() { return Ok(true); }
     // Check if file is empty
     let metadata = fs::metadata(path)?;
     // Return result
@@ -119,9 +161,7 @@ fn is_file_empty(path: &str) -> std::io::Result<bool> {
 // Tauri setup function(manage state object)
 pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     // Get app data Path
-    let app_data_path = format!("{}/auth",
-        get_app_path(AppPath::DATA, &app.config()).unwrap()
-    );
+    let app_data_path = get_app_path(AppPath::DATA, &app.config()).unwrap();
     // Check if app data folder exist
     let data_path = std::path::Path::new(&app_data_path);
     // Get CookieStore
@@ -138,9 +178,7 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
         Arc::new(cookie_store)
     };
     // Get app config path
-    let app_config_path = format!("{}/config",
-        get_app_path(AppPath::CONFIG, &app.config()).unwrap()
-    );
+    let app_config_path = get_app_path(AppPath::CONFIG, &app.config()).unwrap();
     // Check if app config folder exist
     let config_path = std::path::Path::new(&app_config_path);
     // Check if folder is empty
@@ -166,7 +204,7 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     let client = Arc::new(client);
     // Get login status and wrap it as Arc<Mutex<bool>>
     let is_login =
-        !is_file_empty(format!("{}/cookies.json", &app_data_path).as_str()).unwrap();
+        !is_file_empty(format!("{}/auth/cookies.json", &app_data_path).as_str()).unwrap();
     let is_login = Mutex::new(is_login);
     let is_login = Arc::new(is_login);
     // Manage state object

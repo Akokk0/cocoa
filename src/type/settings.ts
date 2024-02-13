@@ -1,3 +1,3 @@
-export interface CocoaSettings {
+export interface CocoaConfig {
     auto_login: boolean
 }

@@ -31,6 +31,18 @@ pub fn save_cookies(app_state: State<AppState>) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn save_refresh_token(refresh_token: String, app_state: State<AppState>) {
+    // Define refresh_token_file_path
+    let refresh_token_path = format!("{}/auth/refresh_token", app_state.app_data_path);
+    // Create refresh_token.txt to save refresh_token on disk
+    std::fs::File::create(&refresh_token_path)
+        .map(std::io::BufWriter::new)
+        .unwrap()
+        .write_all(refresh_token.as_bytes())
+        .unwrap();
+}
+
+#[tauri::command]
 pub fn change_settings(
     settings: CocoaConfig,
     app_state: State<AppState>
@@ -134,18 +146,6 @@ pub fn check_cookies_status(app_state: State<AppState>) {
     for cookie in cookie_store_guard.iter_any() {
         println!("{:?}", cookie);
     }
-}
-
-#[tauri::command]
-pub fn save_refresh_token(refresh_token: String, app_state: State<AppState>) {
-    // Define refresh_token_file_path
-    let refresh_token_path = format!("{}/refresh_token", app_state.app_data_path);
-    // Create refresh_token.txt to save refresh_token on disk
-    std::fs::File::create(&refresh_token_path)
-        .map(std::io::BufWriter::new)
-        .unwrap()
-        .write_all(refresh_token.as_bytes())
-        .unwrap();
 }
 
 #[tauri::command]
