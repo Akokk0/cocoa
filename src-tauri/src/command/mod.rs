@@ -43,10 +43,7 @@ pub fn save_refresh_token(refresh_token: String, app_state: State<AppState>) {
 }
 
 #[tauri::command]
-pub fn change_settings(
-    settings: CocoaConfig,
-    app_state: State<AppState>
-) -> Result<(), &str> {
+pub fn change_settings(settings: CocoaConfig, app_state: State<AppState>) -> Result<(), &str> {
     // Get config string
     let toml_string = match toml::to_string(&settings) {
         Ok(str) => str,
@@ -60,8 +57,8 @@ pub fn change_settings(
     // Get file
     let mut config_file = std::fs::File::create(config_file_path)
         .map(BufWriter::new)
-        .unwrap();    // Save new config to disk
-    // Write config to file
+        .unwrap(); // Save new config to disk
+                   // Write config to file
     config_file.write_all(toml_string.as_bytes()).unwrap();
     // Change config in app_state
     let mut config_lock = app_state.config.lock().unwrap();
@@ -85,11 +82,33 @@ pub async fn request(
     };
 
     let content = match req.send().await {
-        Ok(resp) => resp.text().await.map_err(|err| println!("{}", err)),
+        Ok(resp) => resp.text().await.unwrap(),
         Err(_) => return Err(String::from("Request failed to send!")),
     };
 
-    Ok(content.unwrap())
+    Ok(content)
+}
+
+// Common request function todo!
+#[tauri::command]
+pub async fn test_request(
+    url: String,
+    req_type: RequestType,
+    app_state: State<'_, AppState>,
+) -> Result<String, String> {
+    let client_guard = app_state.client.lock().unwrap().clone();
+
+    let req = match req_type {
+        RequestType::GET => client_guard.get(url),
+        RequestType::POST => client_guard.post(url),
+    };
+
+    let content = match req.send().await {
+        Ok(resp) => resp.text().await.unwrap(),
+        Err(_) => return Err(String::from("Request failed to send!")),
+    };
+
+    Ok(content)
 }
 
 // Check if user is login
@@ -97,7 +116,7 @@ pub async fn request(
 pub fn is_login(app_state: State<AppState>) -> Result<bool, String> {
     // Get the lock of is_login
     let login_status_guard = app_state.is_login.lock().unwrap();
-    // Return if the user is logged in 
+    // Return if the user is logged in
     return Ok(*login_status_guard);
 }
 

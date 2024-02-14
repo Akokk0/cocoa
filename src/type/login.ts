@@ -26,3 +26,18 @@ export interface LoginStatus {
         message: string
     }    
 }
+
+export enum WebCookiesRefreshCode {
+    SUCCESS = 0,
+    ACCOUNT_NOT_LOGIN = -101
+}
+
+export interface WebCookiesRefresh {
+    code: WebCookiesRefreshCode,
+    message: string,
+    ttl: number,
+    data: {
+        refresh: boolean,
+        timestamp: number
+    }
+}

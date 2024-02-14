@@ -1,10 +1,13 @@
-import { useState } from "react"
+// Basic
+import { useEffect, useState } from "react"
 import QRCode from "qrcode"
 import { useNavigate } from "react-router-dom"
+import { invoke } from "@tauri-apps/api"
 // API
 import { getLoginQRCodeURL, getLoginStatus } from "@/api/biliApi"
 // Types
 import { GQRCode, LoginStatus, LoginStatusCode } from "@/type/login"
+import { CocoaConfig } from "@/type/settings";
 // UI
 import { Button } from "@/components/ui/button"
 import {
@@ -25,7 +28,9 @@ import {
 } from "@/components/ui/tabs"
 import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/components/ui/use-toast"
-import { invoke } from "@tauri-apps/api"
+// Icons
+import { KeyRound } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 export default function Login() {
     // Define timer
@@ -37,6 +42,7 @@ export default function Login() {
     // State
     const [qrcodeUrl, setQRCodeURL] = useState<string>()
     const [loginStatus, setLoginStatus] = useState<string>()
+    const [cocoaConfig, setCocoaConfig] = useState<CocoaConfig>()
 
     const generateQRCode = async () => {
         // Check if qrcodeStatusTimer is exist
@@ -97,6 +103,16 @@ export default function Login() {
         }, 1000)
     }
 
+    const getConfig = async () => {
+        const config = await invoke('get_config') as CocoaConfig
+        setCocoaConfig(config)
+    }
+
+    // onMounted
+    useEffect(() => {
+        getConfig()
+    }, [])
+
     return (
         <div className="flex flex-col justify-center items-center h-screen">
             <Tabs defaultValue="account" className="w-[400px]">
@@ -104,6 +120,28 @@ export default function Login() {
                     <TabsTrigger value="account">二维码登录</TabsTrigger>
                     <TabsTrigger value="password">账号密码登录</TabsTrigger>
                 </TabsList>
+                <div className=" flex items-center space-x-4 rounded-md border p-4 mt-2">
+                    <KeyRound />
+                    <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                            登录设置
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            是否开启自动登录
+                        </p>
+                    </div>
+                    <Switch checked={cocoaConfig?.auto_login} onCheckedChange={async () => {
+                        // Change settings
+                        await invoke('change_settings', {
+                            settings: {
+                                ...cocoaConfig,
+                                auto_login: !cocoaConfig?.auto_login,
+                            }
+                        })
+                        // Set auto login
+                        setCocoaConfig({ ...cocoaConfig, auto_login: !cocoaConfig?.auto_login })
+                    }} />
+                </div>
                 <TabsContent value="account">
                     <Card>
                         <CardHeader>
