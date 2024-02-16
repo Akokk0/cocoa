@@ -304,7 +304,7 @@ name = "cocoa"
 version = "0.0.0"
 dependencies = [
  "base64 0.21.7",
- "encoding_rs",
+ "flate2",
  "reqwest",
  "reqwest_cookie_store",
  "serde",

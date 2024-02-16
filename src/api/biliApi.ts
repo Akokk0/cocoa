@@ -64,7 +64,7 @@ export async function getRefreshCSRF(correspondPath: string) {
     let attempts = 3
     for(let i = attempts; i > 0; i--) {
         try {
-            return await invoke('test_request', {
+            return await invoke('html_request', {
                 url: `${GET_REFRESH_CSRF}/${correspondPath}`,
                 reqType: 'GET'
             })

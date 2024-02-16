@@ -18,12 +18,13 @@ export async function generateCorrespondPath(timestamp: number) {
 }
 
 // html parse
-export function htmlParse(html: string) {
-    console.log(html);
+export function parseCSRFromHTML(html: string) {
+    // New domparser
     let parser = new DOMParser()
+    // Parse html from string
     let doc = parser.parseFromString(html, 'text/html')
-    console.log(doc);
+    // Get the element with ID 1-name
     let element = doc.getElementById('1-name')
-    let text = element?.textContent
-    console.log(text);
+    // Return csrf
+    return element?.textContent
 }

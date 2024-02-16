@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 // Import api
 import { checkIfCookiesNeedsRefresh, getRefreshCSRF } from "@/api/biliApi";
 import { WebCookiesRefresh, WebCookiesRefreshCode } from "@/type/login";
-import { generateCorrespondPath, htmlParse } from "@/lib/biliUtils";
+import { generateCorrespondPath, parseCSRFromHTML } from "@/lib/biliUtils";
 
 function App() {
   const [loginStatus, setLoginStatus] = useState<boolean>()
@@ -39,17 +39,16 @@ function App() {
       } */
       // Cookies need refresh, get CorrespondPath
       // webCookiesRefreshResp.data.timestamp
-      let correspondPath = await generateCorrespondPath(Date.now() / 1000)
+      const correspondPath = await generateCorrespondPath(webCookiesRefreshResp.data.timestamp)
       // Send request to get refresh_csrf
-      let refreshCSRF = await getRefreshCSRF(correspondPath) as string
-
-      console.log(refreshCSRF);
-      
-      /* let decoder = new TextDecoder('utf-8')
-      let csrfHTML = decoder.decode(bytes) */
-
+      const refreshCSRFHTML = await getRefreshCSRF(correspondPath) as string
       // Parse refresh token
-      htmlParse(refreshCSRF)
+      const refreshCSRF = parseCSRFromHTML(refreshCSRFHTML)
+      // Get csrf from cookies
+      const csrf = await invoke('get_csrf')
+      // Get refresh_token from file
+      const refresh_token = await invoke('get_refresh_token')
+      
     }
     // Define function for getting app status
     const getAllStatus = async () => {

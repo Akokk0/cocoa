@@ -17,7 +17,9 @@ fn main() {
             save_refresh_token,
             change_settings,
             get_config,
-            test_request
+            html_request,
+            get_csrf,
+            get_refresh_token
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

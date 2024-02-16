@@ -34,17 +34,17 @@ pub fn create_headers() -> HeaderMap {
 }
 
 // Load cookies
-fn load_cookies(data_path: &String) -> Arc<CookieStoreMutex> {
+fn load_cookies(app_data_path: &String) -> Arc<CookieStoreMutex> {
     // Define cookies file path
-    let cookies_file_path = format!("{}/auth/cookies.json", data_path);
-    // Define cookies file Path
-    let cookies_path = std::path::Path::new(&cookies_file_path);
+    let cookies_file_path = format!("{}/auth/cookies.json", app_data_path);
+    // Define Path of cookies file 
+    let path_cookie_file = std::path::Path::new(&cookies_file_path);
     // Load cookies from file
     let cookie_store = 
         // Check if path is a file
-        if cookies_path.is_file() {
+        if path_cookie_file.is_file() {
             // Path is a file, reading file content and load cookies
-            let cookie_file_reader = fs::File::open(cookies_path)
+            let cookie_file_reader = fs::File::open(path_cookie_file)
                 .map(std::io::BufReader::new)
                 .unwrap();
             // Load cookie store
@@ -52,7 +52,7 @@ fn load_cookies(data_path: &String) -> Arc<CookieStoreMutex> {
                 Ok(cs) => cs,
                 Err(_) => { // File has been tampered with
                     // remove cookies file
-                    fs::remove_file(cookies_path).unwrap();
+                    fs::remove_file(path_cookie_file).unwrap();
                     // Create new cookie_store
                     CookieStore::default()
                 },
@@ -166,21 +166,15 @@ fn is_file_empty(path: &str) -> std::io::Result<bool> {
 pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     // Get app data Path
     let app_data_path = get_app_path(AppPath::DATA, &app.config()).unwrap();
-    // Check if app data folder exist
-    let data_path = std::path::Path::new(&app_data_path);
-    // Get CookieStore
-    let cookie_store = if data_path.is_dir() { // Path is a folder
-        // Load cookies
-        load_cookies(&app_data_path)
-    } else {
+    // Check if app data folder is exist
+    if !std::path::Path::new(&app_data_path).is_dir() { // Path is a folder
         // Create auth folder
-        if let Err(_) = fs::create_dir_all(data_path) {
+        if let Err(_) = fs::create_dir_all(&app_data_path) {
             println!("Create auth folder failed")
         }
-        let cookie_store = CookieStore::default();
-        let cookie_store = CookieStoreMutex::new(cookie_store);
-        Arc::new(cookie_store)
-    };
+    }
+    // Load cookies
+    let cookie_store = load_cookies(&app_data_path);
     // Get app config path
     let app_config_path = get_app_path(AppPath::CONFIG, &app.config()).unwrap();
     // Check if app config folder exist
