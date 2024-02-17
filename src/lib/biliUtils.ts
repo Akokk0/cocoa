@@ -25,6 +25,8 @@ export function parseCSRFromHTML(html: string) {
     let doc = parser.parseFromString(html, 'text/html')
     // Get the element with ID 1-name
     let element = doc.getElementById('1-name')
+    // Check if element is null
+    if (!element) throw new Error('element is not exist')
     // Return csrf
-    return element?.textContent
+    return element.textContent!
 }

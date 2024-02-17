@@ -11,13 +11,14 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             save_cookies,
             request,
+            html_request,
+            form_request,
             is_login,
             logout,
             check_cookies_status,
             save_refresh_token,
             change_settings,
             get_config,
-            html_request,
             get_csrf,
             get_refresh_token
         ])

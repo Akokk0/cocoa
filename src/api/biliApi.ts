@@ -5,6 +5,7 @@ const LOGIN_BASE_URL = 'https://passport.bilibili.com/'
 const GET_LOGIN_QRCODE = `${LOGIN_BASE_URL}x/passport-login/web/qrcode/generate`
 const GET_LOGIN_STATUS = `${LOGIN_BASE_URL}x/passport-login/web/qrcode/poll`
 const CHECK_COOKIES_NEEDS_REFRESH = `${LOGIN_BASE_URL}x/passport-login/web/cookie/info`
+const REFRESH_COOKIES = `${LOGIN_BASE_URL}x/passport-login/web/cookie/refresh`
 
 // Main
 const MAIN_BASE_URL = 'https://www.bilibili.com/'
@@ -46,7 +47,7 @@ export async function getLoginStatus(qrcodeKey: string) {
 
 export async function checkIfCookiesNeedsRefresh() {
     let attempts = 3
-    for(let i = attempts; i > 0; i--) {
+    for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
                 url: CHECK_COOKIES_NEEDS_REFRESH,
@@ -62,11 +63,35 @@ export async function checkIfCookiesNeedsRefresh() {
 
 export async function getRefreshCSRF(correspondPath: string) {
     let attempts = 3
-    for(let i = attempts; i > 0; i--) {
+    for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('html_request', {
                 url: `${GET_REFRESH_CSRF}/${correspondPath}`,
                 reqType: 'GET'
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function refreshCookie(
+    csrf: string, refresh_csrf: string, refresh_token: string, source: string = 'main_web'
+) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('form_request', {
+                url: `${REFRESH_COOKIES}`,
+                reqType: 'GET',
+                form: {
+                    csrf,
+                    refresh_csrf,
+                    source,
+                    refresh_token,
+                }
             })
         } catch (e) {
             if (i === 1) {

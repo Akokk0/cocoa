@@ -2,6 +2,7 @@ use std::{fs, io::{BufReader, BufWriter, Read, Write}};
 
 use cocoa::{create_headers, AppState, CocoaConfig, RequestType};
 use flate2::read::GzDecoder;
+use serde_json::Value;
 use tauri::State;
 
 // Result<(), String>
@@ -60,6 +61,7 @@ fn checking_auth_folder_is_exist(app_data_path: &String) -> Result<(), String> {
         std::fs::create_dir(&auth_folder_path)
             .map_err(|e| e.to_string())?;
     }
+    // Return ok
     Ok(())
 }
 
@@ -92,28 +94,29 @@ pub fn change_settings(settings: CocoaConfig, app_state: State<AppState>) -> Res
     Ok(())
 }
 
-// Common request function todo!
+// Common request function
 #[tauri::command]
 pub async fn request(
     url: String,
     req_type: RequestType,
     app_state: State<'_, AppState>,
 ) -> Result<String, String> {
+    // Clone client from app_state
     let client_guard = app_state.client
         .lock()
         .map_err(|e| e.to_string())?
         .clone();
-
+    // Get request
     let req = match req_type {
         RequestType::GET => client_guard.get(url),
         RequestType::POST => client_guard.post(url),
     };
-
+    // Send request and get content
     let content = match req.send().await {
-        Ok(resp) => resp.text().await.unwrap(),
+        Ok(resp) => resp.text().await.map_err(|e| e.to_string())?,
         Err(_) => return Err(String::from("Request failed to send!")),
     };
-
+    // Return content
     Ok(content)
 }
 
@@ -123,16 +126,17 @@ pub async fn html_request(
     req_type: RequestType,
     app_state: State<'_, AppState>,
 ) -> Result<String, String> {
+    // Get client from app_state
     let client_guard = app_state.client
         .lock()
         .map_err(|e| e.to_string())?
         .clone();
-
+    // Get request
     let req = match req_type {
         RequestType::GET => client_guard.get(url),
         RequestType::POST => client_guard.post(url),
     };
-
+    // Send request and get bytes
     let content = match req.send().await {
         Ok(resp) => resp
             .bytes()
@@ -140,24 +144,56 @@ pub async fn html_request(
             .map_err(|e| e.to_string())?,
         Err(_) => return Err(String::from("Request failed to send!")),
     };
-
+    // Decode gzip bytes
     let mut d = GzDecoder::new(&content[..]);
     let mut s = String::new();
     d.read_to_string(&mut s).map_err(|e| e.to_string())?;
-
+    // Return html
     Ok(s)
 }
 
 #[tauri::command]
+pub async fn form_request(
+    url: String,
+    req_type: RequestType,
+    form: Value,
+    app_state: State<'_, AppState>,
+) -> Result<String, String> {
+    println!("{}", form);
+    // Clone client from app_state
+    let client_guard = app_state.client
+        .lock()
+        .map_err(|e| e.to_string())?
+        .clone();
+    // Get request
+    let req = match req_type {
+        RequestType::GET => client_guard.get(url),
+        RequestType::POST => client_guard.post(url).form(&form),
+    };
+    // Send request and get content
+    let content = match req.send().await {
+        Ok(resp) => resp.text().await.map_err(|e| e.to_string())?,
+        Err(_) => return Err(String::from("Request failed to send!")),
+    };
+    // Return content
+    Ok(content)
+}
+
+#[tauri::command]
 pub fn get_csrf(app_state: State<AppState>) -> Result<String, String> {
+    // Get cookie_store from app_state
     let cookie_store = app_state.cookie_store
         .lock()
         .map_err(|e| e.to_string())?;
+    // Traverse cookie_store
     for cookie in cookie_store.iter_any() {
+        // Look for the cookie with cookie name bili_jct
         if cookie.name() == "bili_jct" {
+            // Return cookie value with cookie name bili_jct
             return Ok(cookie.value().to_string());
         }
     }
+    // Return not found
     Err(String::from("csrf is not exist"))
 }
 

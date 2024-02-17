@@ -15,9 +15,10 @@ import { Link } from "react-router-dom";
 // Import utils
 import { cn } from "@/lib/utils";
 // Import api
-import { checkIfCookiesNeedsRefresh, getRefreshCSRF } from "@/api/biliApi";
-import { WebCookiesRefresh, WebCookiesRefreshCode } from "@/type/login";
+import { checkIfCookiesNeedsRefresh, getRefreshCSRF, refreshCookie } from "@/api/biliApi";
 import { generateCorrespondPath, parseCSRFromHTML } from "@/lib/biliUtils";
+// Import types
+import { CookieRefreshResp, WebCookiesRefreshResp, WebCookiesRefreshRespCode } from "@/type/login";
 
 function App() {
   const [loginStatus, setLoginStatus] = useState<boolean>()
@@ -26,9 +27,9 @@ function App() {
     // Check if cookies needs refresh
     const checkCookies = async () => {
       // Send request to get refresh flag
-      const webCookiesRefreshResp = JSON.parse(await checkIfCookiesNeedsRefresh() as string) as WebCookiesRefresh
+      const webCookiesRefreshResp = JSON.parse(await checkIfCookiesNeedsRefresh() as string) as WebCookiesRefreshResp
       // Check if account is not login
-      if (webCookiesRefreshResp.code === WebCookiesRefreshCode.ACCOUNT_NOT_LOGIN) {
+      if (webCookiesRefreshResp.code === WebCookiesRefreshRespCode.ACCOUNT_NOT_LOGIN) {
         // Acount is not login, return directly
         return
       }
@@ -42,13 +43,24 @@ function App() {
       const correspondPath = await generateCorrespondPath(webCookiesRefreshResp.data.timestamp)
       // Send request to get refresh_csrf
       const refreshCSRFHTML = await getRefreshCSRF(correspondPath) as string
-      // Parse refresh token
-      const refreshCSRF = parseCSRFromHTML(refreshCSRFHTML)
       // Get csrf from cookies
-      const csrf = await invoke('get_csrf')
+      const csrf = await invoke('get_csrf') as string
+      // Define refreshCSRF
+      let refreshCSRF: string
+      try {
+        // Parse refresh token
+        refreshCSRF = parseCSRFromHTML(refreshCSRFHTML)
+      } catch (e) {
+        // No refresh CSRF was obtained, returning directly
+        return
+      }
       // Get refresh_token from file
-      const refresh_token = await invoke('get_refresh_token')
-      
+      const refreshToken = await invoke('get_refresh_token') as string
+      // Send request to refresh cookies
+      /* const refreshCookieResp = JSON.parse(
+        await refreshCookie(csrf, refreshCSRF, refreshToken) as string
+      ) as CookieRefreshResp */
+      console.log("Aaa ", await refreshCookie(csrf, refreshCSRF, refreshToken));
     }
     // Define function for getting app status
     const getAllStatus = async () => {

@@ -6,7 +6,7 @@ import { invoke } from "@tauri-apps/api"
 // API
 import { getLoginQRCodeURL, getLoginStatus } from "@/api/biliApi"
 // Types
-import { GQRCode, LoginStatus, LoginStatusCode } from "@/type/login"
+import { GQRCodeResp, LoginStatusResp, LoginStatusRespCode } from "@/type/login"
 import { CocoaConfig } from "@/type/settings";
 // UI
 import { Button } from "@/components/ui/button"
@@ -48,7 +48,7 @@ export default function Login() {
         // Check if qrcodeStatusTimer is exist
         qrcodeStatusTimer && clearInterval(qrcodeStatusTimer)
         // Get LoginQRCodeURL
-        const generateQRCodeResp = JSON.parse(await getLoginQRCodeURL() as string) as GQRCode
+        const generateQRCodeResp = JSON.parse(await getLoginQRCodeURL() as string) as GQRCodeResp
         // Check if request is error
         if (generateQRCodeResp.code !== 0) {
             // Generate toast
@@ -65,7 +65,9 @@ export default function Login() {
         // Check status of qrcode
         qrcodeStatusTimer = setInterval(async () => {
             // Send request to get qrcode status
-            let qrcodeStatusResp = JSON.parse(await getLoginStatus(generateQRCodeResp.data.qrcode_key) as string) as LoginStatus
+            let qrcodeStatusResp = JSON.parse(
+                await getLoginStatus(generateQRCodeResp.data.qrcode_key) as string
+            ) as LoginStatusResp
             // Check if request is error
             if (qrcodeStatusResp.code !== 0) {
                 // Return this request
@@ -73,7 +75,7 @@ export default function Login() {
             }
             // Get status of qrcode
             switch (qrcodeStatusResp.data.code) {
-                case LoginStatusCode.LOGIN_SUCCESS: {
+                case LoginStatusRespCode.LOGIN_SUCCESS: {
                     // Login successful, save refresh_token
                     await invoke('save_refresh_token', { refreshToken: qrcodeStatusResp.data.refresh_token })
                     // Save cookies
@@ -85,15 +87,15 @@ export default function Login() {
                     // end
                     break
                 }
-                case LoginStatusCode.QRCODE_NOT_SCANNED: {
+                case LoginStatusRespCode.QRCODE_NOT_SCANNED: {
                     setLoginStatus('未扫码')
                     break
                 }
-                case LoginStatusCode.QRCODE_SCANNED_NOT_CONFIRMED: {
+                case LoginStatusRespCode.QRCODE_SCANNED_NOT_CONFIRMED: {
                     setLoginStatus('已扫码，未确认')
                     break
                 }
-                case LoginStatusCode.QRCODE_INVALID: {
+                case LoginStatusRespCode.QRCODE_INVALID: {
                     // Stop timer
                     clearInterval(qrcodeStatusTimer)
                     // Prompt user that qrcode has expired
