@@ -42,8 +42,15 @@ export interface WebCookiesRefreshResp {
     }
 }
 
+export enum CookieRefreshRespCode {
+    SUCCESS = 0,
+    NOT_LOGIN = -101,
+    CSRF_VERIFICATION_FAILED = -111,
+    REFRESH_CSRF_ERROR_OR_MISMATCH_WITH_COOKIE = 86095
+}
+
 export interface CookieRefreshResp {
-    code: number,
+    code: CookieRefreshRespCode,
     message: string,
     ttl: number,
     data: {
@@ -51,4 +58,17 @@ export interface CookieRefreshResp {
         message: string,
         refresh_token: string
     }
+}
+
+export enum ConfirmRefreshRespCode {
+    SUCCESS = 0,
+    NOT_LOGIN = -101,
+    CSRF_VERIFICATION_FAILED = -111,
+    REQUEST_ERROR = -400
+}
+
+export interface ConfirmRefreshResp {
+    code: ConfirmRefreshRespCode,
+    message: string,
+    ttl: number
 }

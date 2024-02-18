@@ -159,7 +159,6 @@ pub async fn form_request(
     form: Value,
     app_state: State<'_, AppState>,
 ) -> Result<String, String> {
-    println!("{}", form);
     // Clone client from app_state
     let client_guard = app_state.client
         .lock()
@@ -168,7 +167,7 @@ pub async fn form_request(
     // Get request
     let req = match req_type {
         RequestType::GET => client_guard.get(url),
-        RequestType::POST => client_guard.post(url).form(&form),
+        RequestType::POST => client_guard.post(url).form(&form)
     };
     // Send request and get content
     let content = match req.send().await {

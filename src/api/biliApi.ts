@@ -6,6 +6,7 @@ const GET_LOGIN_QRCODE = `${LOGIN_BASE_URL}x/passport-login/web/qrcode/generate`
 const GET_LOGIN_STATUS = `${LOGIN_BASE_URL}x/passport-login/web/qrcode/poll`
 const CHECK_COOKIES_NEEDS_REFRESH = `${LOGIN_BASE_URL}x/passport-login/web/cookie/info`
 const REFRESH_COOKIES = `${LOGIN_BASE_URL}x/passport-login/web/cookie/refresh`
+const CONFIRM_REFRESH = `${LOGIN_BASE_URL}x/passport-login/web/confirm/refresh`
 
 // Main
 const MAIN_BASE_URL = 'https://www.bilibili.com/'
@@ -84,12 +85,32 @@ export async function refreshCookie(
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('form_request', {
-                url: `${REFRESH_COOKIES}`,
-                reqType: 'GET',
+                url: REFRESH_COOKIES,
+                reqType: 'POST',
                 form: {
                     csrf,
                     refresh_csrf,
                     source,
+                    refresh_token,
+                }
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function confirmRefresh(csrf: string, refresh_token: string) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('form_request', {
+                url: CONFIRM_REFRESH,
+                reqType: 'POST',
+                form: {
+                    csrf,
                     refresh_token,
                 }
             })
