@@ -2,11 +2,14 @@ import { createHashRouter } from "react-router-dom";
 // Import pages
 import App from "@/app/App";
 import Login from "@/app/Login";
-import Mainlayout from '@/app/Main/Layout'
-import Home from '@/app/Main/Home'
-import History from "@/app/Main/History";
-import Personal from "@/app/Main/Personal";
-import Settings from "@/app/Main/Settings";
+import Mainlayout from '@/app/main/Layout'
+import Home from '@/app/main/home'
+import History from "@/app/main/history";
+import Personal from "@/app/main/personal";
+import Settings from "@/app/main/settings";
+import Dynamic from "@/app/main/dynamic";
+import Favorite from "@/app/main/favorite";
+import ToView from "@/app/main/toview";
 
 const router = createHashRouter([
     {
@@ -26,8 +29,20 @@ const router = createHashRouter([
                 element: <Home />
             },
             {
+                path: 'dynamic',
+                element: <Dynamic />
+            },
+            {
+                path: 'favorite',
+                element: <Favorite />
+            },
+            {
                 path: 'history',
                 element: <History />
+            },
+            {
+                path: 'toview',
+                element: <ToView />
             },
             {
                 path: 'personal',

@@ -1,3 +1,5 @@
+import { invoke } from "@tauri-apps/api";
+
 // generate CorrespondPath
 export async function generateCorrespondPath(timestamp: number) {
     const publicKey = await crypto.subtle.importKey(
@@ -29,4 +31,20 @@ export function parseCSRFromHTML(html: string) {
     if (!element) throw new Error('element is not exist')
     // Return csrf
     return element.textContent!
+}
+
+export async function getImgUsingRust(url: string) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('img_request', {
+                url,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
 }

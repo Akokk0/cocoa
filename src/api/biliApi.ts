@@ -12,6 +12,10 @@ const CONFIRM_REFRESH = `${LOGIN_BASE_URL}x/passport-login/web/confirm/refresh`
 const MAIN_BASE_URL = 'https://www.bilibili.com/'
 const GET_REFRESH_CSRF = `${MAIN_BASE_URL}correspond/1`
 
+// API
+const API_URL = 'https://api.bilibili.com/'
+const MUST_DO = `${API_URL}x/web-interface/popular/precious`
+
 export async function getLoginQRCodeURL() {
     // try three times
     let attempts = 3
@@ -113,6 +117,30 @@ export async function confirmRefresh(csrf: string, refresh_token: string) {
                     csrf,
                     refresh_token,
                 }
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getMustDo(page?: number, page_size?: number) {
+    let url: string
+    // Check if page and page_size is not null
+    if (page && page_size) {
+        url = `${MUST_DO}?page=${page}&page_size=${page_size}`
+    } else {
+        url = MUST_DO
+    }
+
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url,
+                reqType: 'GET',
             })
         } catch (e) {
             if (i === 1) {

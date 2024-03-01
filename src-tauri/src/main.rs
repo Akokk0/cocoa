@@ -13,6 +13,7 @@ fn main() {
             request,
             html_request,
             form_request,
+            img_request,
             is_login,
             logout,
             check_cookies_status,

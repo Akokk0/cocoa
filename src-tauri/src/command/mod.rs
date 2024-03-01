@@ -179,6 +179,26 @@ pub async fn form_request(
 }
 
 #[tauri::command]
+pub async fn img_request(
+    url: String,
+    app_state: State<'_, AppState>
+) -> Result<String, String> {
+    // Clone client from app_state
+    let client_guard = app_state.client
+        .lock()
+        .map_err(|e| e.to_string())?
+        .clone();
+    // Send request and get content
+    let content = match client_guard.get(url).send().await {
+        Ok(resp) => resp.bytes().await.map_err(|e| e.to_string())?,
+        Err(_) => return Err(String::from("Request failed to send!")),
+    };
+    let base64_content = base64::encode(&content);
+    // Return content
+    Ok(base64_content)
+}
+
+#[tauri::command]
 pub fn get_csrf(app_state: State<AppState>) -> Result<String, String> {
     // Get cookie_store from app_state
     let cookie_store = app_state.cookie_store
