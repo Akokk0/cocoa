@@ -1,5 +1,5 @@
 import { getMustDo } from "@/api/biliApi"
-import { AutoPlayCarousel } from "@/components/autoplay-carousel"
+import AutoPlayCarousel from "@/components/autoplay-carousel"
 import { MustDoResp, MustDoRespCode } from "@/type/home"
 import { useEffect, useState } from "react"
 

@@ -1,5 +1,5 @@
 import Autoplay from "embla-carousel-autoplay"
-
+// UI
 import { Card, CardContent } from "@/components/ui/card"
 import {
     Carousel,
@@ -8,30 +8,18 @@ import {
     CarouselNext,
 } from "@/components/ui/carousel"
 import { MustDoResp } from "@/type/home"
-import { useEffect, useRef, useState } from "react"
-import { invoke } from "@tauri-apps/api"
+import Image from "./image"
+// React
+import { useRef } from "react"
 
-export function AutoPlayCarousel({ list }: { list: MustDoResp }) {
+export default function AutoPlayCarousel({ list }: { list: MustDoResp }) {
     const plugin = useRef(
-        Autoplay({ delay: 2000, stopOnInteraction: true })
+        Autoplay({ delay: 5000, stopOnInteraction: true })
     )
-
-    const Cover = ({ url, ...props }: { url: string }) => {
-        const [img, setImg] = useState<string | undefined>();
-        invoke('img_request', { url })
-            .then(i => setImg(i as string))
-
-        return (
-            <>
-                {img && <img src={`data:image/jpeg;base64,${img}`} alt="封面" {...props} />}
-            </>
-        )
-    }
 
     return (
         <div>
-            <Cover url={list.data.list[0].pic} />
-            {/* <Carousel
+            <Carousel
                 plugins={[plugin.current]}
                 className="w-full max-w-xs"
                 onMouseLeave={plugin.current.reset}
@@ -41,16 +29,20 @@ export function AutoPlayCarousel({ list }: { list: MustDoResp }) {
                         <CarouselItem key={i}>
                             <div className="p-1">
                                 <Card>
-                                    <CardContent className="flex items-center justify-center p-6">
-                                        <img src={v.pic} alt="封面" />
+                                    <Image url={v.pic} alt="封面" />
+                                    <CardContent className="flex flex-col justify-start">
+                                        <span className="inline-block text-sm mt-2">{v.title}</span>
+                                        <div className="h-6 inline-flex w-fit items-center space-x-1 rounded-xl border border-border_color pr-2 mt-2">
+                                            <Image url={v.owner.face} alt="头像" className="rounded-full w-6" />
+                                            <span className="inline-block text-xs">{v.owner.name}</span>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             </div>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-                <CarouselNext />
-            </Carousel> */}
+            </Carousel>
         </div>
     )
 }
