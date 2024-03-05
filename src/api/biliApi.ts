@@ -15,6 +15,7 @@ const GET_REFRESH_CSRF = `${MAIN_BASE_URL}correspond/1`
 // API
 const API_URL = 'https://api.bilibili.com/'
 const MUST_DO = `${API_URL}x/web-interface/popular/precious`
+const POPULAR = `${API_URL}x/web-interface/popular`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -126,20 +127,28 @@ export async function confirmRefresh(csrf: string, refresh_token: string) {
     }
 }
 
-export async function getMustDo(page?: number, page_size?: number) {
-    let url: string
-    // Check if page and page_size is not null
-    if (page && page_size) {
-        url = `${MUST_DO}?page=${page}&page_size=${page_size}`
-    } else {
-        url = MUST_DO
-    }
-
+export async function getMustDo(page: number = 1, page_size: number = 85) {
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
-                url,
+                url: `${MUST_DO}?page=${page}&page_size=${page_size}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getPopular(pn: number = 1, ps: number = 20) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${POPULAR}?pn=${pn}&ps=${ps}`,
                 reqType: 'GET',
             })
         } catch (e) {

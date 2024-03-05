@@ -26,8 +26,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Cocoa",
-        "width": 1280,
-        "height": 800
+        "width": 1580,
+        "height": 1000
       }
     ],
     "security": {

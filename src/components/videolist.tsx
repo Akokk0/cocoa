@@ -1,15 +1,13 @@
-import Autoplay from "embla-carousel-autoplay"
-// UI
 import { Card, CardContent } from "@/components/ui/card"
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
 } from "@/components/ui/carousel"
-import Image from "./image"
-// React
-import { useRef } from "react"
 import VideoInfo from "./videoinfo"
+import Image from "./image"
 
 type List = [
     {
@@ -59,24 +57,25 @@ type List = [
     }
 ]
 
-export default function AutoPlayCarousel({ list }: { list: List }) {
-    const plugin = useRef(
-        Autoplay({ delay: 5000, stopOnInteraction: true })
-    )
+type VideoListProps = {
+    list: List
+} & React.HTMLAttributes<HTMLDivElement>
 
+const VideoList: React.FC<VideoListProps> = ({ list, ...props }) => {
     return (
-        <div>
+        <div {...props}>
             <Carousel
-                plugins={[plugin.current]}
-                className="w-full max-w-xs"
-                onMouseLeave={plugin.current.reset}
+                opts={{
+                    align: "start",
+                }}
+                className="w-full max-w-4xl"
             >
                 <CarouselContent>
                     {list.map((v, i) => (
-                        <CarouselItem key={i}>
+                        <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3">
                             <div className="p-1">
                                 <Card className="overflow-hidden">
-                                    <Image url={v.pic} alt="封面"className="w-full h-48" />
+                                    <Image url={v.pic} alt="封面" className="w-full h-48" />
                                     <CardContent className="flex flex-col justify-start space-y-2">
                                         <span className="mt-2 text-sm line-clamp-2 h-10">{v.title}</span>
                                         <div className="h-6 inline-flex w-fit items-center space-x-1 rounded-xl border border-border_color pr-2">
@@ -90,7 +89,11 @@ export default function AutoPlayCarousel({ list }: { list: List }) {
                         </CarouselItem>
                     ))}
                 </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
             </Carousel>
         </div>
     )
 }
+
+export default VideoList

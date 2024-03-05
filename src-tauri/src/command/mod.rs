@@ -1,5 +1,6 @@
 use std::{fs, io::{BufReader, BufWriter, Read, Write}};
 
+use base64::Engine;
 use cocoa::{create_headers, AppState, CocoaConfig, RequestType};
 use flate2::read::GzDecoder;
 use serde_json::Value;
@@ -193,7 +194,7 @@ pub async fn img_request(
         Ok(resp) => resp.bytes().await.map_err(|e| e.to_string())?,
         Err(_) => return Err(String::from("Request failed to send!")),
     };
-    let base64_content = base64::encode(&content);
+    let base64_content = base64::engine::general_purpose::STANDARD.encode(&content);
     // Return content
     Ok(base64_content)
 }
