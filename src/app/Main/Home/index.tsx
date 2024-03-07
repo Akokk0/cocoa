@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 // UI
 import AutoPlayCarousel from "@/components/autoplay-carousel"
 import VideoList from "@/components/videolist"
+import AreaTabs from "@/components/areatabs"
 
 export default function Home() {
     const [mustDoList, setMustDoList] = useState<MustDoResp>()
@@ -29,9 +30,17 @@ export default function Home() {
 
     return (
         <div>
-            <div className="flex">
+            <div className="flex space-x-80">
+                <h2 className="text-2xl font-bold">入站必刷</h2>
+                <h2 className="text-2xl font-bold">热门</h2>
+            </div>
+            <div className="flex mt-4">
                 {mustDoList && <AutoPlayCarousel list={mustDoList.data.list} />}
                 {popular && <VideoList list={popular.data.list} className="ml-20"/>}
+            </div>
+            <div className="mt-7">
+                <h3 className="text-2xl font-bold">分区</h3>
+                <AreaTabs className="mt-1" />
             </div>
         </div>
     )

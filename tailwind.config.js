@@ -28,7 +28,8 @@ module.exports = {
           foreground: "hsl(var(--primary-foreground))",
         }, */
         primary: '#fa749b',
-        border_color: '#efefef',
+        bili_blue: '#139fd6',
+        bili_grey: '#efefef',
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
