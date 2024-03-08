@@ -6,77 +6,43 @@ import {
     CarouselItem,
 } from "@/components/ui/carousel"
 // React
-import { useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import VideoInfo from "./videoinfo"
+import { List, VideoListResp, VideoListRespCode } from "@/type/home"
+import { getMustDo } from "@/api/biliApi"
 
-type List = [
-    {
-        aid: number,
-        videos: number,
-        tid: number,
-        tname: string,
-        copyright: number,
-        pic: string,
-        title: string,
-        pubdate: number,
-        ctime: number,
-        desc: string,
-        duration: number,
-        owner: {
-            mid: number,
-            name: string,
-            face: string
-        },
-        stat: {
-            aid: number,
-            view: number,
-            danmaku: number,
-            reply: number,
-            favorite: number,
-            coin: number,
-            share: number,
-            now_rank: number,
-            his_rank: number,
-            like: number,
-            dislike: number,
-            vt: number,
-            vv: number
-        },
-        dynamic: string,
-        cid: number,
-        dimension: {
-            width: number,
-            height: number,
-            rotate: number
-        },
-        short_link_v2: string,
-        first_frame: string,
-        pub_location: string,
-        bvid: string,
-        achievement: string
-    }
-]
+export default function AutoPlayCarousel() {
+    const [list, setList] = useState<List>()
 
-export default function AutoPlayCarousel({ list }: { list: List }) {
+    useEffect(() => {
+        const initial = async () => {
+            // Send request to get must-do content
+            const mustDoResp = JSON.parse(await getMustDo() as string) as VideoListResp
+            // Check if request is error
+            if (mustDoResp.code !== VideoListRespCode.SUCCESS) return
+            // Set resp to state
+            setList(mustDoResp.data.list)
+        }
+        initial()
+    }, [])
+
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: true })
     )
 
     return (
-        <div>
-            <Carousel
-                plugins={[plugin.current]}
-                className="w-full max-w-xs"
-                onMouseLeave={plugin.current.reset}
-            >
-                <CarouselContent>
-                    {list.map((v, i) => (
-                        <CarouselItem key={i}>
-                            <VideoInfo item={v} />
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-            </Carousel>
-        </div>
+        list && <Carousel
+            plugins={[plugin.current]}
+            className="w-full max-w-xs"
+            onMouseLeave={plugin.current.reset}
+        >
+            <CarouselContent>
+                {list.map((v, i) => (
+                    <CarouselItem key={i}>
+                        <VideoInfo item={v} />
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+        </Carousel>
     )
 }

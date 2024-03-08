@@ -1,3 +1,4 @@
+import { VideoZone } from "@/type/bili"
 import { invoke } from "@tauri-apps/api"
 
 // Login
@@ -16,6 +17,7 @@ const GET_REFRESH_CSRF = `${MAIN_BASE_URL}correspond/1`
 const API_URL = 'https://api.bilibili.com/'
 const MUST_DO = `${API_URL}x/web-interface/popular/precious`
 const POPULAR = `${API_URL}x/web-interface/popular`
+const REGION_NEW = `${API_URL}x/web-interface/dynamic/region`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -149,6 +151,22 @@ export async function getPopular(pn: number = 1, ps: number = 20) {
         try {
             return await invoke('request', {
                 url: `${POPULAR}?pn=${pn}&ps=${ps}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getRegionNew(rid: VideoZone = VideoZone.douga, pn: number = 1, ps: number = 10) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${REGION_NEW}?pn=${pn}&ps=${ps}&rid=${rid}`,
                 reqType: 'GET',
             })
         } catch (e) {
