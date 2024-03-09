@@ -446,6 +446,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@formkit/auto-animate@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "@formkit/auto-animate@npm:0.8.1"
+  checksum: 10c0/78dea83222f974e57028136ec4e894f74f729f7dd343504aa85c8562647952d1576a031fa5d16a603371206f23386997952345707f4242f3891f0cbf87509e19
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -1636,6 +1643,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cocoa@workspace:."
   dependencies:
+    "@formkit/auto-animate": "npm:^0.8.1"
     "@radix-ui/react-avatar": "npm:^1.0.4"
     "@radix-ui/react-label": "npm:^2.0.2"
     "@radix-ui/react-slot": "npm:^1.0.2"

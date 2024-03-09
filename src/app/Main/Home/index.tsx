@@ -10,11 +10,11 @@ export default function Home() {
                 <h2 className="text-2xl font-bold">入站必刷</h2>
                 <h2 className="text-2xl font-bold">热门</h2>
             </div>
-            <div className="flex mt-4">
+            <div className="flex mt-3">
                 <AutoPlayCarousel />
                 <VideoList className="ml-20" />
             </div>
-            <AreaTabs className="mt-7" />
+            <AreaTabs className="mt-5" />
         </div>
     )
 }

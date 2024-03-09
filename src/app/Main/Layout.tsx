@@ -1,8 +1,9 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-// UI
 // CSS
 import './Layout.css'
+// Icons
 import { Home, History, Settings, Radar, ListRestart, Star } from "lucide-react";
+// Utils
 import { cn } from "@/lib/utils";
 
 export default function Layout() {
@@ -66,7 +67,6 @@ export default function Layout() {
                 </aside>
                 {/* 主要内容区域 */}
                 <main className="flex-1 p-4">
-                    <h1 className="text-3xl font-bold mb-4">主要内容</h1>
                     <Outlet />
                 </main>
             </div>

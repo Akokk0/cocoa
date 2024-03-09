@@ -2,12 +2,13 @@ import { getRegionNew } from "@/api/biliApi"
 import { VideoZone } from "@/type/bili"
 import { List, RegionNewResp, VideoListRespCode } from "@/type/home"
 import { useEffect, useState } from "react"
+// UI
+import Image from "./image"
 
 type AreaTabsProps = React.HTMLAttributes<HTMLDivElement>
 
 const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
     const [currentTab, setCurrentTab] = useState<VideoZone>(VideoZone.douga)
-
     const [list, setList] = useState<List>()
 
     useEffect(() => {
@@ -18,7 +19,6 @@ const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
             if (regionNewResp.code !== VideoListRespCode.SUCCESS) return
             // Set resp to state
             setList(regionNewResp.data.archives)
-            console.log(regionNewResp.data.archives);
         }
         initial()
     }, [])
@@ -28,7 +28,7 @@ const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
     } & React.HTMLAttributes<HTMLLIElement>
 
     type TabContentProps = {
-        value: VideoZone, children?: React.ReactNode
+        value: VideoZone, list: List
     } & React.HTMLAttributes<HTMLDivElement>
 
     const Tab = ({
@@ -38,19 +38,33 @@ const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
             <li
                 onClick={() => setCurrentTab(value)}
                 className="hover:cursor-pointer"
-                style={currentTab === value ? { fontWeight: 'bold' } : undefined}
+                style={value === currentTab ? {
+                    fontWeight: 700,
+                    color: 'black',
+                    scale: '115%',
+                    borderBottom: '2px solid black'
+                } : undefined}
                 {...props}
             >{children}</li>
         )
     }
 
     const TabContent = ({
-        value, children, ...props
+        value, list, ...props
     }: TabContentProps) => {
         return (
             value === currentTab &&
-            <div {...props}>
-                {children}
+            <div className="flex flex-col h-full" {...props}>
+                <div className="h-[50%] bg-pink-100 overflow-x-auto">
+                    <div className="flex space-x-5">
+                        {list.map((v, i) => (
+                            <div key={i}>
+                                <Image url={v.pic} alt="封面" className=" w-96" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="flex-1 bg-blue-100"></div>
             </div>
         )
     }
@@ -59,7 +73,7 @@ const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
         <div {...props}>
             <div className="flex items-center space-x-7">
                 <h3 className="text-2xl font-bold">分区</h3>
-                <ul className="flex space-x-2 text-[#7f7f7f] text-sm">
+                <ul className="flex space-x-4 text-[#7f7f7f] text-sm">
                     <Tab value={VideoZone.douga}>动画</Tab>
                     <Tab value={VideoZone.anime}>番剧</Tab>
                     <Tab value={VideoZone.guochuang}>国创</Tab>
@@ -83,15 +97,21 @@ const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
                     <Tab value={VideoZone.tv}>电视剧</Tab>
                 </ul>
             </div>
-            <div className="w-[60%] h-[20%] bg-pink-200">
-                <TabContent value={VideoZone.douga}>
-                </TabContent>
-                <TabContent value={VideoZone.anime}>
-                </TabContent>
-                <TabContent value={VideoZone.guochuang}>
-                </TabContent>
-                <TabContent value={VideoZone.music}>
-                </TabContent>
+            <div className="mt-2">
+                <div className="flex space-x-2 mb-2">
+                    <span className="flex h-3 w-3 translate-y-1 rounded-full bg-bili_blue" />
+                    <span className="text-sm">最新发布</span>
+                </div>
+                <div className="w-[60%] h-56 border border-bili_grey rounded-xl overflow-hidden shadow-sm">
+                    {list && <TabContent value={VideoZone.douga} list={list} />}
+                </div>
+                <div className="flex space-x-2 mt-3">
+                    <span className="flex h-3 w-3 translate-y-1 rounded-full bg-bili_blue" />
+                    <span className="text-sm">最新发布</span>
+                </div>
+                <div className="w-[60%] h-56 mt-3 border border-bili_grey rounded-xl overflow-hidden shadow-sm">
+                    {/* todo! */}
+                </div>
             </div>
         </div>
     )
