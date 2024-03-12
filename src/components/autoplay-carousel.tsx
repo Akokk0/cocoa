@@ -31,18 +31,20 @@ export default function AutoPlayCarousel() {
     )
 
     return (
-        list && <Carousel
-            plugins={[plugin.current]}
-            className="w-full max-w-xs"
-            onMouseLeave={plugin.current.reset}
-        >
-            <CarouselContent>
-                {list.map((v, i) => (
-                    <CarouselItem key={i}>
-                        <VideoInfo item={v} />
-                    </CarouselItem>
-                ))}
-            </CarouselContent>
-        </Carousel>
+        <div className="w-full max-w-xs h-[20.2rem]">
+            <Carousel
+                plugins={[plugin.current]}
+                className="w-full max-w-xs"
+                onMouseLeave={plugin.current.reset}
+            >
+                {list && <CarouselContent>
+                    {list.map((v, i) => (
+                        <CarouselItem key={i}>
+                            <VideoInfo item={v} />
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>}
+            </Carousel>
+        </div>
     )
 }

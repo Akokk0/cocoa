@@ -4,6 +4,7 @@ import { List, RegionNewResp, VideoListRespCode } from "@/type/home"
 import { useEffect, useState } from "react"
 // UI
 import Image from "./image"
+import { ArrowLeft, ArrowRight, Clock, Play, RotateCw } from "lucide-react"
 
 type AreaTabsProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -55,16 +56,40 @@ const AreaTabs: React.FC<AreaTabsProps> = ({ ...props }) => {
         return (
             value === currentTab &&
             <div className="flex flex-col h-full" {...props}>
-                <div className="h-[50%] bg-pink-100 overflow-x-auto">
-                    <div className="flex space-x-5">
+                <div className="h-[50%] bg-pink-100 overflow-x-hidden overflow-y-hidden">
+                    <div className="flex w-full">
                         {list.map((v, i) => (
-                            <div key={i}>
-                                <Image url={v.pic} alt="封面" className=" w-96" />
+                            <div key={i} className="flex-shrink-0 p-2">
+                                <Image className="w-40 h-24 rounded-md" url={v.pic} alt="封面" />
                             </div>
                         ))}
                     </div>
                 </div>
-                <div className="flex-1 bg-blue-100"></div>
+                <div className="flex-1 flex bg-blue-100">
+                    <div className="bg-green-200 w-[30rem] flex flex-col p-2">
+                        <div className="flex-1 relative">
+                            <div className="absolute right-0 top-0 flex flex-col">
+                                <div className="flex"><Play /> <Clock /></div>
+                                <div>UserInfo</div>
+                            </div>
+                        </div>
+                        <div>Title</div>
+                    </div>
+                    <div className="flex-1 bg-orange-200 p-2">
+                        Description
+                    </div>
+                    <div className="bg-red-200 w-40 relative">
+                        <button className="absolute right-[7.1rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8">
+                            <RotateCw width="1.2rem" height="1.2rem" />
+                        </button>
+                        <button className="absolute right-[4.5rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8">
+                            <ArrowLeft />
+                        </button>
+                        <button className="absolute right-4 bottom-4 flex items-center justify-center rounded-full border p-1 w-12 h-12">
+                            <ArrowRight width="2.8rem" height="2.8rem" />
+                        </button>
+                    </div>
+                </div>
             </div>
         )
     }
