@@ -5,7 +5,7 @@ import AreaTabs from "@/components/areatabs"
 
 export default function Home() {
     return (
-        <div>
+        <div className="p-4">
             <div className="flex space-x-80">
                 <h2 className="text-2xl font-bold">入站必刷</h2>
                 <h2 className="text-2xl font-bold">热门</h2>

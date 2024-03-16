@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type ImageProps = {
     url: string
@@ -10,12 +10,14 @@ export default function Image({
     url, alt, ...props
 }: ImageProps) {
     const [img, setImg] = useState<string | undefined>();
-    invoke('img_request', { url })
-        .then(i => setImg(i as string))
+    useEffect(() => {
+        invoke('img_request', { url })
+            .then(base64 => setImg(base64 as string))
+    }, [])
 
     return (
         <>
-            {img && <img src={`data:image/jpeg;base64,${img}`} alt={alt} {...props} />}
+            {img && <img src={`data:image/jpg;base64,${img}`} alt={alt} {...props} />}
         </>
     )
 }

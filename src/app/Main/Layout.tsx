@@ -5,8 +5,22 @@ import './Layout.css'
 import { Home, History, Settings, Radar, ListRestart, Star } from "lucide-react";
 // Utils
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
+import { useBiliStore } from "@/store/biliStore";
+import { getPersonalInfo } from "@/api/biliApi";
+import { PersonalInfo } from "@/type/user";
 
 export default function Layout() {
+    useEffect(() => {
+        const initial = async () => {
+            console.log('initialize personal info');
+            const setPersonal = useBiliStore(state => state.setPersonal)
+            const personalInfo = JSON.parse(await getPersonalInfo() as string) as PersonalInfo
+            setPersonal(personalInfo)
+        }
+        initial()
+    }, [])
+
     const location = useLocation()
 
     const NavLink = (
@@ -28,13 +42,13 @@ export default function Layout() {
 
     const Title = (
         { children, ...props }:
-        { children: React.ReactNode }
-    ) => <div className="text-3xl mt-4 ml-1" {...props}>{ children }</div>
+            { children: React.ReactNode }
+    ) => <div className="text-3xl mt-4 ml-1" {...props}>{children}</div>
 
     const SubTitle = (
         { children, ...props }:
-        { children: React.ReactNode }
-    ) => <div className="text-xl mt-4 ml-1" {...props}>{ children }</div>
+            { children: React.ReactNode }
+    ) => <div className="text-xl mt-4 ml-1" {...props}>{children}</div>
 
     return (
         <>
@@ -66,7 +80,7 @@ export default function Layout() {
                     </div>
                 </aside>
                 {/* 主要内容区域 */}
-                <main className="flex-1 p-4">
+                <main className="flex-1">
                     <Outlet />
                 </main>
             </div>
