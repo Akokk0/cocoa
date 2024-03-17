@@ -1,6 +1,6 @@
 import ChooseUP from "@/components/chooseup";
 import PersonalLetter from "@/components/personal_letter";
-import SendDynamic from "@/components/senddynamic";
+import SendDynamic from "@/components/send_dynamic";
 
 export default function Dynamic() {
     return (

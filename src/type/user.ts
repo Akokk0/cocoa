@@ -177,6 +177,18 @@ export interface PersonalInfo {
     level_exp: LevelExp
 }
 
+export enum PersonalInfoRespCode {
+    SUCCESS = 0,
+    NOT_LOGIN = -101
+}
+
+export interface PersonalInfoResp {
+    code: PersonalInfoRespCode,
+    message: string,
+    ttl: number,
+    data: PersonalInfo
+}
+
 export interface UserInfo {
     mid: number,
     name: string,

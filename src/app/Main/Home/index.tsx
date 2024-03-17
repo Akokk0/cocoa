@@ -1,7 +1,8 @@
 // UI
-import AutoPlayCarousel from "@/components/autoplay-carousel"
+import AutoPlayCarousel from "@/components/autoplay_carousel"
+import FreshHomeCategories from "@/components/tabsarea/tab"
 import VideoList from "@/components/videolist"
-import AreaTabs from "@/components/areatabs"
+// import AreaTabs from "@/components/areatabs"
 
 export default function Home() {
     return (
@@ -14,7 +15,8 @@ export default function Home() {
                 <AutoPlayCarousel />
                 <VideoList className="ml-20" />
             </div>
-            <AreaTabs className="mt-5" />
+            {/* <AreaTabs className="mt-5" /> */}
+            <FreshHomeCategories />
         </div>
     )
 }

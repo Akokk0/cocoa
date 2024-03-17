@@ -8,15 +8,17 @@ import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useBiliStore } from "@/store/biliStore";
 import { getPersonalInfo } from "@/api/biliApi";
-import { PersonalInfo } from "@/type/user";
+import { PersonalInfoResp, PersonalInfoRespCode } from "@/type/user";
 
 export default function Layout() {
+    const setPersonal = useBiliStore(state => state.setPersonal)
+
     useEffect(() => {
         const initial = async () => {
             console.log('initialize personal info');
-            const setPersonal = useBiliStore(state => state.setPersonal)
-            const personalInfo = JSON.parse(await getPersonalInfo() as string) as PersonalInfo
-            setPersonal(personalInfo)
+            const personalInfo = JSON.parse(await getPersonalInfo() as string) as PersonalInfoResp
+            if (personalInfo.code !== PersonalInfoRespCode.SUCCESS) return
+            setPersonal(personalInfo.data)
         }
         initial()
     }, [])
