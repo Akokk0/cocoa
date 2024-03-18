@@ -1710,6 +1710,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-router-dom: "npm:^6.22.3"
     tailwind-merge: "npm:^2.2.2"
+    tailwind-scrollbar-hide: "npm:^1.1.7"
     tailwindcss: "npm:^3.4.1"
     tailwindcss-animate: "npm:^1.0.7"
     typescript: "npm:^5.4.2"
@@ -3302,6 +3303,13 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:^7.24.0"
   checksum: 10c0/68a5e199848a467aed4f8d1a8d7b6a5b583ff72f1d2801e018bf245eaa41e6564b63ead9e2b708a214cefbd843970c5e0a21754d5f2a20e2c1238e25955685ce
+  languageName: node
+  linkType: hard
+
+"tailwind-scrollbar-hide@npm:^1.1.7":
+  version: 1.1.7
+  resolution: "tailwind-scrollbar-hide@npm:1.1.7"
+  checksum: 10c0/1027ca724c51a43da9a9a9f730f707652bcaded6f94d82fd445e349ee19bd34d8c1312e3e075193ec89c0524d824e716a06d646ca757913f4df0f4f5faec8fe4
   languageName: node
   linkType: hard
 

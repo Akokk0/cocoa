@@ -1,15 +1,3 @@
-.App {
-    font-family: sans-serif;
-    text-align: center;
-}
-
-h3 {
-    background-color: #2e8555;
-    margin: 10px;
-    line-height: 100px;
-    border-radius: 10px;
-}
-
 .fresh-home-categories {
     display: flex;
     align-items: stretch;
@@ -70,7 +58,6 @@ body.dark .fresh-home-header-tabs .default-tabs .default-tab {
     opacity: 0.5;
 }
 
-
 .fresh-home-header-tabs .default-tabs .default-tab::after {
     content: "";
     position: absolute;
@@ -95,9 +82,7 @@ body *:after {
     transform: translateX(-50%) scaleX(1);
 }
 
-
 .fresh-home {
-    padding: 16px 36px;
     width: 100%;
     max-width: 1440px;
     display: flex;
@@ -156,8 +141,6 @@ body *:after {
     padding: 12px;
     margin: calc(0px - 12px);
 }
-
-
 
 .fresh-home-rank-list .fresh-home-rank-list-first-item {
     display: flex;
@@ -454,8 +437,6 @@ body *:after {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
-
 
 .mdi-arrow-left::before {
     content: "\F004D";

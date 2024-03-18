@@ -13,7 +13,7 @@ export default function Image({
     useEffect(() => {
         invoke('img_request', { url })
             .then(base64 => setImg(base64 as string))
-    }, [])
+    }, [url])
 
     return (
         <>

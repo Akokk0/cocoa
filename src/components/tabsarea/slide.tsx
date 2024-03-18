@@ -1,14 +1,36 @@
-import React, { useRef, useState } from 'react'
+// React
+import { useEffect, useRef, useState } from 'react'
+// Component
+import Image from '../image';
+import UPInfo from '../upinfo';
+// Types
+import { List } from '@/type/home';
+// Styles
 import './styles.css'
+import './button_animation.css'
+// Icons
+import { ArrowLeft, ArrowRight, Clock, Play, RotateCw } from 'lucide-react';
 
-export default function Slide({initItems}:any) {
-    const timerIdRef = useRef<any>(null);
+type SlideProps = {
+    list: List,
+    getNewVideoDate: () => void
+} & React.HTMLAttributes<HTMLDivElement>
+
+export default function Slide({
+    list,
+    getNewVideoDate
+}: SlideProps) {
+    // Refs
+    const timerIdRef = useRef(null);
     const containerRef = useRef(null);
-
-    const [items, setItems] = useState(initItems)
-
-
-    const jumpToCard = (index) => {
+    // States
+    const [items, setItems] = useState<List>(list)
+    // Effect
+    useEffect(() => {
+        setItems(list)
+    }, [list])
+    // Functions
+    const jumpToCard = (index: any) => {
         if (index <= 1 || index >= items.length) {
             return
         }
@@ -24,7 +46,7 @@ export default function Slide({initItems}:any) {
     }
 
     const nextCard = () => {
-        setItems(prevItems => {
+        setItems((prevItems: List) => {
             return [...prevItems.slice(1), prevItems[0]]
         });
     };
@@ -32,7 +54,7 @@ export default function Slide({initItems}:any) {
     const handleClicPre = () => {
         if (!timerIdRef.current) {
             previousCard();
-            timerIdRef.current = setTimeout(() => {
+            setTimeout(() => {
                 timerIdRef.current = null;
             }, 400);
         }
@@ -41,7 +63,7 @@ export default function Slide({initItems}:any) {
     const handleClicNext = () => {
         if (!timerIdRef.current) {
             nextCard();
-            timerIdRef.current = setTimeout(() => {
+            setTimeout(() => {
                 timerIdRef.current = null;
             }, 400);
         }
@@ -53,83 +75,70 @@ export default function Slide({initItems}:any) {
             const lastChild = container.lastElementChild;
             container.insertBefore(lastChild, container.firstElementChild);
             setTimeout(() => {
-                setItems(prevItems => {
+                setItems((prevItems: any) => {
                     const lastItem = prevItems[prevItems.length - 1];
                     return [lastItem, ...prevItems.slice(0, -1)];
                 });
             }, 400);
         }
     };
-  return (
-    <div className="fresh-home-video-slides">
-    <div className="fresh-home-video-slides-covers" ref={containerRef}>
-        {
-            items.map(({ coverUrl, id, title }, index) => {
-                return (
-                    <a data-id={id} key={id} onClick={() => {
-                        jumpToCard(index)
-                    }} href={index !== 1 ? 'javascript:void(0)' : 'http://baidu.com'} className="fresh-home-video-slides-cover">
-                        <img src={coverUrl} alt="" width={'100%'} />
-                    </a>
-                )
-            })
-        }
-    </div>
-    <div className="cover-placeholder-vertical"></div>
-    <div className='fresh-home-video-slides-row'>
-        <div className='fresh-home-video-slides-main-info'>
+    // View
+    return (
+        <div className="fresh-home-video-slides">
+            <div className="fresh-home-video-slides-covers" ref={containerRef}>
+                {
+                    items.map(({ pic, aid }, index) => {
+                        return (
+                            <a data-id={aid} key={aid} onClick={() => {
+                                jumpToCard(index)
+                            }} href={index !== 1 ? 'javascript:void(0)' : 'javascript:void(0)'} className="fresh-home-video-slides-cover">
+                                <Image url={pic} alt='封面' />
+                            </a>
+                        )
+                    })
+                }
+            </div>
+            <div className="cover-placeholder-vertical"></div>
             <div className='fresh-home-video-slides-row'>
-                <div className="cover-placeholder-horizontal"></div>
-                <div className='fresh-home-video-slides-main-actions'>
-                    <a href="https://www.bilibili.com/video/BV1rC4y1j7MU" target="_blank" className="fresh-home-video-slides-play-button">
-                        <div data-v-18aa9448="" role="button" className="be-button primary round">
-                            <div data-v-18aa9448="" className="content-container">
-                                <i className="be-icon mdi mdi-play" data-v-18aa9448="" ></i>
-                                播放
+                <div className='fresh-home-video-slides-main-info'>
+                    <div className='fresh-home-video-slides-row'>
+                        <div className="cover-placeholder-horizontal"></div>
+                        <div className='fresh-home-video-slides-main-actions'>
+                            <div className="flex space-x-2 mb-1">
+                                <div className="flex items-center justify-center space-x-2 text-white bg-bili_blue rounded-full w-24 h-8 text-sm">
+                                    <Play width="1rem" height="1rem" /> <span>播放</span>
+                                </div>
+                                <div className="border border-bili_grey p-1 rounded-full text-gray-800">
+                                    <Clock />
+                                </div>
+                            </div>
+                            <div>
+                                <UPInfo up={items[1].owner} />
                             </div>
                         </div>
-                    </a>
-                    <a href="https://space.bilibili.com/473456010" title="木羽TiAmo" target="_blank" className="fresh-home-video-slides-up-container">
-                        <img width="24" height="24" src="https://i0.hdslb.com/bfs/face/fd6f1e1b9d82900bad0802964ce92decbd471ea9.jpg" />
-                        <div className="fresh-home-video-slides-up-name">
-                            木羽TiAmo
-                        </div>
+                    </div>
+                    <a target="_blank" className="fresh-home-video-slides-main-title">
+                        {items[1].title}
                     </a>
                 </div>
-            </div>
-            <a title="【中英授权】“快些逃跑吧你已经死到临头！”Epic音乐剧手书Done For" href="https://www.bilibili.com/video/BV1rC4y1j7MU" target="_blank" className="fresh-home-video-slides-main-title">
-                {items[1].title}
-            </a>
-        </div>
-        <div className='fresh-home-video-slides-main-description'>
-            <div className='description-text'> {items[1].desc}</div>
-        </div>
-        <div className="fresh-home-video-slides-actions">
-            <div className="be-button fresh-home-video-slides-refresh-button light icon" title="刷新" >
-                <div className='content-container'>
-                    <i className="be-icon mdi mdi-refresh"  ></i>
+                <div className='fresh-home-video-slides-main-description scrollbar-hide'>
+                    <div className='description-text w-72'>{items[1].desc}</div>
                 </div>
-            </div>
-            <div
-                className="be-button fresh-home-video-slides-previous-button light icon"
-                title="上一个"
-                onClick={() => {
-                    handleClicPre()
-                }}
-            >
-                <div className='content-container'>
-                    <svg className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3386" width="20" height="20"><path d="M983.8 312.7C958 251.7 921 197 874 150S772.3 66 711.3 40.3C648.2 13.5 581.1 0 512 0S375.8 13.5 312.7 40.3C251.7 66 197 103 150 150S66 251.7 40.3 312.7C13.5 375.8 0 442.9 0 512s13.5 136.2 40.3 199.3C66 772.3 103 827 150 874s101.8 83.9 162.7 109.7c63.1 26.7 130.2 40.3 199.3 40.3s136.2-13.5 199.3-40.3C772.3 958 827 921 874 874s83.9-101.8 109.7-162.7c26.7-63.1 40.3-130.2 40.3-199.3s-13.5-136.2-40.2-199.3zM623.5 718.5c14.1 14.1 14.1 36.9 0 50.9-7 7-16.2 10.5-25.5 10.5s-18.4-3.5-25.5-10.5L340.6 537.5c-14.1-14.1-14.1-36.9 0-50.9l232-232c14.1-14.1 36.9-14.1 50.9 0 14.1 14.1 14.1 36.9 0 50.9L416.9 512l206.6 206.5z" fill="" p-id="3387"></path></svg>
-                </div>
-            </div>
-            <div onClick={() => {
-                handleClicNext()
-            }} className="be-button fresh-home-video-slides-next-button light icon" title="下一个"  >
-                <div className='content-container'>
-                    <svg className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3177" width="20" height="20"><path d="M0 512c0 69.1 13.5 136.2 40.3 199.3C66 772.3 103 827 150 874s101.8 83.9 162.7 109.7c63.1 26.7 130.2 40.3 199.3 40.3s136.2-13.5 199.3-40.3C772.3 958 827 921 874 874s83.9-101.8 109.7-162.7c26.7-63.1 40.3-130.2 40.3-199.3s-13.5-136.2-40.3-199.3C958 251.7 921 197 874 150S772.3 66 711.3 40.3C648.2 13.5 581.1 0 512 0S375.8 13.5 312.7 40.3C251.7 66 197 103 150 150S66 251.7 40.3 312.7C13.5 375.8 0 442.9 0 512z m607.1 0L400.5 305.5c-14.1-14.1-14.1-36.9 0-50.9 14.1-14.1 36.9-14.1 50.9 0l232 231.9c14.1 14.1 14.1 36.9 0 50.9l-231.9 232c-7 7-16.2 10.5-25.5 10.5s-18.4-3.5-25.5-10.5c-14.1-14.1-14.1-36.9 0-50.9L607.1 512z" fill="" p-id="3178"></path></svg>
+                <div className="fresh-home-video-slides-actions">
+                    <button className="absolute right-[7.1rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
+                            rotatingF hover:border-bili_blue" onClick={getNewVideoDate}>
+                        <RotateCw className="rotatingElement" width="1.2rem" height="1.2rem" />
+                    </button>
+                    <button className="absolute right-[4.5rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
+                            popLeftArrow hover:border-bili_blue" onClick={handleClicPre} >
+                        <ArrowLeft className="arrow-left" />
+                    </button>
+                    <button className="absolute right-4 bottom-4 flex items-center justify-center rounded-full border p-1 w-12 h-12 transition
+                            popRightArrow hover:border-bili_blue" onClick={handleClicNext} >
+                        <ArrowRight className="arrow-right" width="2.8rem" height="2.8rem" />
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-  )
+    )
 }

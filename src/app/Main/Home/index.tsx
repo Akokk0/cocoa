@@ -16,7 +16,7 @@ export default function Home() {
                 <VideoList className="ml-20" />
             </div>
             {/* <AreaTabs className="mt-5" /> */}
-            <FreshHomeCategories />
+            <FreshHomeCategories className="mt-5" />
         </div>
     )
 }
