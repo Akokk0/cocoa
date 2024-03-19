@@ -1,6 +1,5 @@
 import TypeTwoItem from './type_2_item'
 import './styles.css'
-import './type_2.css'
 
 export default function TypeTwo() {
     return (

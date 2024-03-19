@@ -18,6 +18,7 @@ const API_URL = 'https://api.bilibili.com/'
 const MUST_DO = `${API_URL}x/web-interface/popular/precious`
 const POPULAR = `${API_URL}x/web-interface/popular`
 const REGION_NEW = `${API_URL}x/web-interface/dynamic/region`
+const RANKING = `${API_URL}x/web-interface/ranking/v2`
 
 // User
 const PERSONAL_INFO = `${API_URL}x/space/myinfo`
@@ -170,6 +171,22 @@ export async function getRegionNew(rid: VideoZone = VideoZone.douga, pn: number 
         try {
             return await invoke('request', {
                 url: `${REGION_NEW}?pn=${pn}&ps=${ps}&rid=${rid}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getRanking(rid: VideoZone = VideoZone.douga, type: string = 'all') {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${RANKING}?rid=${rid}&type=${type}`,
                 reqType: 'GET',
             })
         } catch (e) {
