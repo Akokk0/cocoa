@@ -91,3 +91,97 @@ export interface RankingResp {
         list: List
     }
 }
+
+export enum TimelineTypes {
+    Anime = 1,
+    Movie = 3,
+    Guochuang = 4
+}
+
+export type Episode = {
+    cover: string,
+    delay: number,
+    delay_id: number,
+    delay_index: string,
+    delay_reason: string,
+    ep_cover: string,
+    episode_id: number,
+    pub_index: string,
+    pub_time: string,
+    pub_ts: number,
+    published: number,
+    follows: string,
+    plays: string,
+    season_id: number,
+    square_cover: string,
+    title: string
+}
+
+export type Result = {
+    date: string,
+    date_ts: number,
+    day_of_week: number,
+    is_today: number
+    episodes: Array<Episode>,
+}
+
+export enum TimelineRespCode {
+    SUCCESS = 0,
+    REQUEST_ERROR = -400,
+    ERROR = -404
+}
+
+export interface TimelineResp {
+    code: TimelineRespCode,
+    message: string,
+    result: Array<Result>
+}
+
+export enum PGCRankingRespCode {
+    SUCCESS = 0,
+    REQUEST_ERROR = -400,
+    ERROR = -404
+}
+
+export interface PGCRankingResp {
+    code: PGCRankingRespCode;
+    data: {
+        list: PGCRankingItem[];
+        note: string;
+        season_type: number;
+    }
+    message: string;
+}
+
+export interface PGCRankingItem {
+    badge: string;
+    badge_info: {
+        bg_color: string;
+        bg_color_night: string;
+        text: string;
+    }
+    badge_type: number;
+    cover: string;
+    desc: string;
+    enable_vt: boolean;
+    icon_font: {
+        name: string;
+        text: string;
+    }
+    new_ep: {
+        cover: string;
+        index_show: string;
+    };
+    rank: number;
+    rating: string;
+    season_id: number;
+    ss_horizontal_cover: string;
+    stat: {
+        danmaku: number;
+        follow: number;
+        series_follow: number;
+        view: number;
+    };
+    title: string;
+    url: string;
+}

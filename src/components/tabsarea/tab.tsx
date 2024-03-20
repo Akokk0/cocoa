@@ -7,6 +7,7 @@ import TypeTwo from './type_2';
 import { VideoZone } from '@/type/bili';
 // Styles
 import './styles.css'
+import { TimelineTypes } from '@/type/home';
 
 type FreshHomeCategoriesProps = {
 
@@ -31,13 +32,13 @@ const FreshHomeCategories: React.FC<FreshHomeCategoriesProps> = ({ ...props }) =
             id: VideoZone.anime,
             name: 'anime',
             displayName: '番剧',
-            content: <TypeTwo />
+            content: <TypeTwo timelineType={TimelineTypes.Anime} />
         },
         {
             id: VideoZone.guochuang,
             name: 'guochuang',
             displayName: '国创',
-            content: <TypeOne videoZone={VideoZone.guochuang} />
+            content: <TypeTwo timelineType={TimelineTypes.Guochuang} />
         },
         {
             id: VideoZone.music,

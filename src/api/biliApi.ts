@@ -1,4 +1,5 @@
 import { VideoZone } from "@/type/bili"
+import { TimelineTypes } from "@/type/home"
 import { invoke } from "@tauri-apps/api"
 
 // Login
@@ -19,6 +20,8 @@ const MUST_DO = `${API_URL}x/web-interface/popular/precious`
 const POPULAR = `${API_URL}x/web-interface/popular`
 const REGION_NEW = `${API_URL}x/web-interface/dynamic/region`
 const RANKING = `${API_URL}x/web-interface/ranking/v2`
+const TIMELINE = `${API_URL}pgc/web/timeline`
+const PGCRANKING = `${API_URL}pgc/season/rank/web/list`
 
 // User
 const PERSONAL_INFO = `${API_URL}x/space/myinfo`
@@ -203,6 +206,38 @@ export async function getPersonalInfo() {
         try {
             return await invoke('request', {
                 url: PERSONAL_INFO,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getTimeLine(types: TimelineTypes = TimelineTypes.Anime, before: number = 7, after: number = 7) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${TIMELINE}?types=${types}&before=${before}&after=${after}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getPGCRanking(seasonType: TimelineTypes = TimelineTypes.Anime, day: number = 3) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${PGCRANKING}?season_type=${seasonType}&day=${day}`,
                 reqType: 'GET',
             })
         } catch (e) {

@@ -180,8 +180,6 @@ body *:after {
 .cover-scale {
     background-color: #fff;
     color: black;
-    border-radius: 12px;
-    border: 1px solid rgba(136, 136, 136, 0.1333333333);
     box-sizing: border-box;
     box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
     cursor: pointer;
@@ -254,14 +252,12 @@ body *:after {
     padding: 0 4px 0 16px;
     position: relative;
     flex-shrink: 0;
-    height: 82px;
 }
 
 .fresh-home-categories-bangumi-timeline-item {
     /* animation: 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) first-animation running both;
     animation-delay: 0s; */
 }
-
 
 .fresh-home-video-slides .fresh-home-video-slides-covers {
     position: absolute;
@@ -304,8 +300,6 @@ body *:after {
     height: var(--other-cover-height);
     transition: .4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-
-
 
 .fresh-home-video-slides .fresh-home-video-slides-cover:nth-child(1) {
     opacity: 0;
