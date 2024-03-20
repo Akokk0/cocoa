@@ -56,7 +56,7 @@ export default function TypeTwoItem({
                 {item.episodes.map(episode => (
                     <div className='fresh-home-categories-bangumi-timeline-seasons'>
                         <a href="" className='fresh-home-categories-bangumi-timeline-season'>
-                            <div className='fresh-home-categories-bangumi-timeline-season-cover'>
+                            <div className='fresh-home-categories-bangumi-timeline-season-cover cover-scale'>
                                 <Image url={episode.square_cover} alt='square_cover' />
                             </div>
                             <div className='fresh-home-categories-bangumi-timeline-season-title'>{episode.title}</div>
