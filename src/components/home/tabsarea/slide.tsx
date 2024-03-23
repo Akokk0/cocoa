@@ -1,8 +1,8 @@
 // React
 import { useEffect, useRef, useState } from 'react'
 // Component
-import Image from '../image';
-import UPInfo from '../upinfo';
+import Image from '../../image';
+import UPInfo from '../../upinfo';
 // Types
 import { List } from '@/type/home';
 // Styles

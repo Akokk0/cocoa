@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 // Component
 import Slide from './slide';
-import Image from '../image';
+import Image from '../../image';
 // APIs
 import { getRanking, getRegionNew } from '@/api/biliApi';
 // types

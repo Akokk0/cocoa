@@ -1,7 +1,7 @@
 // UI
-import AutoPlayCarousel from "@/components/autoplay_carousel"
-import FreshHomeCategories from "@/components/tabsarea/tab"
-import VideoList from "@/components/videolist"
+import AutoPlayCarousel from "@/components/home/autoplay_carousel"
+import FreshHomeCategories from "@/components/home/tabsarea/tab"
+import VideoList from "@/components/home/videolist"
 // import AreaTabs from "@/components/areatabs"
 
 export default function Home() {

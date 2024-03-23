@@ -26,6 +26,9 @@ const PGCRANKING = `${API_URL}pgc/season/rank/web/list`
 // User
 const PERSONAL_INFO = `${API_URL}x/space/myinfo`
 
+// Dynamic
+const DYNAMIC_LIST = `${API_URL}x/polymer/web-dynamic/v1/feed/all`
+
 export async function getLoginQRCodeURL() {
     // try three times
     let attempts = 3
@@ -232,12 +235,40 @@ export async function getTimeLine(types: TimelineTypes = TimelineTypes.Anime, be
     }
 }
 
-export async function getPGCRanking(seasonType: TimelineTypes = TimelineTypes.Anime, day: number = 3) {
+export async function getPGCRanking(season_type: TimelineTypes = TimelineTypes.Anime, day: number = 3) {
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
-                url: `${PGCRANKING}?season_type=${seasonType}&day=${day}`,
+                url: `${PGCRANKING}?season_type=${season_type}&day=${day}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getDynamicList(
+    type: string = 'all',
+    offset?: number,
+    update_baseline?: string,
+    page?: number,
+    timezone_offset: string = '-408'
+) {
+    let url = `${DYNAMIC_LIST}?type=${type}`
+    offset && (url += `&offset=${offset}`)
+    update_baseline && (url += `&update_baseline=${update_baseline}`)
+    page && (url += `&page=${page}`)
+    timezone_offset && (url += `&timezone_offset=${timezone_offset}`)
+
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url,
                 reqType: 'GET',
             })
         } catch (e) {

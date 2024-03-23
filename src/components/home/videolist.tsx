@@ -5,7 +5,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel"
-import VideoInfo from "./videoinfo"
+import VideoInfo from "../videoinfo"
 import { useEffect, useState } from "react"
 import { getPopular } from "@/api/biliApi"
 import { List, VideoListResp, VideoListRespCode } from "@/type/home"

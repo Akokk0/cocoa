@@ -1,8 +1,19 @@
-import ChooseUP from "@/components/chooseup";
-import PersonalLetter from "@/components/personal_letter";
-import SendDynamic from "@/components/send_dynamic";
+import { getDynamicList } from "@/api/biliApi";
+import ChooseUP from "@/components/dynamic/chooseup";
+import PersonalLetter from "@/components/dynamic/personal_letter";
+import SendDynamic from "@/components/dynamic/send_dynamic";
+import { useEffect } from "react";
 
 export default function Dynamic() {
+
+    const getDynamicListResp = async () => {
+        const dynamicListResp = JSON.parse(await getDynamicList() as string)
+    }
+
+    useEffect(() => {
+
+    }, [])
+
     return (
         <div className="bg-[#d3e9e8] h-full">
             <div className="flex space-x-3 p-4">

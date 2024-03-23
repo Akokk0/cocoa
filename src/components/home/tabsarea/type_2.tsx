@@ -4,7 +4,7 @@ import { PGCRankingItem, PGCRankingResp, PGCRankingRespCode, Result, TimelineRes
 import { useEffect, useState } from 'react'
 import { getPGCRanking, getTimeLine } from '@/api/biliApi'
 import { Star } from 'lucide-react'
-import Image from '../image'
+import Image from '../../image'
 
 type TypeTwoProps = {
     timelineType: TimelineTypes

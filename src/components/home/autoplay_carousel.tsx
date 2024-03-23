@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/carousel"
 // React
 import { useEffect, useRef, useState } from "react"
-import VideoInfo from "./videoinfo"
+import VideoInfo from "../videoinfo"
 import { List, VideoListResp, VideoListRespCode } from "@/type/home"
 import { getMustDo } from "@/api/biliApi"
 

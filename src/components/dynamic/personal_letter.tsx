@@ -1,6 +1,6 @@
 import { useBiliStore } from "@/store/biliStore"
-import { Avatar, AvatarFallback } from "./ui/avatar"
-import Image from "./image"
+import { Avatar, AvatarFallback } from "../ui/avatar"
+import Image from "../image"
 
 export default function PersonalLetter() {
     const personalInfo = useBiliStore(state => state.personal)
