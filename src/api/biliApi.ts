@@ -1,4 +1,5 @@
 import { VideoZone } from "@/type/bili"
+import { DynamicTypes } from "@/type/dynamic"
 import { TimelineTypes } from "@/type/home"
 import { invoke } from "@tauri-apps/api"
 
@@ -252,7 +253,7 @@ export async function getPGCRanking(season_type: TimelineTypes = TimelineTypes.A
 }
 
 export async function getDynamicList(
-    type: string = 'all',
+    type: DynamicTypes = DynamicTypes.All,
     offset?: number,
     update_baseline?: string,
     page?: number,
