@@ -599,15 +599,100 @@ export interface ModuleDynamic {
     topic: ModuleDynamicTopic; // 话题信息
 }
 
+export interface ThreePointItemModal {
+    cancel: string; // 取消按钮文本，例如"我点错了"
+    confirm: string; // 确认按钮文本，例如"删除"
+    content: string; // 提示内容，例如"确定要删除此条动态吗？"
+    title: string; // 标题，例如"删除动态"
+}
+
+export interface ThreePointItemParams {
+    dynamic_id: string; // 当前动态ID，可能已弃用
+    status: boolean; // 当前动态是否处于置顶状态，可能已弃用
+}
+
+export interface ThreePointItem {
+    label: string; // 显示文本
+    type: string; // 类型
+    modal?: ThreePointItemModal; // 弹出框信息，删除动态时弹出，可选字段
+    params?: ThreePointItemParams; // 参数，置顶/取消置顶时使用，可选字段
+}
+
+export interface ModuleMore {
+    three_point_items: ThreePointItem[]
+}
+
+export interface ModuleStatComment {
+    count: number; // 评论数
+    forbidden: boolean; // 是否禁止评论，此处固定为false
+    hidden: boolean; // 是否隐藏评论功能，直播类型动态可能会隐藏
+}
+
+export interface ModuleStatForward {
+    count: number; // 转发数
+    forbidden: boolean; // 是否禁止转发，此处固定为false
+}
+
+export interface ModuleStatLike {
+    count: number; // 点赞数
+    forbidden: boolean; // 是否禁止点赞，此处固定为false
+    status: boolean; // 当前用户是否点赞
+}
+
+export interface ModuleStat {
+    comment: ModuleStatComment; // 评论数据
+    forward: ModuleStatForward; // 转发数据
+    like: ModuleStatLike; // 点赞数据
+}
+
+export interface InteractionItemRichTextNode {
+    orig_text: string; // 原始文本
+    rid: string; // 关联ID，通常是用户UID
+    text: string; // 替换后的文本
+    type: RichTextNodeType; // 富文本节点类型
+    emoji?: RichTextNodeEmoji; // 可选的表情信息
+}
+
+export interface InteractionItemDesc {
+    rich_text_nodes: InteractionItemRichTextNode[],
+    text: string
+}
+
+export interface InteractionItem {
+    desc: object; // 点赞/评论信息
+    type: number; // 类型，0：点赞信息，1：评论信息
+}
+
+export interface ModuleInteraction {
+    items: InteractionItem[]
+}
+
+export interface ModuleFold {
+    ids: any[]; // 被折叠的动态id列表
+    statement: string; // 显示文案，例如“展开x条相关动态”
+    type: number; // 类型标识，此处为1
+    users: any[]; // 空数组，表示相关用户信息（此场景下未使用）
+}
+
+export interface ModuleDispute {
+    desc: string; // 描述文本
+    jump_url: string; // 跳转链接
+    title: string; // 提醒文案，例如：“视频内含有危险行为，请勿模仿”
+}
+
+export interface ModuleTag {
+    text?: string // 置顶，置顶动态出现这个对象，否则没有
+}
+
 export interface DynamicModules {
     module_author: ModuleAuthor; // UP主信息
     module_dynamic: ModuleDynamic; // 动态内容信息
-    module_more: object; // 动态右上角三点菜单
-    module_stat: object; // 动态统计数据
-    module_interaction: object; // 热度评论
-    module_fold: object; // 动态折叠信息
-    module_dispute: object; // 争议小黄条
-    module_tag: object; // 置顶信息
+    module_more: ModuleMore; // 动态右上角三点菜单
+    module_stat: ModuleStat; // 动态统计数据
+    module_interaction: ModuleInteraction; // 热度评论
+    module_fold: ModuleFold; // 动态折叠信息
+    module_dispute: ModuleDispute; // 争议小黄条
+    module_tag: ModuleTag; // 置顶信息
 }
 
 export interface DynamicItem {
@@ -616,7 +701,7 @@ export interface DynamicItem {
     modules: DynamicModules; // 动态信息，具体结构依据实际数据定义
     type: string; // 动态类型
     visible: boolean; // 是否显示，true表示正常显示，false表示折叠动态
-    orig?: object; // 原动态信息，仅动态类型为DYNAMIC_TYPE_FORWARD的情况下存在，可选字段
+    orig?: DynamicItem; // 原动态信息，仅动态类型为DYNAMIC_TYPE_FORWARD的情况下存在，可选字段
 }
 
 export interface DynamicListResp {
@@ -625,7 +710,7 @@ export interface DynamicListResp {
     ttl: number,
     data: {
         has_more: boolean,
-        items: [],
+        items: DynamicItem[],
         offset: string,
         update_baseline: string,
         update_num: number
