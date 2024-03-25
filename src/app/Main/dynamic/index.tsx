@@ -2,16 +2,23 @@ import { getDynamicList } from "@/api/biliApi";
 import ChooseUP from "@/components/dynamic/chooseup";
 import PersonalLetter from "@/components/dynamic/personal_letter";
 import SendDynamic from "@/components/dynamic/send_dynamic";
-import { useEffect } from "react";
+import { DynamicItem, DynamicListResp, DynamicListRespCode } from "@/type/dynamic";
+import { useEffect, useState } from "react";
 
 export default function Dynamic() {
+    const [dynamicList, setDynamicList] = useState<DynamicItem[]>()
 
     const getDynamicListResp = async () => {
-        const dynamicListResp = JSON.parse(await getDynamicList() as string)
+        // Send request to get popular content
+        const dynamicListResp = JSON.parse(await getDynamicList() as string) as DynamicListResp
+        // Check if request is error
+        if (dynamicListResp.code != DynamicListRespCode.SUCCESS) return
+        //Set resp to state
+        setDynamicList(dynamicListResp.data.items)
     }
 
     useEffect(() => {
-
+        getDynamicListResp()
     }, [])
 
     return (
@@ -22,7 +29,7 @@ export default function Dynamic() {
                         <SendDynamic />
                     </div>
                     <div className="h-32 rounded-md bg-white p-3">
-                        <ChooseUP />
+                        {dynamicList && <ChooseUP dynamicList={dynamicList} />}
                     </div>
                     <div className="h-16 rounded-md bg-white">动态类型</div>
                     <div className="rounded-md bg-white">动态</div>

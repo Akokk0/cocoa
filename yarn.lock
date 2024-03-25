@@ -1300,6 +1300,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/luxon@npm:^3":
+  version: 3.4.2
+  resolution: "@types/luxon@npm:3.4.2"
+  checksum: 10c0/d835467de3daf7e17ba78b50bb5a14efd94272439ca067990d71332a54b311544459c69623eddd243b511b28d70194c9591a9ee8cf9c038962c965f991affd7e
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 20.11.17
   resolution: "@types/node@npm:20.11.17"
@@ -1693,6 +1700,7 @@ __metadata:
     "@radix-ui/react-toast": "npm:^1.1.5"
     "@tauri-apps/api": "npm:^1.5.3"
     "@tauri-apps/cli": "npm:^1.5.11"
+    "@types/luxon": "npm:^3"
     "@types/node": "npm:^20.11.28"
     "@types/qrcode": "npm:^1.5.5"
     "@types/react": "npm:^18.2.66"
@@ -1704,6 +1712,7 @@ __metadata:
     embla-carousel-autoplay: "npm:^8.0.0"
     embla-carousel-react: "npm:^8.0.0"
     lucide-react: "npm:^0.358.0"
+    luxon: "npm:^3.4.4"
     postcss: "npm:^8.4.35"
     qrcode: "npm:^1.5.3"
     react: "npm:^18.2.0"
@@ -2459,6 +2468,13 @@ __metadata:
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0
   checksum: 10c0/cbfd01bb5afde9b1e30d2e6d24d8ae202aa099d5ee8917b34ac0a327b456c705270034a76c65e39ed368ce753de1ee2d9cd8d4bdfd1a03db3cd9b6cfb5e165e9
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.4.4":
+  version: 3.4.4
+  resolution: "luxon@npm:3.4.4"
+  checksum: 10c0/02e26a0b039c11fd5b75e1d734c8f0332c95510f6a514a9a0991023e43fb233884da02d7f966823ffb230632a733fc86d4a4b1e63c3fbe00058b8ee0f8c728af
   languageName: node
   linkType: hard
 

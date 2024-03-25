@@ -71,7 +71,7 @@ export enum VipLabelTheme {
     FoolsDayHundredAnnualVip = "fools_day_hundred_annual_vip",
 }
 
-interface VipLabel {
+export interface VipLabel {
     bg_color: string; // 会员标签背景颜色
     bg_style: number;
     border_color: string; // 空串
@@ -139,24 +139,24 @@ export interface ModuleAuthor {
     nft_info: NFTAvatarBadge; // NFT头像信息
 }
 
-enum ContentType {
+export enum ContentType {
     GameAndDecoration = 1,
     Ogv = 2,
 }
 
-interface ButtonJumpStyle {
+export interface ButtonJumpStyle {
     // 跳转类型，game和decoration类型特有
     icon_url: string,
     text: string // game 进入 decoration 去看看
 }
 
-interface Check {
+export interface Check {
     // ogv类型特有
     icon_url: string,
     text: string // ogv: 已追剧 uncheck ogv: 追剧
 }
 
-interface AdditionalButton {
+export interface AdditionalButton {
     jump_style: ButtonJumpStyle | null; // 跳转类型，仅game和decoration类型特有
     jump_url: string; // 跳转URL
     type: ContentType; // 类型
@@ -165,7 +165,7 @@ interface AdditionalButton {
     uncheck: Check | null; // ogv类型特有
 }
 
-interface AdditionalCommon {
+export interface AdditionalCommon {
     button: AdditionalButton; // 按钮内容
     cover: string; // 左侧封面图
     desc1: string; // 描述1
@@ -178,7 +178,7 @@ interface AdditionalCommon {
     title: string; // 卡片标题
 }
 
-enum ReservationStatus {
+export enum ReservationStatus {
     /* 
         1：未预约，使用uncheck
         2：已预约，使用check 
@@ -187,7 +187,7 @@ enum ReservationStatus {
     Reserved = 2, // 已预约
 }
 
-enum ReservationType {
+export enum ReservationType {
     /* 
         1：视频预约，使用jump_style
         2：直播预约，使用check和uncheck
@@ -196,24 +196,19 @@ enum ReservationType {
     Live = 2, // 直播预约
 }
 
-interface ButtonCheck {
+export interface ButtonCheck {
     icon_url: string, // 空串
     text: string // 按钮显示文案
 }
 
-interface ButtonUnCheck {
+export interface ButtonUnCheck {
     icon_url: string, // 显示图标URL
     text: string, // 按钮显示文案
     toast: string, // 预约成功显示提示文案	
     disable: number // 是否不可预约 1：是
 }
 
-interface ButtonJumpStyle {
-    icon_url: string, // 空串
-    text: string // 按钮显示文案 去观看
-}
-
-interface ReserveButton {
+export interface ReserveButton {
     check: ButtonCheck; // 已预约状态显示内容
     status: ReservationStatus; // 预约状态
     type: ReservationType; // 类型
@@ -222,12 +217,12 @@ interface ReserveButton {
     jump_url: string; // 跳转URL
 }
 
-interface ReserveDesc1 {
+export interface ReserveDesc1 {
     style: number // 0：视频预约 11-05 20:00 直播 预计今天 17:05发布 1：直播中
     text: string // 显示文案
 }
 
-interface ReserveDesc2 {
+export interface ReserveDesc2 {
     style: number,
     /* 
         显示文案
@@ -240,13 +235,13 @@ interface ReserveDesc2 {
     visible: boolean // true：显示文案 false：显示已结束
 }
 
-interface ReserveDesc3 {
+export interface ReserveDesc3 {
     jump_url: string, // 开奖信息跳转URL
     style: number,
     text: string // 奖品信息显示文案
 }
 
-interface AdditionalReserve {
+export interface AdditionalReserve {
     button: ReserveButton; // 按钮信息
     desc1: ReserveDesc1; // 预约时间
     desc2: ReserveDesc2; // 预约观看量
@@ -260,7 +255,7 @@ interface AdditionalReserve {
     desc3?: ReserveDesc3; // 预约有奖信息，可选字段
 }
 
-interface GoodsItem {
+export interface GoodsItem {
     brief: string; // 商品副标题
     cover: string; // 商品封面
     id: string; // 商品ID
@@ -270,14 +265,14 @@ interface GoodsItem {
     price: string; // 商品价格
 }
 
-interface AdditionalGoods {
+export interface AdditionalGoods {
     head_icon: string; // 空串
     head_text: string; // 卡片头显示文案
     items: GoodsItem[]; // 商品信息列表
     jump_url: string; // 空串
 }
 
-interface AdditionalVote {
+export interface AdditionalVote {
     choice_cnt: number; // 选项数量
     default_share: number; // 是否默认勾选同时分享至动态，1：勾选
     desc: string; // 投票标题
@@ -289,7 +284,7 @@ interface AdditionalVote {
     vote_id: number; // 投票ID
 }
 
-interface AdditionalUGC {
+export interface AdditionalUGC {
     cover: string; // 封面
     desc_second: string; // 播放量与弹幕数
     duration: string; // 视频长度
@@ -300,13 +295,25 @@ interface AdditionalUGC {
     title: string; // 视频标题
 }
 
-type ModuleDynamicAdditional = {
+export enum AdditionalType {
+    NONE = "ADDITIONAL_TYPE_NONE",
+    PGC = "ADDITIONAL_TYPE_PGC",
+    GOODS = "ADDITIONAL_TYPE_GOODS", // 商品信息
+    VOTE = "ADDITIONAL_TYPE_VOTE", // 投票
+    COMMON = "ADDITIONAL_TYPE_COMMON", // 一般类型，如游戏
+    MATCH = "ADDITIONAL_TYPE_MATCH",
+    UP_RCMD = "ADDITIONAL_TYPE_UP_RCMD",
+    UGC = "ADDITIONAL_TYPE_UGC", // 视频跳转
+    RESERVE = "ADDITIONAL_TYPE_RESERVE", // 直播预约
+}
+
+export type ModuleDynamicAdditional = {
     common?: AdditionalCommon; // 一般类型，ADDITIONAL_TYPE_COMMON类型独有
     reserve?: AdditionalReserve; // 预约信息，ADDITIONAL_TYPE_RESERVE类型独有
     goods?: AdditionalGoods; // 商品内容，ADDITIONAL_TYPE_GOODS类型独有
     vote?: AdditionalVote; // 投票信息，ADDITIONAL_TYPE_VOTE类型独有
     ugc?: AdditionalUGC; // 视频信息，ADDITIONAL_TYPE_UGC类型独有
-    type: string; // 卡片类型，相关内容卡片类型
+    type: AdditionalType; // 卡片类型，相关内容卡片类型
 }
 
 export interface RichTextNodeEmoji {
@@ -321,7 +328,7 @@ export interface RichTextNodeGoods {
     type: number
 }
 
-enum RichTextNodeType {
+export enum RichTextNodeType {
     NONE = "RICH_TEXT_NODE_TYPE_NONE",
     TEXT = "RICH_TEXT_NODE_TYPE_TEXT",
     AT = "RICH_TEXT_NODE_TYPE_AT",
@@ -359,7 +366,7 @@ export interface ModuleDynamicDesc {
     text: string
 }
 
-enum MajorType {
+export enum MajorType {
     NONE = "DYNAMIC_TYPE_NONE",
     FORWARD = "DYNAMIC_TYPE_FORWARD",
     AV = "DYNAMIC_TYPE_AV",
@@ -384,18 +391,18 @@ enum MajorType {
     SUBSCRIPTION_NEW = "DYNAMIC_TYPE_SUBSCRIPTION_NEW"
 }
 
-interface UgcSeasonBadge {
+export interface UgcSeasonBadge {
     bg_color: string,
     color: string,
     text: string
 }
 
-interface UgcSeasonStat {
+export interface UgcSeasonStat {
     danmaku: string,
     play: string
 }
 
-interface MajorUgcSeason {
+export interface MajorUgcSeason {
     aid: number; // 视频AV号
     badge: UgcSeasonBadge; // 角标信息
     cover: string; // 视频封面
@@ -407,7 +414,7 @@ interface MajorUgcSeason {
     title: string; // 视频标题
 }
 
-interface MajorArticle {
+export interface MajorArticle {
     covers: string[]; // 封面图数组，最多三张
     desc: string; // 文章摘要
     id: number; // 文章CV号
@@ -416,7 +423,7 @@ interface MajorArticle {
     title: string; // 文章标题
 }
 
-interface DrawItem {
+export interface DrawItem {
     height: number; // 图片高度
     size: number; // 图片大小，单位KB
     src: string; // 图片URL
@@ -424,23 +431,23 @@ interface DrawItem {
     width: number; // 图片宽度
 }
 
-interface MajorDraw {
+export interface MajorDraw {
     id: number, // 对应相簿id
     items: DrawItem[] // 图片信息列表
 }
 
-interface ArchiveBadge {
+export interface ArchiveBadge {
     bg_color: string,
     color: string,
     text: string
 }
 
-interface ArchiveStat {
+export interface ArchiveStat {
     danmaku: string,
     play: string
 }
 
-interface MajorArchive {
+export interface MajorArchive {
     aid: string; // 视频AV号
     badge: ArchiveBadge; // 角标信息
     bvid: string; // 视频BVID
@@ -465,7 +472,7 @@ export interface CommonBadge {
     text: string; // 文本内容，此处为空串
 }
 
-enum SeriesType {
+export enum SeriesType {
     Anime = 1, // 番剧
     Movie = 2, // 电影
     Documentary = 3, // 纪录片
@@ -586,7 +593,7 @@ export interface ModuleDynamicMajor {
     none?: MajorNone; // 动态失效
 }
 
-interface ModuleDynamicTopic {
+export interface ModuleDynamicTopic {
     id: number; // 话题id
     jump_url: string; // 跳转URL
     name: string; // 话题名称
@@ -704,8 +711,13 @@ export interface DynamicItem {
     orig?: DynamicItem; // 原动态信息，仅动态类型为DYNAMIC_TYPE_FORWARD的情况下存在，可选字段
 }
 
+export enum DynamicListRespCode {
+    SUCCESS = 0,
+    NOT_LOGIN = -101
+}
+
 export interface DynamicListResp {
-    code: number,
+    code: DynamicListRespCode,
     message: string,
     ttl: number,
     data: {

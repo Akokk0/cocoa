@@ -4,6 +4,7 @@ import Image from "../image"
 
 export default function PersonalLetter() {
     const personalInfo = useBiliStore(state => state.personal)
+
     console.log(personalInfo);
 
     return (
@@ -16,11 +17,11 @@ export default function PersonalLetter() {
                 </Avatar>
                 <div className="flex flex-col justify-between p-1">
                     <span className="text-md line-clamp-1">{personalInfo?.name}</span>
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-2 items-center">
                         {/* Vip标签 */}
                         {
                             personalInfo?.vip.status === 0 ? '' :
-                                <span className={`bg-[#${personalInfo?.vip.label.bg_color}]`}>{personalInfo?.vip.label.label_theme}</span>
+                            <span className="bg-[#FB7299] rounded-sm p-1 text-xs text-white">{personalInfo?.vip.label.text}</span>
                         }
                         {/* 等级标签 */}
                         <span className="text-sm">LV{personalInfo.level}</span>
