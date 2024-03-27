@@ -1,13 +1,16 @@
 import { getDynamicList } from "@/api/biliApi";
 import ChooseUP from "@/components/dynamic/chooseup";
+import DynamicList from "@/components/dynamic/dynamic_list";
+import DynamicTypeSelector from "@/components/dynamic/dynamic_type";
 import PersonalLetter from "@/components/dynamic/personal_letter";
 import SendDynamic from "@/components/dynamic/send_dynamic";
 import { DynamicItem, DynamicListResp, DynamicListRespCode } from "@/type/dynamic";
 import { useEffect, useState } from "react";
 
 export default function Dynamic() {
+    // State
     const [dynamicList, setDynamicList] = useState<DynamicItem[]>()
-
+    // Func
     const getDynamicListResp = async () => {
         // Send request to get popular content
         const dynamicListResp = JSON.parse(await getDynamicList() as string) as DynamicListResp
@@ -16,7 +19,7 @@ export default function Dynamic() {
         //Set resp to state
         setDynamicList(dynamicListResp.data.items)
     }
-
+    // Effect
     useEffect(() => {
         getDynamicListResp()
     }, [])
@@ -31,8 +34,12 @@ export default function Dynamic() {
                     <div className="h-32 rounded-md bg-white p-3">
                         {dynamicList && <ChooseUP dynamicList={dynamicList} />}
                     </div>
-                    <div className="h-16 rounded-md bg-white">动态类型</div>
-                    <div className="rounded-md bg-white">动态</div>
+                    <div className="h-12 rounded-md bg-white p-3">
+                        <DynamicTypeSelector />
+                    </div>
+                    <div className="rounded-md bg-white">
+                        {dynamicList && <DynamicList dynamicList={dynamicList} />}
+                    </div>
                 </div>
                 <div className="flex flex-col space-y-3 w-64">
                     <div className="h-40 rounded-md bg-white p-5">

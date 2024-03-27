@@ -4,9 +4,6 @@ import Image from "../image"
 
 export default function PersonalLetter() {
     const personalInfo = useBiliStore(state => state.personal)
-
-    console.log(personalInfo);
-
     return (
         personalInfo &&
         <div className="flex flex-col space-y-4">

@@ -3,7 +3,7 @@ import { DynamicItem } from "@/type/dynamic"
 // Dependence
 import { DateTime } from "luxon"
 // React
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 // UI
 import {
     Carousel,
@@ -16,6 +16,7 @@ import {
 import { Radar } from "lucide-react"
 import TabContent from "./chooseupTab"
 import { cn } from "@/lib/utils"
+import { useBiliStore } from "@/store/biliStore"
 
 type ChooseUPProps = {
     dynamicList: DynamicItem[]
@@ -24,8 +25,10 @@ type ChooseUPProps = {
 export default function ChooseUP({
     dynamicList
 }: ChooseUPProps) {
+    // Store
+    const currentTab = useBiliStore(state => state.dynamicUpCurrentTab)
+    const setCurrentTab = useBiliStore(state => state.setDynamicUpCurrentTab)
     // State
-    const [currentTab, setCurrentTab] = useState<string>('all')
     const [updatedDynamic, setUpdatedDynamic] = useState<DynamicItem[]>()
 
     // Func
@@ -48,10 +51,6 @@ export default function ChooseUP({
         setUpdatedDynamic(list)
     }
 
-    const changeCurrentTab = useCallback((id: string) => {
-        setCurrentTab(id)
-    }, [])
-
     // Effect
     useEffect(() => {
         getUpdatedDynamic()
@@ -66,7 +65,7 @@ export default function ChooseUP({
                 className="w-full max-w-lg ml-12 mt-2"
             >
                 <CarouselContent>
-                    <CarouselItem className="md:basis-1/2 lg:basis-1/6 hover:cursor-pointer" onClick={() => changeCurrentTab('all')}>
+                    <CarouselItem className="md:basis-1/2 lg:basis-1/6 hover:cursor-pointer" onClick={() => setCurrentTab('all')}>
                         <div className="flex flex-col space-y-2 items-center">
                             <div className={cn('w-16 h-16 rounded-full flex justify-center items-center', currentTab === 'all' ? 'border border-bili_blue': '')}>
                                 {/* Icon */}
@@ -78,7 +77,7 @@ export default function ChooseUP({
                         </div>
                     </CarouselItem>
                     {updatedDynamic?.map(item => (
-                        <TabContent currentTab={currentTab} changeCurrentTab={changeCurrentTab} item={item} />
+                        <TabContent currentTab={currentTab} item={item} />
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />
