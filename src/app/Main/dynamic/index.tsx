@@ -37,9 +37,7 @@ export default function Dynamic() {
                     <div className="h-12 rounded-md bg-white p-3">
                         <DynamicTypeSelector />
                     </div>
-                    <div className="rounded-md bg-white">
-                        {dynamicList && <DynamicList dynamicList={dynamicList} />}
-                    </div>
+                    {dynamicList && <DynamicList dynamicList={dynamicList} />}
                 </div>
                 <div className="flex flex-col space-y-3 w-64">
                     <div className="h-40 rounded-md bg-white p-5">

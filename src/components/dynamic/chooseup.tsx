@@ -76,8 +76,8 @@ export default function ChooseUP({
                             <span className={cn('text-xs text-center', currentTab === 'all' ? 'text-bili_blue' : '')}>全部动态</span>
                         </div>
                     </CarouselItem>
-                    {updatedDynamic?.map(item => (
-                        <TabContent currentTab={currentTab} item={item} />
+                    {updatedDynamic?.map((item, index) => (
+                        <TabContent key={index} currentTab={currentTab} item={item} />
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />

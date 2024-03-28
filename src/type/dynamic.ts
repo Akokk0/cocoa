@@ -702,11 +702,36 @@ export interface DynamicModules {
     module_tag: ModuleTag; // 置顶信息
 }
 
+export enum DynamicType {
+    NONE = "DYNAMIC_TYPE_NONE",
+    FORWARD = "DYNAMIC_TYPE_FORWARD",
+    AV = "DYNAMIC_TYPE_AV",
+    PGC = "DYNAMIC_TYPE_PGC",
+    COURSES = "DYNAMIC_TYPE_COURSES",
+    WORD = "DYNAMIC_TYPE_WORD",
+    DRAW = "DYNAMIC_TYPE_DRAW",
+    ARTICLE = "DYNAMIC_TYPE_ARTICLE",
+    MUSIC = "DYNAMIC_TYPE_MUSIC",
+    COMMON_SQUARE = "DYNAMIC_TYPE_COMMON_SQUARE",
+    COMMON_VERTICAL = "DYNAMIC_TYPE_COMMON_VERTICAL",
+    LIVE = "DYNAMIC_TYPE_LIVE",
+    MEDIALIST = "DYNAMIC_TYPE_MEDIALIST",
+    COURSES_SEASON = "DYNAMIC_TYPE_COURSES_SEASON",
+    COURSES_BATCH = "DYNAMIC_TYPE_COURSES_BATCH",
+    AD = "DYNAMIC_TYPE_AD",
+    APPLET = "DYNAMIC_TYPE_APPLET",
+    SUBSCRIPTION = "DYNAMIC_TYPE_SUBSCRIPTION",
+    LIVE_RCMD = "DYNAMIC_TYPE_LIVE_RCMD",
+    BANNER = "DYNAMIC_TYPE_BANNER",
+    UGC_SEASON = "DYNAMIC_TYPE_UGC_SEASON",
+    SUBSCRIPTION_NEW = "DYNAMIC_TYPE_SUBSCRIPTION_NEW"
+}
+
 export interface DynamicItem {
     basic: DynamicBasic; // 动态的基本信息，具体结构依据实际数据定义
     id_str: string; // 动态id
     modules: DynamicModules; // 动态信息，具体结构依据实际数据定义
-    type: string; // 动态类型
+    type: DynamicType; // 动态类型
     visible: boolean; // 是否显示，true表示正常显示，false表示折叠动态
     orig?: DynamicItem; // 原动态信息，仅动态类型为DYNAMIC_TYPE_FORWARD的情况下存在，可选字段
 }
