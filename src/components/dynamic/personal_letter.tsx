@@ -7,12 +7,12 @@ export default function PersonalLetter() {
     return (
         personalInfo &&
         <div className="flex flex-col space-y-4">
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 ml-5 mt-4">
                 <Avatar className="w-16 h-16">
                     <Image url={personalInfo?.face!} alt="头像" />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col justify-between p-1">
+                <div className="flex flex-col justify-around">
                     <span className="text-md line-clamp-1">{personalInfo?.name}</span>
                     <div className="flex space-x-2 items-center">
                         {/* Vip标签 */}
@@ -25,7 +25,7 @@ export default function PersonalLetter() {
                     </div>
                 </div>
             </div>
-            <div className="flex space-x-10 justify-around text-sm">
+            <div className="flex justify-around text-sm">
                 {/* 关注 */}
                 <div className="flex flex-col space-y-1 items-center">
                     <span>{personalInfo.following}</span>

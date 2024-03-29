@@ -91,7 +91,7 @@ export default function Slide({
                         return (
                             <a data-id={aid} key={aid} onClick={() => {
                                 jumpToCard(index)
-                            }} href={index !== 1 ? 'javascript:void(0)' : 'javascript:void(0)'} className="fresh-home-video-slides-cover">
+                            }} href='#!' className="fresh-home-video-slides-cover">
                                 <Image url={pic} alt='封面' />
                             </a>
                         )

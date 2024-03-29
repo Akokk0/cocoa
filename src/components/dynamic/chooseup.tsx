@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/carousel"
 // Icons
 import { Radar } from "lucide-react"
-import TabContent from "./chooseupTab"
+import TabContent from "./chooseup_tab"
 import { cn } from "@/lib/utils"
 import { useBiliStore } from "@/store/biliStore"
 

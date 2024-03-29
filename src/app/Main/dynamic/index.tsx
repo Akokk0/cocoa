@@ -25,29 +25,39 @@ export default function Dynamic() {
     }, [])
 
     return (
+        /* BG */
         <div className="bg-[#d3e9e8] h-full">
+            {/* All Framework */}
             <div className="flex space-x-3 p-4">
-                <div className="flex flex-col space-y-3 w-[40rem]">
-                    <div className="h-40 rounded-md bg-white p-3">
+                {/* Left */}
+                <div className="overflow-hidden rounded-lg">
+                    <div className="flex flex-col space-y-3 w-[42rem] h-[59.5rem] overflow-auto scrollbar-hide">
+                        <div className="h-32 rounded-md bg-white p-3">
+                            {dynamicList && <ChooseUP dynamicList={dynamicList} />}
+                        </div>
+                        <div className="h-12 rounded-md bg-white p-3">
+                            <DynamicTypeSelector />
+                        </div>
+                        {dynamicList && <DynamicList dynamicList={dynamicList} />}
+                    </div>
+                </div>
+                {/* Right */}
+                <div className="flex flex-col space-y-3 flex-1">
+                    <div className="h-[11.75rem] rounded-md bg-white p-3">
                         <SendDynamic />
                     </div>
-                    <div className="h-32 rounded-md bg-white p-3">
-                        {dynamicList && <ChooseUP dynamicList={dynamicList} />}
+                    <div className="flex space-x-3">
+                        <div className="flex flex-col space-y-3">
+                            <div className="flex-1 h-40 w-[19.5rem] rounded-md bg-white">
+                                <PersonalLetter />
+                            </div>
+                            <div className="rounded-md bg-white">直播信息</div>
+                        </div>
+                        <div className="flex flex-col flex-1 space-y-3">
+                            <div className="h-40 rounded-md bg-white">社区中心</div>
+                            <div>话题</div>
+                        </div>
                     </div>
-                    <div className="h-12 rounded-md bg-white p-3">
-                        <DynamicTypeSelector />
-                    </div>
-                    {dynamicList && <DynamicList dynamicList={dynamicList} />}
-                </div>
-                <div className="flex flex-col space-y-3 w-64">
-                    <div className="h-40 rounded-md bg-white p-5">
-                        <PersonalLetter />
-                    </div>
-                    <div className="rounded-md bg-white">直播信息</div>
-                </div>
-                <div className="flex flex-col space-y-3 w-72">
-                    <div className="h-40 rounded-md bg-white">社区中心</div>
-                    <div>话题</div>
                 </div>
             </div>
         </div>
