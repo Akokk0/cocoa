@@ -139,6 +139,36 @@ export interface ModuleAuthor {
     nft_info: NFTAvatarBadge; // NFT头像信息
 }
 
+export interface UpowerLotteryButton {
+    jump_style: ButtonJumpStyle,
+    jump_url: string,
+    type: number
+}
+
+export interface UpowerLotteryDesc {
+    jump_url: string,
+    style: number,
+    text: string
+}
+
+export interface UpowerLotteryHint {
+    style: number,
+    text: string
+}
+
+export interface AdditionalUpowerLottery {
+    button: UpowerLotteryButton,
+    desc: UpowerLotteryDesc,
+    hint: UpowerLotteryHint,
+    jump_url: string,
+    rid: number,
+    state: number,
+    title: string,
+    up_mid: number,
+    upower_action_state: number,
+    upower_level: number
+}
+
 export enum ContentType {
     GameAndDecoration = 1,
     Ogv = 2,
@@ -305,9 +335,11 @@ export enum AdditionalType {
     UP_RCMD = "ADDITIONAL_TYPE_UP_RCMD",
     UGC = "ADDITIONAL_TYPE_UGC", // 视频跳转
     RESERVE = "ADDITIONAL_TYPE_RESERVE", // 直播预约
+    LOTTERY = "ADDITIONAL_TYPE_UPOWER_LOTTERY" // 充电抽奖
 }
 
 export type ModuleDynamicAdditional = {
+    upower_lottery: AdditionalUpowerLottery // 充电抽奖，ADDITIONAL_TYPE_UPOWER_LOTTERY类型独有
     common?: AdditionalCommon; // 一般类型，ADDITIONAL_TYPE_COMMON类型独有
     reserve?: AdditionalReserve; // 预约信息，ADDITIONAL_TYPE_RESERVE类型独有
     goods?: AdditionalGoods; // 商品内容，ADDITIONAL_TYPE_GOODS类型独有
