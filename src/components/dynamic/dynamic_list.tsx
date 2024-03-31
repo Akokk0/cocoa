@@ -7,6 +7,9 @@ import { Button } from "../ui/button"
 import TopicIcon from "../icon/topic"
 import PlayIcon from "../icon/play"
 import Danmaku from "../icon/danmaku"
+import ForwardIcon from "../icon/forward"
+import CommentIcon from "../icon/comment"
+import LikeIcon from "../icon/like"
 
 type DynamicListProps = {
     dynamicList: DynamicItem[]
@@ -32,8 +35,19 @@ const DynamicList: React.FC<DynamicListProps> = ({
                         {/* Dynamic Main Area */}
                         {dynamicParser(item)}
                         {/* Stat Area */}
-                        <div>
-                            
+                        <div className="flex space-x-44 text-sm text-gray-500">
+                            <div className="flex space-x-1 items-center">
+                                <ForwardIcon />
+                                <span>{item.modules.module_stat.forward.count === 0 ? '转发' : item.modules.module_stat.forward.count}</span>
+                            </div>
+                            <div className="flex space-x-1 items-center">
+                                <CommentIcon />
+                                <span>{item.modules.module_stat.comment.count === 0 ? '评论' : item.modules.module_stat.comment.count}</span>
+                            </div>
+                            <div className="flex space-x-1 items-center">
+                                <LikeIcon />
+                                <span>{item.modules.module_stat.like.count === 0 ? '点赞' : item.modules.module_stat.like.count}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
