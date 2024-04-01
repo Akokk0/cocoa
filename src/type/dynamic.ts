@@ -493,6 +493,42 @@ export interface MajorArchive {
     type: number; // 类型
 }
 
+export interface LiveRCMDContent {
+    live_play_info: {
+        area_id: number,
+        area_name: string,
+        cover: string,
+        link: string,
+        live_id: string,
+        live_screen_type: number,
+        live_start_time: number,
+        live_status: number,
+        online: number,
+        parent_area_id: number,
+        parent_area_name: string,
+        pendants: {
+            list: null
+        },
+        play_type: number,
+        room_id: number,
+        room_paid_type: number,
+        room_type: number,
+        title: string,
+        uid: number,
+        watched_show: {
+            icon: string,
+            icon_location: string,
+            icon_web: string,
+            num: number,
+            switch: boolean,
+            text_large: string,
+            text_small: string
+        }
+    }
+    live_record_info: null,
+    type: number
+}
+
 export interface MajorLiveRCMD {
     content: string, // 直播间内容JSON
     reserve_type: number // 0

@@ -1,4 +1,4 @@
-import { AdditionalType, DrawItem, DynamicItem, DynamicType, ModuleDynamicAdditional, ModuleDynamicDesc, RichTextNodeType, VipStatus } from "@/type/dynamic"
+import { AdditionalType, DrawItem, DynamicItem, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, RichTextNodeType, VipStatus } from "@/type/dynamic"
 import Image from "../image"
 import React from "react"
 import CssImg from "../css_img"
@@ -30,23 +30,26 @@ const DynamicList: React.FC<DynamicListProps> = ({
                     <div className="flex flex-col flex-1 space-y-2">
                         <div className="flex flex-col space-y-1">
                             <div className={item.modules.module_author.vip?.status === VipStatus.Active ? 'text-primary' : ''}>{item.modules.module_author.name}</div>
-                            <span className="text-sm text-gray-400">{item.modules.module_author.pub_time}</span>
+                            {/* Pub time */}
+                            {pubTimeParser(item.modules.module_author)}
                         </div>
                         {/* Dynamic Main Area */}
-                        {dynamicParser(item)}
+                        <div>
+                            {dynamicParser(item)}
+                        </div>
                         {/* Stat Area */}
-                        <div className="flex space-x-44 text-sm text-gray-500">
+                        <div className="grid grid-cols-3 text-sm text-gray-500">
                             <div className="flex space-x-1 items-center">
                                 <ForwardIcon />
-                                <span>{item.modules.module_stat.forward.count === 0 ? '转发' : item.modules.module_stat.forward.count}</span>
+                                <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParse(item.modules.module_stat.forward.count)}</span>
                             </div>
                             <div className="flex space-x-1 items-center">
                                 <CommentIcon />
-                                <span>{item.modules.module_stat.comment.count === 0 ? '评论' : item.modules.module_stat.comment.count}</span>
+                                <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParse(item.modules.module_stat.comment.count)}</span>
                             </div>
                             <div className="flex space-x-1 items-center">
                                 <LikeIcon />
-                                <span>{item.modules.module_stat.like.count === 0 ? '点赞' : item.modules.module_stat.like.count}</span>
+                                <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParse(item.modules.module_stat.like.count)}</span>
                             </div>
                         </div>
                     </div>
@@ -54,6 +57,30 @@ const DynamicList: React.FC<DynamicListProps> = ({
             ))}
         </div>
     )
+}
+
+const statCountParse = (count: number) => {
+    if (count >= 10000) {
+        return `${(count / 10000).toFixed(1)}万`
+    }
+    return `${count}`
+}
+
+const pubTimeParser = (author: ModuleAuthor) => {
+    if (author.pub_time) {
+        return (
+            <div className="flex text-xs text-gray-400">
+                <span>{author.pub_time}</span> &nbsp;
+                <span>{author.pub_action ? ` · ${author.pub_action}` : ''}</span>
+            </div>
+        )
+    } else {
+        return (
+            <div className="text-xs text-gray-400">
+                <span>{author.pub_action}</span>
+            </div>
+        )
+    }
 }
 
 const dynamicTextParser = (desc: ModuleDynamicDesc) => {
@@ -113,7 +140,35 @@ const dynamicPicRender = (pics: DrawItem[]) => {
 const additionalParser = (additional: ModuleDynamicAdditional) => {
     // Determine the type of Additional
     switch (additional.type) {
-        case AdditionalType.COMMON: return
+        case AdditionalType.COMMON: {
+            const item = additional.common
+            return (
+                <div>
+                    {/* Head Text */}
+                    <span className="text-xs text-gray-500">{item?.head_text}</span>
+                    {/* Main */}
+                    <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                        {/* Info */}
+                        <div className="flex space-x-2">
+                            {/* Img */}
+                            <div className="w-20 h-20 bg-gray-300 rounded-lg bg-opacity-30">
+                                <CssImg className="w-20 h-20 bg-no-repeat bg-center bg-cover rounded-lg overflow-hidden" url={item?.cover!} />
+                            </div>
+                            <div className="flex flex-col justify-around text-sm">
+                                {/* Game name */}
+                                <span className="line-clamp-1">{item?.title}</span>
+                                {/* Desc1*/}
+                                <span className="text-xs text-gray-400">{item?.desc1}</span>
+                                {/* Desc2 */}
+                                <span className="text-xs text-gray-400">{item?.desc2}</span>
+                            </div>
+                        </div>
+                        {/* Button */}
+                        <Button className="text-white">{item?.button.jump_style?.text}</Button>
+                    </div>
+                </div>
+            )
+        }
         case AdditionalType.RESERVE: return
         case AdditionalType.GOODS: {
             const item = additional.goods!.items[0]
@@ -268,12 +323,15 @@ const dynamicParser = (item: DynamicItem) => {
             return (
                 <div>
                     {/* Text Area */}
-                    {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
+                    <div className="text-sm leading-6">
+                        {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
+                    </div>
                     {/* Video Area */}
-                    <div className="w-full h-28 flex rounded-lg overflow-hidden">
+                    <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
                         {/* Cover */}
                         <div className="relative">
-                            <Image className="w-52 h-full" url={video?.cover!} alt="Cover" />
+                            <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={video?.cover!} />
+                            {/* <Image  url={video?.cover!} alt="Cover" /> */}
                             <div className="absolute left-0 top-0 w-52 h-full" style={{ backgroundImage: 'linear-gradient(180deg, transparent 70%, black 100%)' }}></div>
                             <span className="absolute right-2 bottom-2 text-white text-sm opacity-80">{video?.duration_text}</span>
                         </div>
@@ -291,6 +349,52 @@ const dynamicParser = (item: DynamicItem) => {
                                 <div className="flex space-x-1 items-center"><PlayIcon /> <span>{video?.stat.play}</span></div>
                                 {/* Danmaku */}
                                 <div className="flex space-x-1 items-center"><Danmaku /> <span>{video?.stat.danmaku}</span></div>
+                            </div>
+                        </div>
+                    </div >
+                </div>
+            )
+        }
+        case DynamicType.ARTICLE: {
+            const article = item.modules.module_dynamic.major?.article
+            return (
+                <div className="space-y-2">
+                    {/* Title */}
+                    <span className="font-bold">{article?.title}</span>
+                    {/* Desc */}
+                    <div>
+                        {article?.desc} <br />
+                    </div>
+                    {/* Pic */}
+                    <div>
+                        {article?.covers.map((pic, index) => (
+                            <Image key={index} className="w-[30rem] h-60 object-cover object-center" url={pic} alt="Cover" />
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+        case DynamicType.LIVE_RCMD: {
+            const live_play_info = (JSON.parse(item.modules.module_dynamic.major?.live_rcmd?.content!) as LiveRCMDContent).live_play_info
+            return (
+                <div>
+                    {/* Text Area */}
+                    <div className="text-sm leading-6">
+                        {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
+                    </div>
+                    {/* Video Area */}
+                    <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
+                        {/* Cover */}
+                        <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live_play_info.cover} />
+                        {/* Info */}
+                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-lg p-3">
+                            <div className="flex flex-col space-y-1">
+                                {/* Title */}
+                                <span className="text-balance line-clamp-2">{live_play_info?.title}</span>
+                            </div>
+                            {/* Stat */}
+                            <div className="text-gray-500 text-sm items-center">
+                                <span>{live_play_info.area_name} · {live_play_info.watched_show.text_large}</span>
                             </div>
                         </div>
                     </div >
