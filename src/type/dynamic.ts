@@ -734,7 +734,7 @@ export interface InteractionItemDesc {
 }
 
 export interface InteractionItem {
-    desc: object; // 点赞/评论信息
+    desc: InteractionItemDesc; // 点赞/评论信息
     type: number; // 类型，0：点赞信息，1：评论信息
 }
 

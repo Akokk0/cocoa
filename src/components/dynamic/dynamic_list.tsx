@@ -1,9 +1,13 @@
-import { AdditionalType, DrawItem, DynamicItem, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, RichTextNodeType, VipStatus } from "@/type/dynamic"
-import Image from "../image"
 import React from "react"
+// Component
+import Image from "../image"
 import CssImg from "../css_img"
-import { ChevronRight, Gift, ShoppingBag } from "lucide-react"
 import { Button } from "../ui/button"
+import InfiniteScroll from 'react-infinite-scroll-component';
+// Types
+import { AdditionalType, DrawItem, DynamicItem, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, RichTextNodeType, VipStatus } from "@/type/dynamic"
+// Icons
+import { ChevronRight, Gift, Link, ShoppingBag } from "lucide-react"
 import TopicIcon from "../icon/topic"
 import PlayIcon from "../icon/play"
 import Danmaku from "../icon/danmaku"
@@ -19,7 +23,17 @@ const DynamicList: React.FC<DynamicListProps> = ({
     dynamicList
 }) => {
     return (
-        <div className="h-[47rem]">
+        <InfiniteScroll
+            dataLength={dynamicList.length}
+            hasMore={true}
+            next={() => console.log('Loading')}
+            loader={<h4>Loading...</h4>}
+            endMessage={
+                <p style={{ textAlign: 'center' }}>
+                    <b>Yay! You have seen it all</b>
+                </p>
+            }
+        >
             {dynamicList.map((item, index) => (
                 <div key={index} className="flex space-x-5 mb-2 bg-white p-5 rounded-lg">
                     {/* Avatar Area */}
@@ -37,6 +51,29 @@ const DynamicList: React.FC<DynamicListProps> = ({
                         <div>
                             {dynamicParser(item)}
                         </div>
+                        {/* Like Area */}
+                        {item.modules.module_interaction &&
+                            <div className="flex space-x-2 items-center text-gray-400">
+                                {/* Vertical Line */}
+                                <div className="w-[0.2rem] h-6 bg-bili_grey"></div>
+                                {/* Like Icon */}
+                                <LikeIcon />
+                                {/* Content */}
+                                <div className="flex text-gray-400 text-xs">
+                                    {item.modules.module_interaction.items[0].desc.rich_text_nodes.map((v, i) => {
+                                        if (i === item.modules.module_interaction.items[0].desc.rich_text_nodes.length - 1) {
+                                            return (
+                                                <span key={i}>&nbsp;{v.orig_text}</span>
+                                            )
+                                        } else {
+                                            return (
+                                                <span key={i} className=" text-gray-500">{v.orig_text}</span>
+                                            )
+                                        }
+                                    })}
+                                </div>
+                            </div>
+                        }
                         {/* Stat Area */}
                         <div className="grid grid-cols-3 text-sm text-gray-500">
                             <div className="flex space-x-1 items-center">
@@ -55,7 +92,7 @@ const DynamicList: React.FC<DynamicListProps> = ({
                     </div>
                 </div>
             ))}
-        </div>
+        </InfiniteScroll>
     )
 }
 
@@ -102,6 +139,7 @@ const dynamicTextParser = (desc: ModuleDynamicDesc) => {
                 }
                 if (node.type === RichTextNodeType.TOPIC) return <span key={index} className="text-bili_blue hover:cursor-pointer">{node.orig_text}</span>
                 if (node.type === RichTextNodeType.EMOJI) return <span key={index} className="inline-block"><Image className="w-7 h-7" url={node.emoji?.icon_url!} alt="emoji" /></span>
+                if (node.type === RichTextNodeType.WEB) return <span key={index} className="text-bili_blue hover:cursor-pointer"><Link className="w-5 h-5 inline-block" /> {node.text}</span>
                 if (node.type === RichTextNodeType.NONE) return
                 return <span key={index} className="text-bili_blue hover:cursor-pointer">{node.orig_text}</span>
             })}
