@@ -821,3 +821,70 @@ export interface DynamicListResp {
         update_num: number
     }
 }
+
+export enum RecentUpdatedDynamicUpInfoRespCode {
+    SUCCESS = 0,
+    NOT_LOGIN = -101
+}
+
+export interface LevelInfo {
+    current_level: number; // 当前等级，范围0-6级
+    current_min: number; // 当前最小经验值，始终为0
+    current_exp: number; // 当前经验值
+    next_exp: number; // 升级所需的下一级经验值
+}
+
+export interface MyInfoOfficial {
+    role: number; // 认证类型，根据用户认证类型一览确定
+    title: string; // 认证信息，如果没有则为空
+    desc: string; // 认证备注，如果没有则为空
+    type: number; // 是否认证，-1为无，0为已认证
+}
+
+export interface MyInfoVip {
+    type: number; // 会员类型：0为无，1为月大会员，2为年度及以上大会员
+    status: number; // 会员状态：0为无，1为有
+    due_date: number; // 会员过期时间，Unix时间戳（毫秒）
+    vip_pay_type: number; // 支付类型：0为未支付，1为已支付
+    theme_type: number; // 主题类型，作用尚不明确，固定为0
+    label: VipLabel; // 会员标签
+    avatar_subscript: number; // 是否显示会员图标：0为不显示，1为显示
+    nickname_color: string; // 会员昵称颜色，例如#FB7299
+    role: number; // 大角色类型：1月度大会员，3年度大会员，7十年大会员，15百年大会员
+    avatar_subscript_url: string; // 大会员角标地址
+    tv_vip_status: number; // 电视大会员状态：0为未开通
+    tv_vip_pay_type: number; // 电视大会员支付类型
+}
+
+export interface RecentUpdatedMyInfo {
+    dyns: number; // 个人动态数量
+    face: string; // 头像URL
+    face_nft: number; // 不明，可能表示是否为NFT头像
+    follower: number; // 粉丝数量
+    following: number; // 关注数量
+    level_info: LevelInfo; // 用户等级信息
+    mid: number; // 账户mid
+    name: string; // 账户名称
+    offcial: MyInfoOfficial; // 认证信息
+    space_bg: string; // 个人中心背景横幅URL
+    vip: MyInfoVip; // VIP信息
+}
+
+export interface RecentUpdatedUpListItem {
+    face: string; // UP主头像
+    has_update: boolean; // 最近是否有更新
+    is_reserve_recall: boolean; // 作用不明
+    mid: number; // UP主mid
+    uname: string; // UP主昵称
+}
+
+export interface RecentUpdatedDynamicUpInfoResp {
+    code: RecentUpdatedDynamicUpInfoRespCode,
+    data: {
+        live_users: null,
+        my_info: RecentUpdatedMyInfo,
+        up_list: RecentUpdatedUpListItem[]
+    },
+    message: string,
+    ttl: number
+}

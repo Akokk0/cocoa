@@ -5,7 +5,7 @@ import CssImg from "../css_img"
 import { Button } from "../ui/button"
 import InfiniteScroll from 'react-infinite-scroll-component';
 // Types
-import { AdditionalType, DrawItem, DynamicItem, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, RichTextNodeType, VipStatus } from "@/type/dynamic"
+import { AdditionalType, DrawItem, DynamicItem, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, ModuleInteraction, RichTextNodeType, VipStatus } from "@/type/dynamic"
 // Icons
 import { ChevronRight, Gift, Link, ShoppingBag } from "lucide-react"
 import TopicIcon from "../icon/topic"
@@ -41,7 +41,7 @@ const DynamicList: React.FC<DynamicListProps> = ({
                         <Image url={item.modules.module_author.face} alt="Avatar" />
                     </div>
                     {/* Dynamic main */}
-                    <div className="flex flex-col flex-1 space-y-2">
+                    <div className="flex flex-col flex-1 space-y-3">
                         <div className="flex flex-col space-y-1">
                             <div className={item.modules.module_author.vip?.status === VipStatus.Active ? 'text-primary' : ''}>{item.modules.module_author.name}</div>
                             {/* Pub time */}
@@ -51,42 +51,25 @@ const DynamicList: React.FC<DynamicListProps> = ({
                         <div>
                             {dynamicParser(item)}
                         </div>
+                        {/* Additional Area */}
+                        <div className="mt-2">
+                            {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional)}
+                        </div>
                         {/* Like Area */}
-                        {item.modules.module_interaction &&
-                            <div className="flex space-x-2 items-center text-gray-400">
-                                {/* Vertical Line */}
-                                <div className="w-[0.2rem] h-6 bg-bili_grey"></div>
-                                {/* Like Icon */}
-                                <LikeIcon />
-                                {/* Content */}
-                                <div className="flex text-gray-400 text-xs">
-                                    {item.modules.module_interaction.items[0].desc.rich_text_nodes.map((v, i) => {
-                                        if (i === item.modules.module_interaction.items[0].desc.rich_text_nodes.length - 1) {
-                                            return (
-                                                <span key={i}>&nbsp;{v.orig_text}</span>
-                                            )
-                                        } else {
-                                            return (
-                                                <span key={i} className=" text-gray-500">{v.orig_text}</span>
-                                            )
-                                        }
-                                    })}
-                                </div>
-                            </div>
-                        }
+                        {item.modules.module_interaction && interactionParser(item.modules.module_interaction)}
                         {/* Stat Area */}
                         <div className="grid grid-cols-3 text-sm text-gray-500">
                             <div className="flex space-x-1 items-center">
                                 <ForwardIcon />
-                                <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParse(item.modules.module_stat.forward.count)}</span>
+                                <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParser(item.modules.module_stat.forward.count)}</span>
                             </div>
                             <div className="flex space-x-1 items-center">
                                 <CommentIcon />
-                                <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParse(item.modules.module_stat.comment.count)}</span>
+                                <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParser(item.modules.module_stat.comment.count)}</span>
                             </div>
                             <div className="flex space-x-1 items-center">
                                 <LikeIcon />
-                                <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParse(item.modules.module_stat.like.count)}</span>
+                                <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParser(item.modules.module_stat.like.count)}</span>
                             </div>
                         </div>
                     </div>
@@ -96,7 +79,32 @@ const DynamicList: React.FC<DynamicListProps> = ({
     )
 }
 
-const statCountParse = (count: number) => {
+const interactionParser = (interaction: ModuleInteraction) => {
+    const item = interaction.items[0].desc
+    return (
+        <div className="flex space-x-3 items-center text-gray-400 border-l-2 border-bili_grey">
+            {/* Icon */}
+            <div className="ml-3">
+                {item.rich_text_nodes[item.rich_text_nodes.length - 1].orig_text.includes('赞了') ?
+                    <LikeIcon /> :
+                    <CommentIcon />
+                }
+            </div>
+            {/* Content */}
+            <div className="text-gray-400 text-xs">
+                {item.rich_text_nodes.map((v, i) => {
+                    if (i === item.rich_text_nodes.length - 1) {
+                        if (v.orig_text.includes('赞了')) return <span key={i}>&nbsp;{v.orig_text}</span>
+                        else return <span key={i}>{v.orig_text}</span>
+                    }
+                    if (v.type === RichTextNodeType.AT) return <span key={i} className=" text-gray-500">{v.orig_text}</span>
+                })}
+            </div>
+        </div>
+    )
+}
+
+const statCountParser = (count: number) => {
     if (count >= 10000) {
         return `${(count / 10000).toFixed(1)}万`
     }
@@ -265,7 +273,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                             </div>
                         </div>
                         {/* Button */}
-                        <Button className="text-white">{additional.goods?.items[0].jump_desc}</Button>
+                        <Button className="text-white ml-5">{additional.goods?.items[0].jump_desc}</Button>
                     </div>
                 </div>
             )
@@ -308,7 +316,6 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
 }
 
 const dynamicParser = (item: DynamicItem) => {
-    console.log(item);
     switch (item.type) {
         case DynamicType.DRAW:
         case DynamicType.WORD: {
@@ -328,10 +335,6 @@ const dynamicParser = (item: DynamicItem) => {
                     {/* Pic Area */}
                     <div className="mt-2">
                         {item.modules.module_dynamic.major?.draw?.items && dynamicPicRender(item.modules.module_dynamic.major?.draw?.items)}
-                    </div>
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional)}
                     </div>
                 </div>
             )
@@ -374,7 +377,7 @@ const dynamicParser = (item: DynamicItem) => {
                             <span className="absolute right-2 bottom-2 text-white text-sm opacity-80">{video?.duration_text}</span>
                         </div>
                         {/* Info */}
-                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-lg p-3">
+                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
                             <div className="flex flex-col space-y-1">
                                 {/* Title */}
                                 <span className="text-sm line-clamp-2">{video?.title}</span>
@@ -406,7 +409,7 @@ const dynamicParser = (item: DynamicItem) => {
                     {/* Pic */}
                     <div>
                         {article?.covers.map((pic, index) => (
-                            <Image key={index} className="w-[30rem] h-60 object-cover object-center" url={pic} alt="Cover" />
+                            <Image key={index} className="w-[30rem] h-60 rounded-lg overflow-hidden object-cover object-center" url={pic} alt="Cover" />
                         ))}
                     </div>
                 </div>
@@ -425,7 +428,7 @@ const dynamicParser = (item: DynamicItem) => {
                         {/* Cover */}
                         <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live_play_info.cover} />
                         {/* Info */}
-                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-lg p-3">
+                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
                             <div className="flex flex-col space-y-1">
                                 {/* Title */}
                                 <span className="text-balance line-clamp-2">{live_play_info?.title}</span>
@@ -433,6 +436,38 @@ const dynamicParser = (item: DynamicItem) => {
                             {/* Stat */}
                             <div className="text-gray-500 text-sm items-center">
                                 <span>{live_play_info.area_name} · {live_play_info.watched_show.text_large}</span>
+                            </div>
+                        </div>
+                    </div >
+                </div>
+            )
+        }
+        case DynamicType.COURSES_SEASON: {
+            const courses = item.modules.module_dynamic.major?.courses
+            return (
+                <div>
+                    {/* Text Area */}
+                    <div className="text-sm leading-6">
+                        {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
+                    </div>
+                    {/* Courses Area */}
+                    <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
+                        {/* Cover */}
+                        <div className="relative">
+                            <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={courses?.cover!} />
+                            <div className="absolute top-1 right-1">{courses?.badge.text}</div>
+                        </div>
+                        {/* Info */}
+                        <div className="flex-1 flex flex-col justify-between rounded-r-lg border border-l-0 p-3 bg-white">
+                            <div className="flex flex-col space-y-1">
+                                {/* Title */}
+                                <span className="text-sm line-clamp-2">{courses?.title}</span>
+                                {/* Desc */}
+                                <span className="text-xs line-clamp-1 text-gray-500">{courses?.sub_title}</span>
+                            </div>
+                            {/* Stat */}
+                            <div className="flex space-x-9 text-gray-500 text-xs items-center">
+                                {courses?.desc}
                             </div>
                         </div>
                     </div >

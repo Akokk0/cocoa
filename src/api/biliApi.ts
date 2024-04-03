@@ -29,6 +29,8 @@ const PERSONAL_INFO = `${API_URL}x/space/myinfo`
 
 // Dynamic
 const DYNAMIC_LIST = `${API_URL}x/polymer/web-dynamic/v1/feed/all`
+const PERSONAL_DYNAMIC_LIST = `${API_URL}x/polymer/web-dynamic/v1/feed/space`
+const RECENT_UPDATED = `${API_URL}x/polymer/web-dynamic/v1/portal`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -270,6 +272,48 @@ export async function getDynamicList(
         try {
             return await invoke('request', {
                 url,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getPerosnalDynamicList(
+    host_mid: string,
+    offset?: number,
+    features?: string,
+    timezone_offset: string = '-408'
+) {
+    let url = `${PERSONAL_DYNAMIC_LIST}?host_mid=${host_mid}`
+    offset && (url += `&offset=${offset}`)
+    timezone_offset && (url += `&timezone_offset=${timezone_offset}`)
+    features && (url += `&features=${features}`)
+
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getRecentUpdatedDynamicUpInfo() {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                RECENT_UPDATED,
                 reqType: 'GET',
             })
         } catch (e) {

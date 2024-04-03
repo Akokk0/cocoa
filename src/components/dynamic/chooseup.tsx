@@ -14,8 +14,11 @@ import {
 } from "@/components/ui/carousel"
 // Icons
 import { Radar } from "lucide-react"
+// Components
 import TabContent from "./chooseup_tab"
+// Utils
 import { cn } from "@/lib/utils"
+// Stores
 import { useBiliStore } from "@/store/biliStore"
 
 type ChooseUPProps = {
@@ -30,7 +33,6 @@ export default function ChooseUP({
     const setCurrentTab = useBiliStore(state => state.setDynamicUpCurrentTab)
     // State
     const [updatedDynamic, setUpdatedDynamic] = useState<DynamicItem[]>()
-
     // Func
     const getUpdatedDynamic = async () => {
         const time = Math.floor(DateTime.now().setZone('UTC+8').minus({ hours: 12 }).valueOf() / 1000)
@@ -51,10 +53,22 @@ export default function ChooseUP({
         setUpdatedDynamic(list)
     }
 
+    // State
+    /* const [recentUpdatedDynamicUpInfoList, setRecentUpdatedDynamicUpInfoList] = useState<RecentUpdatedUpListItem[]>()
+    // Func (Need Access_Token)
+    const getRecentUpdatedDynamicUpInfoResp = async () => {
+        // Send request to get popular content
+        const RecentUpdatedDynamicUpInfoResp = JSON.parse(await getRecentUpdatedDynamicUpInfo() as string) as RecentUpdatedDynamicUpInfoResp
+        // Check if request is error
+        if (RecentUpdatedDynamicUpInfoResp.code != RecentUpdatedDynamicUpInfoRespCode.SUCCESS) return
+        // Set resp to state
+        setRecentUpdatedDynamicUpInfoList(RecentUpdatedDynamicUpInfoResp.data.up_list)
+    } */
+
     // Effect
     useEffect(() => {
         getUpdatedDynamic()
-    }, [dynamicList])
+    }, [])
 
     return (
         <div>
@@ -62,7 +76,7 @@ export default function ChooseUP({
                 opts={{
                     align: "start",
                 }}
-                className="w-full max-w-lg ml-12 mt-2"
+                className="w-full max-w-[33rem] ml-12 mt-2"
             >
                 <CarouselContent>
                     <CarouselItem className="md:basis-1/2 lg:basis-1/6 hover:cursor-pointer" onClick={() => setCurrentTab('all')}>
@@ -76,8 +90,8 @@ export default function ChooseUP({
                             <span className={cn('text-xs text-center', currentTab === 'all' ? 'text-bili_blue' : '')}>全部动态</span>
                         </div>
                     </CarouselItem>
-                    {updatedDynamic?.map((item, index) => (
-                        <TabContent key={index} currentTab={currentTab} item={item} />
+                    {updatedDynamic?.map(item => (
+                        <TabContent key={item.id_str} currentTab={currentTab} item={item} />
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />

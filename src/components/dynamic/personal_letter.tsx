@@ -2,11 +2,17 @@ import { useBiliStore } from "@/store/biliStore"
 import { Avatar, AvatarFallback } from "../ui/avatar"
 import Image from "../image"
 
-export default function PersonalLetter() {
+type PersonalLetterProps = {
+
+} & React.HTMLAttributes<HTMLDivElement>
+
+export default function PersonalLetter({
+    ...props
+}: PersonalLetterProps) {
     const personalInfo = useBiliStore(state => state.personal)
     return (
         personalInfo &&
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 w-80" {...props}>
             <div className="flex space-x-2 ml-5 mt-4">
                 <Avatar className="w-16 h-16">
                     <Image url={personalInfo?.face!} alt="头像" />
