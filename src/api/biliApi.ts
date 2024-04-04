@@ -26,6 +26,7 @@ const PGCRANKING = `${API_URL}pgc/season/rank/web/list`
 
 // User
 const PERSONAL_INFO = `${API_URL}x/space/myinfo`
+const USER_FOLLOWINGS = `${API_URL}x/relation/followings`
 
 // Dynamic
 const DYNAMIC_LIST = `${API_URL}x/polymer/web-dynamic/v1/feed/all`
@@ -308,12 +309,12 @@ export async function getPerosnalDynamicList(
     }
 }
 
-export async function getRecentUpdatedDynamicUpInfo() {
+export async function getLatestUpdatesDynamicUpInfo() {
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
-                RECENT_UPDATED,
+                url: RECENT_UPDATED,
                 reqType: 'GET',
             })
         } catch (e) {
@@ -323,3 +324,19 @@ export async function getRecentUpdatedDynamicUpInfo() {
         }
     }
 }
+
+/* export async function getUserFollowings(uid: string) {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: RECENT_UPDATED,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+} */

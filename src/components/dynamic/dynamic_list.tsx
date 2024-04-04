@@ -279,7 +279,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
             )
         }
         case AdditionalType.LOTTERY: {
-            const item = additional.upower_lottery
+            const item = additional.upower_lottery!
             return (
                 <div className="flex flex-col">
                     {/* Main */}
@@ -308,6 +308,58 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                 </div>
             )
         }
+        case AdditionalType.MATCH: {
+            const item = additional.match
+            const match_info = item?.match_info
+            return (
+                <div className="flex flex-col">
+                    {/* Head Text */}
+                    <div className="flex space-x-1 items-center text-gray-400">
+                        <span className="text-xs">{additional.match?.head_text}</span>
+                    </div>
+                    {/* Main */}
+                    <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                        {/* Info */}
+                        <div className="flex-1 flex space-x-2">
+                            {/* Img */}
+                            <div className="w-[4.5rem] h-[4.5rem] flex justify-center items-center text-gray-500 text-xs border-r border-bili_grey">
+                                {match_info?.title}
+                            </div>
+                            <div className="flex-1 flex justify-around text-sm">
+                                {/* Left Team */}
+                                <div className="flex flex-col items-center">
+                                    {/* Team Logo */}
+                                    <Image className="w-11 h-11 object-cover object-center" url={match_info?.left_team.pic!} alt="logo" />
+                                    {/* Team Name */}
+                                    <span className="text-xs">{match_info?.left_team.name}</span>
+                                </div>
+                                {/* Match Info */}
+                                <div className="flex flex-col items-center space-y-2">
+                                    {/* Score */}
+                                    <div className="flex space-x-4 text-3xl font-bold">
+                                        {/* Left Team Score */}
+                                        <span>{match_info?.center_top[0]}</span>
+                                        <span>{match_info?.center_top[1]}</span>
+                                        <span>{match_info?.center_top[2]}</span>
+                                    </div>
+                                    {/* Match status */}
+                                    <span className="text-gray-500 text-xs">{match_info?.center_bottom}</span>
+                                </div>
+                                {/* Right Team */}
+                                <div className="flex flex-col items-center">
+                                    {/* Team Logo */}
+                                    <Image className="w-11 h-11 object-cover object-center" url={match_info?.right_team.pic!} alt="logo" />
+                                    {/* Team Name */}
+                                    <span className="text-xs">{match_info?.right_team.name}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Button */}
+                        <Button className="text-white ml-5">{item?.button.jump_style.text}</Button>
+                    </div>
+                </div>
+            )
+        }
         case AdditionalType.VOTE:
         case AdditionalType.UGC:
         case AdditionalType.NONE:
@@ -316,6 +368,8 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
 }
 
 const dynamicParser = (item: DynamicItem) => {
+    console.log(item);
+
     switch (item.type) {
         case DynamicType.DRAW:
         case DynamicType.WORD: {

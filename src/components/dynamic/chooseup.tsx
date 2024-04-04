@@ -1,9 +1,5 @@
-// Types
-import { DynamicItem } from "@/type/dynamic"
-// Dependence
-import { DateTime } from "luxon"
 // React
-import React, { useEffect, useState } from "react"
+import React from "react"
 // UI
 import {
     Carousel,
@@ -22,19 +18,20 @@ import { cn } from "@/lib/utils"
 import { useBiliStore } from "@/store/biliStore"
 
 type ChooseUPProps = {
-    dynamicList: DynamicItem[]
+
 } & React.HTMLAttributes<HTMLDivElement>
 
 export default function ChooseUP({
-    dynamicList
+    
 }: ChooseUPProps) {
     // Store
     const currentTab = useBiliStore(state => state.dynamicUpCurrentTab)
     const setCurrentTab = useBiliStore(state => state.setDynamicUpCurrentTab)
+    const latestUpdatesData = useBiliStore(state => state.latestUpdatesData)
     // State
-    const [updatedDynamic, setUpdatedDynamic] = useState<DynamicItem[]>()
+    // const [updatedDynamic, setUpdatedDynamic] = useState<DynamicItem[]>()
     // Func
-    const getUpdatedDynamic = async () => {
+    /* const getUpdatedDynamic = async () => {
         const time = Math.floor(DateTime.now().setZone('UTC+8').minus({ hours: 12 }).valueOf() / 1000)
         const hasExists: string[] = []
         const list = dynamicList.filter(item => {
@@ -52,23 +49,10 @@ export default function ChooseUP({
         }
         setUpdatedDynamic(list)
     }
-
-    // State
-    /* const [recentUpdatedDynamicUpInfoList, setRecentUpdatedDynamicUpInfoList] = useState<RecentUpdatedUpListItem[]>()
-    // Func (Need Access_Token)
-    const getRecentUpdatedDynamicUpInfoResp = async () => {
-        // Send request to get popular content
-        const RecentUpdatedDynamicUpInfoResp = JSON.parse(await getRecentUpdatedDynamicUpInfo() as string) as RecentUpdatedDynamicUpInfoResp
-        // Check if request is error
-        if (RecentUpdatedDynamicUpInfoResp.code != RecentUpdatedDynamicUpInfoRespCode.SUCCESS) return
-        // Set resp to state
-        setRecentUpdatedDynamicUpInfoList(RecentUpdatedDynamicUpInfoResp.data.up_list)
-    } */
-
     // Effect
     useEffect(() => {
         getUpdatedDynamic()
-    }, [])
+    }, []) */
 
     return (
         <div>
@@ -81,7 +65,7 @@ export default function ChooseUP({
                 <CarouselContent>
                     <CarouselItem className="md:basis-1/2 lg:basis-1/6 hover:cursor-pointer" onClick={() => setCurrentTab('all')}>
                         <div className="flex flex-col space-y-2 items-center">
-                            <div className={cn('w-16 h-16 rounded-full flex justify-center items-center', currentTab === 'all' ? 'border border-bili_blue': '')}>
+                            <div className={cn('w-16 h-16 rounded-full flex justify-center items-center hover:border hover:border-bili_blue', currentTab === 'all' ? 'border border-bili_blue': '')}>
                                 {/* Icon */}
                                 <div className="rounded-full w-14 h-14 bg-[#e0f6fd] flex justify-center items-center">
                                     <Radar color="#1e9ed4" width="2.3rem" height="2.3rem" />
@@ -90,8 +74,8 @@ export default function ChooseUP({
                             <span className={cn('text-xs text-center', currentTab === 'all' ? 'text-bili_blue' : '')}>全部动态</span>
                         </div>
                     </CarouselItem>
-                    {updatedDynamic?.map(item => (
-                        <TabContent key={item.id_str} currentTab={currentTab} item={item} />
+                    {latestUpdatesData?.up_list.map(item => (
+                        <TabContent key={item.mid} currentTab={currentTab} item={item} />
                     ))}
                 </CarouselContent>
                 <CarouselPrevious />

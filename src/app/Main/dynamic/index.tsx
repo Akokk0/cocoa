@@ -2,6 +2,7 @@ import { getDynamicList, getPerosnalDynamicList } from "@/api/biliApi";
 import ChooseUP from "@/components/dynamic/chooseup";
 import DynamicList from "@/components/dynamic/dynamic_list";
 import DynamicTypeSelector from "@/components/dynamic/dynamic_type";
+import IsLive from "@/components/dynamic/is_live";
 import PersonalLetter from "@/components/dynamic/personal_letter";
 import SendDynamic from "@/components/dynamic/send_dynamic";
 import { useBiliStore } from "@/store/biliStore";
@@ -74,19 +75,18 @@ export default function Dynamic() {
                         <div className="h-40 rounded-md bg-white">
                             <PersonalLetter />
                         </div>
-                        <div className="flex-1 h-40 rounded-md bg-white">社区中心</div>
+                        <div className="flex-1 h-40 rounded-md bg-white">话题</div>
                     </div>
                     <div className="h-32 rounded-md bg-white p-3">
-                        {dynamicList && <ChooseUP dynamicList={dynamicList} />}
+                        {dynamicList && <ChooseUP />}
                     </div>
                     {currentUp === 'all' &&
                         <div className="h-12 rounded-md bg-white p-3">
                             <DynamicTypeSelector />
                         </div>
                     }
-                    <div className="flex space-x-3">
-                        <div className="flex-1 rounded-md bg-white h-40">直播信息</div>
-                        <div className="flex-1 rounded-md bg-white">话题</div>
+                    <div className="flex-1 rounded-md bg-white">
+                        <IsLive />
                     </div>
                 </div>
             </div>

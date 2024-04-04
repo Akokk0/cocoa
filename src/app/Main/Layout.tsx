@@ -7,30 +7,45 @@ import { Home, History, Settings, Radar, ListRestart, Star } from "lucide-react"
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
 import { useBiliStore } from "@/store/biliStore";
-import { getPersonalInfo } from "@/api/biliApi";
+import { getLatestUpdatesDynamicUpInfo, getPersonalInfo } from "@/api/biliApi";
 import { PersonalInfoResp, PersonalInfoRespCode } from "@/type/user";
+import { LatestUpdatesDynamicUpInfoResp, LatestUpdatesDynamicUpInfoRespCode } from "@/type/dynamic";
 
 export default function Layout() {
+    // Store
     const setPersonal = useBiliStore(state => state.setPersonal)
+    const setLatestUpdatesData = useBiliStore(state => state.setLatestUpdatesData)
+    // Func
+    const getPersonalInfoResp = async () => {
+        // Send request to get popular content
+        const personalInfo = JSON.parse(await getPersonalInfo() as string) as PersonalInfoResp
+        // Check if request is error
+        if (personalInfo.code !== PersonalInfoRespCode.SUCCESS) return
+        // Set resp to state
+        setPersonal(personalInfo.data)
+    }
 
+    const getLatestUpdatesDynamicUpInfoResp = async () => {
+        // Send request to get popular content
+        const latestUpdatesDynamicUpInfoResp = JSON.parse(await getLatestUpdatesDynamicUpInfo() as string) as LatestUpdatesDynamicUpInfoResp
+        // Check if request is error
+        if (latestUpdatesDynamicUpInfoResp.code != LatestUpdatesDynamicUpInfoRespCode.SUCCESS) return
+        // Set resp to state
+        setLatestUpdatesData(latestUpdatesDynamicUpInfoResp.data)
+    }
+    // Effect
     useEffect(() => {
-        const initial = async () => {
-            console.log('initialize personal info');
-            const personalInfo = JSON.parse(await getPersonalInfo() as string) as PersonalInfoResp
-            if (personalInfo.code !== PersonalInfoRespCode.SUCCESS) return
-            setPersonal(personalInfo.data)
-        }
-        initial()
+        getPersonalInfoResp()
+        getLatestUpdatesDynamicUpInfoResp()
     }, [])
-
+    // Object
     const location = useLocation()
-
+    // Component
     const NavLink = (
         { href, Icon, children, ...props }:
             { href: string, Icon?: React.ComponentType<any>, children?: React.ReactNode }
     ) => {
-        const pathname = location.pathname
-        const isActive = href === pathname
+        const isActive = href === location.pathname
 
         return (
             <Link to={href} {...props}>

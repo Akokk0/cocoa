@@ -1,11 +1,14 @@
 import { create } from 'zustand'
 // Type
 import { PersonalInfo } from '@/type/user'
-import { DynamicTypes } from '@/type/dynamic'
+import { DynamicTypes, LatestUpdatesData } from '@/type/dynamic'
 
 type biliStoreState = {
     personal: PersonalInfo | undefined,
     setPersonal: (personalInfo: PersonalInfo) => void,
+
+    latestUpdatesData: LatestUpdatesData | undefined,
+    setLatestUpdatesData: (data: LatestUpdatesData) => void,
 
     dynamicUpCurrentTab: string,
     setDynamicUpCurrentTab: (currentTab: string) => void,
@@ -20,6 +23,13 @@ export const useBiliStore = create<biliStoreState>()((set) => ({
     setPersonal(personalInfo) {
         set(() => ({
             personal: personalInfo
+        }))
+    },
+
+    latestUpdatesData: undefined,
+    setLatestUpdatesData(data) {
+        set(() => ({
+            latestUpdatesData: data
         }))
     },
 

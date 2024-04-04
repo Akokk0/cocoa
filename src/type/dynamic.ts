@@ -325,6 +325,38 @@ export interface AdditionalUGC {
     title: string; // 视频标题
 }
 
+export interface MatchButton {
+    jump_style: { text: string }
+    jump_url: string,
+    type: number
+}
+
+export interface MatchInfo {
+    center_bottom: string,
+    center_top: string[],
+    left_team: {
+        id: number,
+        name: string,
+        pic: string
+    }
+    right_team: {
+        id: number,
+        name: string,
+        pic: string
+    }
+    status: number,
+    sub_title: string,
+    title: string
+}
+
+export interface AdditionalMatch {
+    button: MatchButton,
+    head_text: string,
+    id_str: string,
+    jump_url: string,
+    match_info: MatchInfo
+}
+
 export enum AdditionalType {
     NONE = "ADDITIONAL_TYPE_NONE",
     PGC = "ADDITIONAL_TYPE_PGC",
@@ -339,10 +371,11 @@ export enum AdditionalType {
 }
 
 export type ModuleDynamicAdditional = {
-    upower_lottery: AdditionalUpowerLottery // 充电抽奖，ADDITIONAL_TYPE_UPOWER_LOTTERY类型独有
+    upower_lottery?: AdditionalUpowerLottery // 充电抽奖，ADDITIONAL_TYPE_UPOWER_LOTTERY类型独有
     common?: AdditionalCommon; // 一般类型，ADDITIONAL_TYPE_COMMON类型独有
     reserve?: AdditionalReserve; // 预约信息，ADDITIONAL_TYPE_RESERVE类型独有
     goods?: AdditionalGoods; // 商品内容，ADDITIONAL_TYPE_GOODS类型独有
+    match?: AdditionalMatch; // 比赛信息，ADDITIONAL_TYPE_MATCH类型独有
     vote?: AdditionalVote; // 投票信息，ADDITIONAL_TYPE_VOTE类型独有
     ugc?: AdditionalUGC; // 视频信息，ADDITIONAL_TYPE_UGC类型独有
     type: AdditionalType; // 卡片类型，相关内容卡片类型
@@ -822,7 +855,7 @@ export interface DynamicListResp {
     }
 }
 
-export enum RecentUpdatedDynamicUpInfoRespCode {
+export enum LatestUpdatesDynamicUpInfoRespCode {
     SUCCESS = 0,
     NOT_LOGIN = -101
 }
@@ -856,7 +889,7 @@ export interface MyInfoVip {
     tv_vip_pay_type: number; // 电视大会员支付类型
 }
 
-export interface RecentUpdatedMyInfo {
+export interface LatestUpdatesDataMyInfo {
     dyns: number; // 个人动态数量
     face: string; // 头像URL
     face_nft: number; // 不明，可能表示是否为NFT头像
@@ -870,7 +903,7 @@ export interface RecentUpdatedMyInfo {
     vip: MyInfoVip; // VIP信息
 }
 
-export interface RecentUpdatedUpListItem {
+export interface LatestUpdatesDataListItem {
     face: string; // UP主头像
     has_update: boolean; // 最近是否有更新
     is_reserve_recall: boolean; // 作用不明
@@ -878,13 +911,31 @@ export interface RecentUpdatedUpListItem {
     uname: string; // UP主昵称
 }
 
-export interface RecentUpdatedDynamicUpInfoResp {
-    code: RecentUpdatedDynamicUpInfoRespCode,
-    data: {
-        live_users: null,
-        my_info: RecentUpdatedMyInfo,
-        up_list: RecentUpdatedUpListItem[]
-    },
+export interface LiveUsersItems {
+    face: string,
+    is_reserve_recall: boolean,
+    jump_url: string,
+    mid: number,
+    room_id: number,
+    title: string,
+    uname: string
+}
+
+export interface LatestUpdatesDataLiveUsers {
+    count: number,
+    group: string,
+    items: LiveUsersItems[]
+}
+
+export interface LatestUpdatesData {
+    live_users: LatestUpdatesDataLiveUsers,
+    my_info: LatestUpdatesDataMyInfo,
+    up_list: LatestUpdatesDataListItem[]
+}
+
+export interface LatestUpdatesDynamicUpInfoResp {
+    code: LatestUpdatesDynamicUpInfoRespCode,
+    data: LatestUpdatesData,
     message: string,
     ttl: number
 }

@@ -1306,19 +1306,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^3":
+"@types/luxon@npm:^3.4.2":
   version: 3.4.2
   resolution: "@types/luxon@npm:3.4.2"
   checksum: 10c0/d835467de3daf7e17ba78b50bb5a14efd94272439ca067990d71332a54b311544459c69623eddd243b511b28d70194c9591a9ee8cf9c038962c965f991affd7e
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.11.28":
+"@types/node@npm:*":
   version: 20.12.2
   resolution: "@types/node@npm:20.12.2"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/bb47d115a8f95aadebdd6403fee16d149d6b5568ad53bacc42df34c2d572561e36ba47b05f7f68bada43752d7369b470a90df65b646af7502dfb799a21b4fca7
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.12.4":
+  version: 20.12.4
+  resolution: "@types/node@npm:20.12.4"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/9b142fcd839a48c348d6b9acfc753dfa4b3fb1f3e23ed67e8952bee9b2dfdaffdddfbcf0e4701557b88631591a5f9968433910027532ef847759f8682e27ffe7
   languageName: node
   linkType: hard
 
@@ -1338,22 +1347,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.22":
-  version: 18.2.23
-  resolution: "@types/react-dom@npm:18.2.23"
+"@types/react-dom@npm:^18.2.24":
+  version: 18.2.24
+  resolution: "@types/react-dom@npm:18.2.24"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/9348e93558aa67b4b237bd0eab62e72e85f3e17a1c45fde04d874476269730f7c671b3d62390c4fca588da2a026e90cc74148abc349dbfd4ee5535a82ccdf38e
+  checksum: 10c0/9ec38e5ab4727c56ef17bd8e938ead88748ba19db314b8d9807714a5cae430f5b799514667b221b4f2dc8d9b4ca17dd1c3da8c41c083c2de9eddcc31bec6b8ff
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.2.66":
+"@types/react@npm:*":
   version: 18.2.73
   resolution: "@types/react@npm:18.2.73"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/b6645ab3c20efa41cfccf58ce0be45419517a0ba4594e323dd400342fb1c1f9589d169cf9bfa85b5b0605e9097fe9de7734b6d0c533f5b9bc32aaadb624537a4
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.74":
+  version: 18.2.74
+  resolution: "@types/react@npm:18.2.74"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/347e38b4c5dc20d50ff71bf04b7caaef490e5ff695e74a0088a13fbb2a0c5d125a5ecfd142adfa30f0176da0e2734942c91ba61d95ce269c43b3265bd7379361
   languageName: node
   linkType: hard
 
@@ -1461,7 +1480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.4.18":
+"autoprefixer@npm:^10.4.19":
   version: 10.4.19
   resolution: "autoprefixer@npm:10.4.19"
   dependencies:
@@ -1657,20 +1676,20 @@ __metadata:
     "@radix-ui/react-toast": "npm:^1.1.5"
     "@tauri-apps/api": "npm:^1.5.3"
     "@tauri-apps/cli": "npm:^1.5.11"
-    "@types/luxon": "npm:^3"
-    "@types/node": "npm:^20.11.28"
+    "@types/luxon": "npm:^3.4.2"
+    "@types/node": "npm:^20.12.4"
     "@types/qrcode": "npm:^1.5.5"
-    "@types/react": "npm:^18.2.66"
-    "@types/react-dom": "npm:^18.2.22"
+    "@types/react": "npm:^18.2.74"
+    "@types/react-dom": "npm:^18.2.24"
     "@vitejs/plugin-react": "npm:^4.2.1"
-    autoprefixer: "npm:^10.4.18"
+    autoprefixer: "npm:^10.4.19"
     class-variance-authority: "npm:^0.7.0"
     clsx: "npm:^2.1.0"
-    embla-carousel-autoplay: "npm:^8.0.0"
-    embla-carousel-react: "npm:^8.0.0"
-    lucide-react: "npm:^0.358.0"
+    embla-carousel-autoplay: "npm:^8.0.1"
+    embla-carousel-react: "npm:^8.0.1"
+    lucide-react: "npm:^0.364.0"
     luxon: "npm:^3.4.4"
-    postcss: "npm:^8.4.35"
+    postcss: "npm:^8.4.38"
     qrcode: "npm:^1.5.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
@@ -1678,10 +1697,10 @@ __metadata:
     react-router-dom: "npm:^6.22.3"
     tailwind-merge: "npm:^2.2.2"
     tailwind-scrollbar-hide: "npm:^1.1.7"
-    tailwindcss: "npm:^3.4.1"
+    tailwindcss: "npm:^3.4.3"
     tailwindcss-animate: "npm:^1.0.7"
-    typescript: "npm:^5.4.2"
-    vite: "npm:^5.1.6"
+    typescript: "npm:^5.4.3"
+    vite: "npm:^5.2.8"
     zustand: "npm:^4.5.2"
   languageName: unknown
   linkType: soft
@@ -1813,40 +1832,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"embla-carousel-autoplay@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "embla-carousel-autoplay@npm:8.0.0"
+"embla-carousel-autoplay@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "embla-carousel-autoplay@npm:8.0.1"
   peerDependencies:
-    embla-carousel: 8.0.0
-  checksum: 10c0/4a7d233c629e549d05ef931f10de550cba757f68ea37617f76b5e7f1f637e1639f402aefaf1f52cd6aefcb148bb9478482a25dbfb1aa47bbc1661c87ecfc5599
+    embla-carousel: 8.0.1
+  checksum: 10c0/759181309dbb41c04830f60543a91fec52292d20da264a676f677bce00c1c85736f4ddcff7d6055b8ee4b3344840c9638d6ccb69387e6df1f25bf0036a98c81b
   languageName: node
   linkType: hard
 
-"embla-carousel-react@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "embla-carousel-react@npm:8.0.0"
+"embla-carousel-react@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "embla-carousel-react@npm:8.0.1"
   dependencies:
-    embla-carousel: "npm:8.0.0"
-    embla-carousel-reactive-utils: "npm:8.0.0"
+    embla-carousel: "npm:8.0.1"
+    embla-carousel-reactive-utils: "npm:8.0.1"
   peerDependencies:
     react: ^16.8.0 || ^17.0.1 || ^18.0.0
-  checksum: 10c0/43d1f551be6119ba62f29fc281b5f89fabfc731fa7a8a008cb5520639be2775377580ad218c23171877f5812167b2a3bb72fac82918ad78b40ebf6f9214dfb4a
+  checksum: 10c0/a16af76be911133f00ff38491b0ed12f09571949234b22bfe83cbd2d8b0d3cf43b666ffc4fc6aaf17e04691495fdad69fc1bc33db3eeec9ba7f67fe8db056a25
   languageName: node
   linkType: hard
 
-"embla-carousel-reactive-utils@npm:8.0.0":
-  version: 8.0.0
-  resolution: "embla-carousel-reactive-utils@npm:8.0.0"
+"embla-carousel-reactive-utils@npm:8.0.1":
+  version: 8.0.1
+  resolution: "embla-carousel-reactive-utils@npm:8.0.1"
   peerDependencies:
-    embla-carousel: 8.0.0
-  checksum: 10c0/d88fb25a59be6bbbb11a9b012bdc42bc1570ae82fd363bda0224cc3131852d469855bc9068bd5aa85e4c8546311de2dd1eae43ea0556dd1443d9b12ff138034c
+    embla-carousel: 8.0.1
+  checksum: 10c0/c511dbbcd869f11f102e826aea600f1668f8097792b4e185678f44240466fe6a224b68833c408bd9eb6c9b26e40321b6f18f70f45bd19df3cd403d964e1fba95
   languageName: node
   linkType: hard
 
-"embla-carousel@npm:8.0.0":
-  version: 8.0.0
-  resolution: "embla-carousel@npm:8.0.0"
-  checksum: 10c0/51634c07816a5eef142b6bdfa1104da8232015de3260ff7c4b21a952abeac4035d2d02ea87bb5cec06290ec4429e606543e898b50aa9ccf6e636e74baf2951a6
+"embla-carousel@npm:8.0.1":
+  version: 8.0.1
+  resolution: "embla-carousel@npm:8.0.1"
+  checksum: 10c0/9ce30759a77e75ff4ce490102c429794fd46f03bbcc4a6af4ecefbe55a5de5289b7ac0f7607d1774a9b23c241d5781bf3d45459590768b15679a9da5b56ef6df
   languageName: node
   linkType: hard
 
@@ -2423,12 +2442,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.358.0":
-  version: 0.358.0
-  resolution: "lucide-react@npm:0.358.0"
+"lucide-react@npm:^0.364.0":
+  version: 0.364.0
+  resolution: "lucide-react@npm:0.364.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/cbfd01bb5afde9b1e30d2e6d24d8ae202aa099d5ee8917b34ac0a327b456c705270034a76c65e39ed368ce753de1ee2d9cd8d4bdfd1a03db3cd9b6cfb5e165e9
+  checksum: 10c0/07e519f700081f6d9f063dc39d9b58da940a976bfc368dd67c272544cfba226b4663eadf1839f41c5014561408200c595ce566b0f07a747e2a69449beb384749
   languageName: node
   linkType: hard
 
@@ -2847,7 +2866,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.23, postcss@npm:^8.4.35, postcss@npm:^8.4.38":
+"postcss@npm:^8.4.23, postcss@npm:^8.4.38":
   version: 8.4.38
   resolution: "postcss@npm:8.4.38"
   dependencies:
@@ -3323,7 +3342,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^3.4.1":
+"tailwindcss@npm:^3.4.3":
   version: 3.4.3
   resolution: "tailwindcss@npm:3.4.3"
   dependencies:
@@ -3418,7 +3437,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.4.2":
+"typescript@npm:^5.4.3":
   version: 5.4.3
   resolution: "typescript@npm:5.4.3"
   bin:
@@ -3428,7 +3447,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.4.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.4.3#optional!builtin<compat/typescript>":
   version: 5.4.3
   resolution: "typescript@patch:typescript@npm%3A5.4.3#optional!builtin<compat/typescript>::version=5.4.3&hash=5adc0c"
   bin:
@@ -3493,9 +3512,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.1.6":
-  version: 5.2.7
-  resolution: "vite@npm:5.2.7"
+"vite@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "vite@npm:5.2.8"
   dependencies:
     esbuild: "npm:^0.20.1"
     fsevents: "npm:~2.3.3"
@@ -3529,7 +3548,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/ca927a8df388f75df194d5a5ba2be4ee46dc1d99d5be277f13c6d1ed4a4df833cc953741ef8e984061ea38b531df84e15e2a9f5deea1626317bcbec63c8ca01c
+  checksum: 10c0/b5717bb00c2570c08ff6d8ed917655e79184efcafa9dd62d52eea19c5d6dfc5a708ec3de9ebc670a7165fc5d401c2bdf1563bb39e2748d8e51e1593d286a9a13
   languageName: node
   linkType: hard
 
