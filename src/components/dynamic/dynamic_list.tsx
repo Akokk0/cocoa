@@ -14,6 +14,8 @@ import Danmaku from "../icon/danmaku"
 import ForwardIcon from "../icon/forward"
 import CommentIcon from "../icon/comment"
 import LikeIcon from "../icon/like"
+// Utils
+import { cn } from "@/lib/utils";
 
 type DynamicListProps = {
     dynamicList: DynamicItem[]
@@ -49,11 +51,7 @@ const DynamicList: React.FC<DynamicListProps> = ({
                         </div>
                         {/* Dynamic Main Area */}
                         <div>
-                            {dynamicParser(item)}
-                        </div>
-                        {/* Additional Area */}
-                        <div className="mt-2">
-                            {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional)}
+                            {dynamicParser(item, false)}
                         </div>
                         {/* Like Area */}
                         {item.modules.module_interaction && interactionParser(item.modules.module_interaction)}
@@ -183,7 +181,7 @@ const dynamicPicRender = (pics: DrawItem[]) => {
     )
 }
 
-const additionalParser = (additional: ModuleDynamicAdditional) => {
+const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean) => {
     // Determine the type of Additional
     switch (additional.type) {
         case AdditionalType.COMMON: {
@@ -193,7 +191,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                     {/* Head Text */}
                     <span className="text-xs text-gray-500">{item?.head_text}</span>
                     {/* Main */}
-                    <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex space-x-2">
                             {/* Img */}
@@ -215,7 +213,39 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                 </div>
             )
         }
-        case AdditionalType.RESERVE: return
+        case AdditionalType.RESERVE: {
+            const item = additional.reserve!
+            return (
+                <div className={cn('flex flex-col rounded-md p-1', forward ? 'bg-white' : 'bg-bili_grey bg-opacity-30')}>
+                    {/* Main */}
+                    <div className="w-full p-2 mt-1 flex justify-between items-center">
+                        {/* Info */}
+                        <div className="flex space-x-3">
+                            {/* <CssImg className="w-16 h-16 bg-no-repeat bg-cover bg-center" url={additional.goods?.items[0].cover!} /> */}
+                            <div className="flex flex-col justify-around space-y-1 text-sm">
+                                {/* Reserve title */}
+                                <span className="line-clamp-1">{item.title}</span>
+                                {/* Info  */}
+                                <div className="text-gray-400 text-xs space-x-5">
+                                    <span>{item.desc1.text}</span>
+                                    <span>{item.desc2.text}</span>
+                                </div>
+                                {/* Prize */}
+                                {item.desc3 &&
+                                    <a className="flex items-center text-bili_blue text-xs" href={item.jump_url}>
+                                        <Gift className="w-4 h-4" />
+                                        <span>&nbsp;{item.desc3.text}</span>
+                                        <ChevronRight className="w-4 h-4" />
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                        {/* Button */}
+                        <Button className="text-white">{item.button.status === 1 ? item.button.uncheck.text : item.button.check.text}</Button>
+                    </div>
+                </div>
+            )
+        }
         case AdditionalType.GOODS: {
             const item = additional.goods!.items[0]
             // Check if goods num is gt one
@@ -228,7 +258,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                             <span className="text-xs">{additional.goods?.head_text}</span>
                         </div>
                         {/* Main */}
-                        <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                        <div className={cn('w-full p-2 mt-1 flex justify-between items-center rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
                             {/* Info */}
                             <div className="flex space-x-2">
                                 {/* Img */}
@@ -251,7 +281,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                         <span className="text-xs">{additional.goods?.head_text}</span>
                     </div>
                     {/* Main */}
-                    <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex space-x-2">
                             {/* Img */}
@@ -283,10 +313,9 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
             return (
                 <div className="flex flex-col">
                     {/* Main */}
-                    <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex space-x-2">
-                            {/* <CssImg className="w-16 h-16 bg-no-repeat bg-cover bg-center" url={additional.goods?.items[0].cover!} /> */}
                             <div className="flex flex-col justify-around text-sm">
                                 {/* Lottery title */}
                                 <span className="line-clamp-1">{item.title}</span>
@@ -318,7 +347,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
                         <span className="text-xs">{additional.match?.head_text}</span>
                     </div>
                     {/* Main */}
-                    <div className="w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md">
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex-1 flex space-x-2">
                             {/* Img */}
@@ -367,7 +396,7 @@ const additionalParser = (additional: ModuleDynamicAdditional) => {
     }
 }
 
-const dynamicParser = (item: DynamicItem) => {
+const dynamicParser = (item: DynamicItem, forward: boolean) => {
     console.log(item);
 
     switch (item.type) {
@@ -390,12 +419,23 @@ const dynamicParser = (item: DynamicItem) => {
                     <div className="mt-2">
                         {item.modules.module_dynamic.major?.draw?.items && dynamicPicRender(item.modules.module_dynamic.major?.draw?.items)}
                     </div>
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
+                    </div>
                 </div>
             )
         }
         case DynamicType.FORWARD: {
             return (
                 <div>
+                    {/* Topic Area */}
+                    {item.modules.module_dynamic.topic &&
+                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                            <TopicIcon />
+                            <span>{item.modules.module_dynamic.topic.name}</span>
+                        </div>
+                    }
                     {/* Text Area */}
                     <div>
                         {item.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(item.modules.module_dynamic.desc)}</div>}
@@ -408,7 +448,7 @@ const dynamicParser = (item: DynamicItem) => {
                             <span className="text-sm text-gray-500">{item.orig?.modules.module_author.name}</span>
                         </div>
                         {/* Main Area */}
-                        <div>{dynamicParser(item.orig!)}</div>
+                        <div>{dynamicParser(item.orig!, true)}</div>
                     </div>
                 </div>
             )
@@ -417,12 +457,19 @@ const dynamicParser = (item: DynamicItem) => {
             const video = item.modules.module_dynamic.major?.archive
             return (
                 <div>
+                    {/* Topic Area */}
+                    {item.modules.module_dynamic.topic &&
+                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                            <TopicIcon />
+                            <span>{item.modules.module_dynamic.topic.name}</span>
+                        </div>
+                    }
                     {/* Text Area */}
                     <div className="text-sm leading-6">
                         {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
                     </div>
                     {/* Video Area */}
-                    <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
+                    <div className={cn('w-full h-28 flex rounded-lg overflow-hidden mt-2', forward ? 'bg-white' : '')}>
                         {/* Cover */}
                         <div className="relative">
                             <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={video?.cover!} />
@@ -431,7 +478,7 @@ const dynamicParser = (item: DynamicItem) => {
                             <span className="absolute right-2 bottom-2 text-white text-sm opacity-80">{video?.duration_text}</span>
                         </div>
                         {/* Info */}
-                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
+                        <div className={cn('flex-1 flex flex-col justify-between rounded-r-lg p-3', forward ? '' : 'border border-l-0')}>
                             <div className="flex flex-col space-y-1">
                                 {/* Title */}
                                 <span className="text-sm line-clamp-2">{video?.title}</span>
@@ -447,6 +494,10 @@ const dynamicParser = (item: DynamicItem) => {
                             </div>
                         </div>
                     </div >
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
+                    </div>
                 </div>
             )
         }
@@ -466,6 +517,10 @@ const dynamicParser = (item: DynamicItem) => {
                             <Image key={index} className="w-[30rem] h-60 rounded-lg overflow-hidden object-cover object-center" url={pic} alt="Cover" />
                         ))}
                     </div>
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
+                    </div>
                 </div>
             )
         }
@@ -473,11 +528,18 @@ const dynamicParser = (item: DynamicItem) => {
             const live_play_info = (JSON.parse(item.modules.module_dynamic.major?.live_rcmd?.content!) as LiveRCMDContent).live_play_info
             return (
                 <div>
+                    {/* Topic Area */}
+                    {item.modules.module_dynamic.topic &&
+                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                            <TopicIcon />
+                            <span>{item.modules.module_dynamic.topic.name}</span>
+                        </div>
+                    }
                     {/* Text Area */}
                     <div className="text-sm leading-6">
                         {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
                     </div>
-                    {/* Video Area */}
+                    {/* Live Area */}
                     <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
                         {/* Cover */}
                         <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live_play_info.cover} />
@@ -493,6 +555,10 @@ const dynamicParser = (item: DynamicItem) => {
                             </div>
                         </div>
                     </div >
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
+                    </div>
                 </div>
             )
         }
@@ -500,6 +566,13 @@ const dynamicParser = (item: DynamicItem) => {
             const courses = item.modules.module_dynamic.major?.courses
             return (
                 <div>
+                    {/* Topic Area */}
+                    {item.modules.module_dynamic.topic &&
+                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                            <TopicIcon />
+                            <span>{item.modules.module_dynamic.topic.name}</span>
+                        </div>
+                    }
                     {/* Text Area */}
                     <div className="text-sm leading-6">
                         {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
@@ -525,6 +598,10 @@ const dynamicParser = (item: DynamicItem) => {
                             </div>
                         </div>
                     </div >
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
+                    </div>
                 </div>
             )
         }

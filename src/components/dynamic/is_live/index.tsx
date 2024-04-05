@@ -1,6 +1,8 @@
 import { useBiliStore } from "@/store/biliStore"
-import Image from "../image"
+import Image from "../../image"
 import { open } from "@tauri-apps/api/shell"
+// CSS
+import './index.css'
 
 type IsLiveProps = {
 
@@ -20,8 +22,14 @@ const IsLive: React.FC<IsLiveProps> = ({
                 {latestUpdatesData?.live_users.items.slice(0, 9).map((item, index) => (
                     <div key={index} onClick={() => open(item.jump_url).catch(console.error)} className="flex rounded-lg space-x-2 hover:bg-bili_grey hover:cursor-pointer">
                         {/* Avatar */}
-                        <div className="p-2 rounded-lg">
+                        <div className="p-2 rounded-lg relative">
                             <Image className="w-16 h-16 rounded-full object-cover object-center" url={item.face} alt="Avatar" />
+                            <div className="absolute left-3 top-14 w-14 h-4 flex items-center justify-center rounded-full bg-primary border border-white">
+                                {/* Text */}
+                                <span className="ml-3 text-white text-center" style={{fontSize: '0.6rem'}}>直播中</span>
+                            </div>
+                            {/* Animation Icon */}
+                            <div className="absolute -left-7 top-[0.6rem] sprite-animation"></div>
                         </div>
                         {/* Info */}
                         <div className="flex-1 py-3">

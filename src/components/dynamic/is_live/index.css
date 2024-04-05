@@ -1,0 +1,23 @@
+@keyframes play {
+    from {
+        background-position: 0px;
+    }
+
+    /* 总宽度 - 单帧宽度 */
+    to {
+        background-position: -3132px;
+    }
+}
+
+.sprite-animation {
+    width: 108px;
+    /* 单帧宽度 */
+    height: 108px;
+    /* 单帧高度 */
+    scale: .1;
+    /* 缩放 */
+    background-image: url('../../../img/living_sprite.png');
+    /* 雪碧图URL */
+    background-repeat: no-repeat;
+    animation: play .5s steps(29) infinite;
+}
