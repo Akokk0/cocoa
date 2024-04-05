@@ -139,7 +139,16 @@ export interface ModuleAuthor {
     nft_info: NFTAvatarBadge; // NFT头像信息
 }
 
+export interface UpowerLotteryButtonCheck {
+    disable: number,
+    icon_url: string,
+    text: string,
+    toast: string
+}
+
 export interface UpowerLotteryButton {
+    check: UpowerLotteryButtonCheck,
+    status: number,
     jump_style: ButtonJumpStyle,
     jump_url: string,
     type: number

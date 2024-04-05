@@ -5,7 +5,7 @@ import CssImg from "../css_img"
 import { Button } from "../ui/button"
 import InfiniteScroll from 'react-infinite-scroll-component';
 // Types
-import { AdditionalType, DrawItem, DynamicItem, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, ModuleInteraction, RichTextNodeType, VipStatus } from "@/type/dynamic"
+import { AdditionalType, DrawItem, DynamicItem, DynamicModules, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, ModuleInteraction, RichTextNodeType, VipStatus } from "@/type/dynamic"
 // Icons
 import { ChevronRight, Gift, Link, ShoppingBag } from "lucide-react"
 import TopicIcon from "../icon/topic"
@@ -37,40 +37,8 @@ const DynamicList: React.FC<DynamicListProps> = ({
             }
         >
             {dynamicList.map((item, index) => (
-                <div key={index} className="flex space-x-5 mb-2 bg-white p-5 rounded-lg">
-                    {/* Avatar Area */}
-                    <div className="w-12 h-12 rounded-full overflow-hidden">
-                        <Image url={item.modules.module_author.face} alt="Avatar" />
-                    </div>
-                    {/* Dynamic main */}
-                    <div className="flex flex-col flex-1 space-y-3">
-                        <div className="flex flex-col space-y-1">
-                            <div className={item.modules.module_author.vip?.status === VipStatus.Active ? 'text-primary' : ''}>{item.modules.module_author.name}</div>
-                            {/* Pub time */}
-                            {pubTimeParser(item.modules.module_author)}
-                        </div>
-                        {/* Dynamic Main Area */}
-                        <div>
-                            {dynamicParser(item, false)}
-                        </div>
-                        {/* Like Area */}
-                        {item.modules.module_interaction && interactionParser(item.modules.module_interaction)}
-                        {/* Stat Area */}
-                        <div className="grid grid-cols-3 text-sm text-gray-500">
-                            <div className="flex space-x-1 items-center">
-                                <ForwardIcon />
-                                <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParser(item.modules.module_stat.forward.count)}</span>
-                            </div>
-                            <div className="flex space-x-1 items-center">
-                                <CommentIcon />
-                                <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParser(item.modules.module_stat.comment.count)}</span>
-                            </div>
-                            <div className="flex space-x-1 items-center">
-                                <LikeIcon />
-                                <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParser(item.modules.module_stat.like.count)}</span>
-                            </div>
-                        </div>
-                    </div>
+                <div key={index}>
+                    {dynamicParser(item)}
                 </div>
             ))}
         </InfiniteScroll>
@@ -181,7 +149,7 @@ const dynamicPicRender = (pics: DrawItem[]) => {
     )
 }
 
-const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean) => {
+const additionalParser = (additional: ModuleDynamicAdditional, forward?: boolean) => {
     // Determine the type of Additional
     switch (additional.type) {
         case AdditionalType.COMMON: {
@@ -191,7 +159,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
                     {/* Head Text */}
                     <span className="text-xs text-gray-500">{item?.head_text}</span>
                     {/* Main */}
-                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center rounded-md', forward ? 'bg-white' : 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex space-x-2">
                             {/* Img */}
@@ -258,7 +226,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
                             <span className="text-xs">{additional.goods?.head_text}</span>
                         </div>
                         {/* Main */}
-                        <div className={cn('w-full p-2 mt-1 flex justify-between items-center rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
+                        <div className={cn('w-full p-2 mt-1 flex justify-between items-center rounded-md', forward ? 'bg-white' : 'bg-bili_grey bg-opacity-30')}>
                             {/* Info */}
                             <div className="flex space-x-2">
                                 {/* Img */}
@@ -281,7 +249,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
                         <span className="text-xs">{additional.goods?.head_text}</span>
                     </div>
                     {/* Main */}
-                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white' : 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex space-x-2">
                             {/* Img */}
@@ -313,7 +281,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
             return (
                 <div className="flex flex-col">
                     {/* Main */}
-                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white' : 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex space-x-2">
                             <div className="flex flex-col justify-around text-sm">
@@ -332,7 +300,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
                             </div>
                         </div>
                         {/* Button */}
-                        <Button className="text-white">{item.button.jump_style.text}</Button>
+                        <Button disabled={item.button.status !== 1} className="text-white">{item.button.status === 1 ? item.button.jump_style.text : item.button.check.text}</Button>
                     </div>
                 </div>
             )
@@ -347,7 +315,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
                         <span className="text-xs">{additional.match?.head_text}</span>
                     </div>
                     {/* Main */}
-                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white': 'bg-bili_grey bg-opacity-30')}>
+                    <div className={cn('w-full p-2 mt-1 flex justify-between items-center bg-bili_grey bg-opacity-30 rounded-md', forward ? 'bg-white' : 'bg-bili_grey bg-opacity-30')}>
                         {/* Info */}
                         <div className="flex-1 flex space-x-2">
                             {/* Img */}
@@ -372,7 +340,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
                                         <span>{match_info?.center_top[2]}</span>
                                     </div>
                                     {/* Match status */}
-                                    <span className="text-gray-500 text-xs">{match_info?.center_bottom}</span>
+                                    <span className={cn('text-xs', match_info?.center_bottom === '进行中' ? 'text-bili_blue' : 'text-gray-500')}>{match_info?.center_bottom}</span>
                                 </div>
                                 {/* Right Team */}
                                 <div className="flex flex-col items-center">
@@ -396,78 +364,93 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward: boolean)
     }
 }
 
-const dynamicParser = (item: DynamicItem, forward: boolean) => {
+const dynamicParser = (item: DynamicItem) => {
     console.log(item);
 
-    switch (item.type) {
+    // Generic
+    return (
+        <div className="flex space-x-5 mb-2 bg-white p-5 rounded-lg">
+            {/* Avatar Area */}
+            <div className="w-12 h-12 rounded-full overflow-hidden">
+                <Image url={item.modules.module_author.face} alt="Avatar" />
+            </div>
+            {/* Dynamic main */}
+            <div className="flex flex-col flex-1 space-y-3">
+                <div className="flex flex-col space-y-1">
+                    <div className={item.modules.module_author.vip?.status === VipStatus.Active ? 'text-primary' : ''}>{item.modules.module_author.name}</div>
+                    {/* Pub time */}
+                    {pubTimeParser(item.modules.module_author)}
+                </div>
+                {/* Topic Area */}
+                {item.modules.module_dynamic.topic &&
+                    <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                        <TopicIcon />
+                        <span>{item.modules.module_dynamic.topic.name}</span>
+                    </div>
+                }
+                {/* Text Area */}
+                <div className="mt-1">
+                    {item.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(item.modules.module_dynamic.desc)}</div>}
+                </div>
+                {/* Main Area */}
+                {dynamicMainContentParser(item.modules, item.type, false, item.orig)}
+                {/* Additional Area */}
+                <div className="mt-2">
+                    {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional)}
+                </div>
+                {/* Hot comment or Friends like Area */}
+                {item.modules.module_interaction && interactionParser(item.modules.module_interaction)}
+                {/* Stat Area */}
+                <div className="grid grid-cols-3 text-sm text-gray-500">
+                    <div className="flex space-x-1 items-center">
+                        <ForwardIcon />
+                        <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParser(item.modules.module_stat.forward.count)}</span>
+                    </div>
+                    <div className="flex space-x-1 items-center">
+                        <CommentIcon />
+                        <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParser(item.modules.module_stat.comment.count)}</span>
+                    </div>
+                    <div className="flex space-x-1 items-center">
+                        <LikeIcon />
+                        <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParser(item.modules.module_stat.like.count)}</span>
+                    </div>
+                </div>
+            </div>
+        </div >
+    )
+}
+
+const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, forward: boolean, orig?: DynamicItem) => {
+    switch (type) {
         case DynamicType.DRAW:
         case DynamicType.WORD: {
             return (
-                <div>
-                    {/* Topic Area */}
-                    {item.modules.module_dynamic.topic &&
-                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
-                            <TopicIcon />
-                            <span>{item.modules.module_dynamic.topic.name}</span>
-                        </div>
-                    }
-                    {/* Text Area */}
-                    <div className="mt-1">
-                        {item.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(item.modules.module_dynamic.desc)}</div>}
-                    </div>
-                    {/* Pic Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.major?.draw?.items && dynamicPicRender(item.modules.module_dynamic.major?.draw?.items)}
-                    </div>
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
-                    </div>
+                <div className="mt-2"> {/* Pic Area */}
+                    {modules.module_dynamic.major?.draw?.items && dynamicPicRender(modules.module_dynamic.major?.draw?.items)}
                 </div>
             )
         }
         case DynamicType.FORWARD: {
             return (
-                <div>
-                    {/* Topic Area */}
-                    {item.modules.module_dynamic.topic &&
-                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
-                            <TopicIcon />
-                            <span>{item.modules.module_dynamic.topic.name}</span>
-                        </div>
-                    }
-                    {/* Text Area */}
-                    <div>
-                        {item.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(item.modules.module_dynamic.desc)}</div>}
+                <div className="w-full mt-2 rounded-lg bg-opacity-50 bg-bili_grey p-5"> {/* Forward Area */}
+                    {/* User Area */}
+                    <div className="flex space-x-2">
+                        <Image className="w-5 h-5 rounded-full" url={modules.module_author.face!} alt="Avatar" />
+                        <span className="text-sm text-gray-500">{modules.module_author.name}</span>
                     </div>
-                    {/* Forward Area */}
-                    <div className="w-full mt-2 rounded-lg bg-opacity-50 bg-bili_grey p-5">
-                        {/* User Area */}
-                        <div className="flex space-x-2">
-                            <Image className="w-5 h-5 rounded-full" url={item.orig?.modules.module_author.face!} alt="Avatar" />
-                            <span className="text-sm text-gray-500">{item.orig?.modules.module_author.name}</span>
-                        </div>
-                        {/* Main Area */}
-                        <div>{dynamicParser(item.orig!, true)}</div>
+                    {/* Main Area */}
+                    <div>{dynamicMainContentParser(orig?.modules!, orig?.type!, true)}</div>
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {modules.module_dynamic.additional && additionalParser(modules.module_dynamic.additional)}
                     </div>
                 </div>
             )
         }
         case DynamicType.AV: {
-            const video = item.modules.module_dynamic.major?.archive
+            const video = modules.module_dynamic.major?.archive
             return (
                 <div>
-                    {/* Topic Area */}
-                    {item.modules.module_dynamic.topic &&
-                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
-                            <TopicIcon />
-                            <span>{item.modules.module_dynamic.topic.name}</span>
-                        </div>
-                    }
-                    {/* Text Area */}
-                    <div className="text-sm leading-6">
-                        {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
-                    </div>
                     {/* Video Area */}
                     <div className={cn('w-full h-28 flex rounded-lg overflow-hidden mt-2', forward ? 'bg-white' : '')}>
                         {/* Cover */}
@@ -494,15 +477,11 @@ const dynamicParser = (item: DynamicItem, forward: boolean) => {
                             </div>
                         </div>
                     </div >
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
-                    </div>
                 </div>
             )
         }
         case DynamicType.ARTICLE: {
-            const article = item.modules.module_dynamic.major?.article
+            const article = modules.module_dynamic.major?.article
             return (
                 <div className="space-y-2">
                     {/* Title */}
@@ -517,66 +496,56 @@ const dynamicParser = (item: DynamicItem, forward: boolean) => {
                             <Image key={index} className="w-[30rem] h-60 rounded-lg overflow-hidden object-cover object-center" url={pic} alt="Cover" />
                         ))}
                     </div>
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
-                    </div>
                 </div>
             )
         }
-        case DynamicType.LIVE_RCMD: {
-            const live_play_info = (JSON.parse(item.modules.module_dynamic.major?.live_rcmd?.content!) as LiveRCMDContent).live_play_info
+        case DynamicType.LIVE: {
+            const live = modules.module_dynamic.major?.live!
             return (
                 <div>
-                    {/* Topic Area */}
-                    {item.modules.module_dynamic.topic &&
-                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
-                            <TopicIcon />
-                            <span>{item.modules.module_dynamic.topic.name}</span>
-                        </div>
-                    }
-                    {/* Text Area */}
-                    <div className="text-sm leading-6">
-                        {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
-                    </div>
                     {/* Live Area */}
                     <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
                         {/* Cover */}
-                        <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live_play_info.cover} />
+                        <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live.cover} />
                         {/* Info */}
                         <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
                             <div className="flex flex-col space-y-1">
                                 {/* Title */}
-                                <span className="text-balance line-clamp-2">{live_play_info?.title}</span>
+                                <span className="text-balance line-clamp-2">{live?.title}</span>
                             </div>
-                            {/* Stat */}
-                            <div className="text-gray-500 text-sm items-center">
-                                <span>{live_play_info.area_name} · {live_play_info.watched_show.text_large}</span>
+                            {/* Info */}
+                            <div className="text-gray-500 text-xs items-center">
+                                <span>{live.desc_first} · {live.desc_second}</span>
                             </div>
                         </div>
                     </div >
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
-                    </div>
                 </div>
             )
         }
+        case DynamicType.LIVE_RCMD: {
+            const live_play_info = (JSON.parse(modules.module_dynamic.major?.live_rcmd?.content!) as LiveRCMDContent).live_play_info
+            return (
+                <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2"> {/* Live Area */}
+                    {/* Cover */}
+                    <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live_play_info.cover} />
+                    {/* Info */}
+                    <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
+                        <div className="flex flex-col space-y-1">
+                            {/* Title */}
+                            <span className="text-balance line-clamp-2">{live_play_info?.title}</span>
+                        </div>
+                        {/* Info */}
+                        <div className="text-gray-500 text-xs items-center">
+                            <span>{live_play_info.area_name} · {live_play_info.watched_show.text_large}</span>
+                        </div>
+                    </div>
+                </div >
+            )
+        }
         case DynamicType.COURSES_SEASON: {
-            const courses = item.modules.module_dynamic.major?.courses
+            const courses = modules.module_dynamic.major?.courses
             return (
                 <div>
-                    {/* Topic Area */}
-                    {item.modules.module_dynamic.topic &&
-                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
-                            <TopicIcon />
-                            <span>{item.modules.module_dynamic.topic.name}</span>
-                        </div>
-                    }
-                    {/* Text Area */}
-                    <div className="text-sm leading-6">
-                        {item.modules.module_dynamic.desc && dynamicTextParser(item.modules.module_dynamic.desc)}
-                    </div>
                     {/* Courses Area */}
                     <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
                         {/* Cover */}
@@ -598,10 +567,6 @@ const dynamicParser = (item: DynamicItem, forward: boolean) => {
                             </div>
                         </div>
                     </div >
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional, forward)}
-                    </div>
                 </div>
             )
         }
