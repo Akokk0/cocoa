@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 // Component
 import Image from "../image"
 import CssImg from "../css_img"
@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 // Types
 import { AdditionalType, DrawItem, DynamicItem, DynamicModules, DynamicType, LiveRCMDContent, ModuleAuthor, ModuleDynamicAdditional, ModuleDynamicDesc, ModuleInteraction, RichTextNodeType, VipStatus } from "@/type/dynamic"
 // Icons
-import { ChevronRight, Gift, Link, ShoppingBag } from "lucide-react"
+import { ChevronRight, Gift, Link, ShoppingBag, Zap } from "lucide-react"
 import TopicIcon from "../icon/topic"
 import PlayIcon from "../icon/play"
 import Danmaku from "../icon/danmaku"
@@ -16,6 +16,7 @@ import CommentIcon from "../icon/comment"
 import LikeIcon from "../icon/like"
 // Utils
 import { cn } from "@/lib/utils";
+import Comment from "../comment";
 
 type DynamicListProps = {
     dynamicList: DynamicItem[]
@@ -37,9 +38,7 @@ const DynamicList: React.FC<DynamicListProps> = ({
             }
         >
             {dynamicList.map((item, index) => (
-                <div key={index}>
-                    {dynamicParser(item)}
-                </div>
+                <DynamicParser key={index} item={item} />
             ))}
         </InfiniteScroll>
     )
@@ -129,14 +128,14 @@ const dynamicPicRender = (pics: DrawItem[]) => {
     if (picItemsLength > 1 && picItemsLength <= 3) return (
         <div className="flex space-x-1">
             {pics.map((pic, index) => (
-                <CssImg key={index} className="h-40 w-36 rounded-lg bg-center bg-no-repeat bg-cover" url={pic.src} />
+                <CssImg key={index} className="h-40 w-36 rounded-lg bg-no-repeat bg-cover" url={pic.src} />
             ))}
         </div>
     )
     if (picItemsLength === 4) return (
         <div className="flex flex-wrap w-80">
             {pics.map((pic, index) => (
-                <CssImg key={index} className="h-40 w-36 mr-1 mb-1 rounded-lg bg-center bg-no-repeat bg-cover" url={pic.src} />
+                <CssImg key={index} className="h-40 w-36 mr-1 mb-1 rounded-lg bg-no-repeat bg-cover" url={pic.src} />
             ))}
         </div>
     )
@@ -300,7 +299,10 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward?: boolean
                             </div>
                         </div>
                         {/* Button */}
-                        <Button disabled={item.button.status !== 1} className="text-white">{item.button.status === 1 ? item.button.jump_style.text : item.button.check.text}</Button>
+                        <Button disabled={item.button.status !== 1} className="text-white">
+                            {item.button.status === 1 && <Zap className="w-5 h-5" />}
+                            {item.button.status === 1 ? item.button.uncheck.text : item.button.check.text}
+                        </Button>
                     </div>
                 </div>
             )
@@ -364,62 +366,6 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward?: boolean
     }
 }
 
-const dynamicParser = (item: DynamicItem) => {
-    console.log(item);
-
-    // Generic
-    return (
-        <div className="flex space-x-5 mb-2 bg-white p-5 rounded-lg">
-            {/* Avatar Area */}
-            <div className="w-12 h-12 rounded-full overflow-hidden">
-                <Image url={item.modules.module_author.face} alt="Avatar" />
-            </div>
-            {/* Dynamic main */}
-            <div className="flex flex-col flex-1 space-y-3">
-                <div className="flex flex-col space-y-1">
-                    <div className={item.modules.module_author.vip?.status === VipStatus.Active ? 'text-primary' : ''}>{item.modules.module_author.name}</div>
-                    {/* Pub time */}
-                    {pubTimeParser(item.modules.module_author)}
-                </div>
-                {/* Topic Area */}
-                {item.modules.module_dynamic.topic &&
-                    <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
-                        <TopicIcon />
-                        <span>{item.modules.module_dynamic.topic.name}</span>
-                    </div>
-                }
-                {/* Text Area */}
-                <div className="mt-1">
-                    {item.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(item.modules.module_dynamic.desc)}</div>}
-                </div>
-                {/* Main Area */}
-                {dynamicMainContentParser(item.modules, item.type, false, item.orig)}
-                {/* Additional Area */}
-                <div className="mt-2">
-                    {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional)}
-                </div>
-                {/* Hot comment or Friends like Area */}
-                {item.modules.module_interaction && interactionParser(item.modules.module_interaction)}
-                {/* Stat Area */}
-                <div className="grid grid-cols-3 text-sm text-gray-500">
-                    <div className="flex space-x-1 items-center">
-                        <ForwardIcon />
-                        <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParser(item.modules.module_stat.forward.count)}</span>
-                    </div>
-                    <div className="flex space-x-1 items-center">
-                        <CommentIcon />
-                        <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParser(item.modules.module_stat.comment.count)}</span>
-                    </div>
-                    <div className="flex space-x-1 items-center">
-                        <LikeIcon />
-                        <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParser(item.modules.module_stat.like.count)}</span>
-                    </div>
-                </div>
-            </div>
-        </div >
-    )
-}
-
 const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, forward: boolean, orig?: DynamicItem) => {
     switch (type) {
         case DynamicType.DRAW:
@@ -435,14 +381,28 @@ const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, fo
                 <div className="w-full mt-2 rounded-lg bg-opacity-50 bg-bili_grey p-5"> {/* Forward Area */}
                     {/* User Area */}
                     <div className="flex space-x-2">
-                        <Image className="w-5 h-5 rounded-full" url={modules.module_author.face!} alt="Avatar" />
-                        <span className="text-sm text-gray-500">{modules.module_author.name}</span>
+                        <Image className="w-5 h-5 rounded-full" url={orig?.modules.module_author.face!} alt="Avatar" />
+                        <span className="text-sm text-gray-500">{orig?.modules.module_author.name}</span>
                     </div>
                     {/* Main Area */}
-                    <div>{dynamicMainContentParser(orig?.modules!, orig?.type!, true)}</div>
-                    {/* Additional Area */}
-                    <div className="mt-2">
-                        {modules.module_dynamic.additional && additionalParser(modules.module_dynamic.additional)}
+                    <div>
+                        {/* Topic Area */}
+                        {orig?.modules.module_dynamic.topic &&
+                            <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                                <TopicIcon />
+                                <span>{orig?.modules.module_dynamic.topic.name}</span>
+                            </div>
+                        }
+                        {/* Text Area */}
+                        <div className="mt-1">
+                            {orig?.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(orig?.modules.module_dynamic.desc)}</div>}
+                        </div>
+                        {/* Main Content */}
+                        <div>{dynamicMainContentParser(orig?.modules!, orig?.type!, true)}</div>
+                        {/* Additional Area */}
+                        <div className="mt-2">
+                            {orig?.modules.module_dynamic.additional && additionalParser(orig?.modules.module_dynamic.additional, true)}
+                        </div>
                     </div>
                 </div>
             )
@@ -452,7 +412,7 @@ const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, fo
             return (
                 <div>
                     {/* Video Area */}
-                    <div className={cn('w-full h-28 flex rounded-lg overflow-hidden mt-2', forward ? 'bg-white' : '')}>
+                    <div className={cn('w-full h-28 flex rounded-lg overflow-hidden', forward ? 'bg-white' : '')}>
                         {/* Cover */}
                         <div className="relative">
                             <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={video?.cover!} />
@@ -571,6 +531,71 @@ const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, fo
             )
         }
     }
+}
+
+type DynamicParserProps = {
+    item: DynamicItem
+} & React.HTMLAttributes<HTMLDivElement>
+
+const DynamicParser: React.FC<DynamicParserProps> = ({
+    item
+}) => {
+    const [comment, setComment] = useState<boolean>()
+    // Generic
+    return (
+        <div className="bg-white p-5 rounded-lg mb-2">
+            <div className="flex space-x-5">
+                {/* Avatar Area */}
+                <div className="w-12 h-12 rounded-full overflow-hidden">
+                    <Image url={item.modules.module_author.face} alt="Avatar" />
+                </div>
+                {/* Dynamic main */}
+                <div className="flex flex-col flex-1 space-y-2">
+                    <div className="flex flex-col space-y-1">
+                        <div className={item.modules.module_author.vip?.status === VipStatus.Active ? 'text-primary' : ''}>{item.modules.module_author.name}</div>
+                        {/* Pub time */}
+                        {pubTimeParser(item.modules.module_author)}
+                    </div>
+                    {/* Topic Area */}
+                    {item.modules.module_dynamic.topic &&
+                        <div className="flex space-x-1 items-center text-sm text-bili_blue mt-2">
+                            <TopicIcon />
+                            <span>{item.modules.module_dynamic.topic.name}</span>
+                        </div>
+                    }
+                    {/* Text Area */}
+                    <div className="mt-1">
+                        {item.modules.module_dynamic.desc && <div className="leading-6 text-sm">{dynamicTextParser(item.modules.module_dynamic.desc)}</div>}
+                    </div>
+                    {/* Main Area */}
+                    {dynamicMainContentParser(item.modules, item.type, false, item.orig)}
+                    {/* Additional Area */}
+                    <div className="mt-2">
+                        {item.modules.module_dynamic.additional && additionalParser(item.modules.module_dynamic.additional)}
+                    </div>
+                    {/* Hot comment or Friends like Area */}
+                    {item.modules.module_interaction && interactionParser(item.modules.module_interaction)}
+                    {/* Stat Area */}
+                    <div className="grid grid-cols-3 text-sm text-gray-500">
+                        <div className="flex space-x-1 items-center hover:cursor-pointer hover:text-bili_blue">
+                            <ForwardIcon />
+                            <span>{item.modules.module_stat.forward.count === 0 ? '转发' : statCountParser(item.modules.module_stat.forward.count)}</span>
+                        </div>
+                        <div className={cn('flex space-x-1 items-center hover:cursor-pointer hover:text-bili_blue', comment ? 'text-bili_blue' : '')} onClick={() => setComment(!comment)}>
+                            <CommentIcon />
+                            <span>{item.modules.module_stat.comment.count === 0 ? '评论' : statCountParser(item.modules.module_stat.comment.count)}</span>
+                        </div>
+                        <div className="flex space-x-1 items-center hover:cursor-pointer hover:text-bili_blue">
+                            <LikeIcon />
+                            <span>{item.modules.module_stat.like.count === 0 ? '点赞' : statCountParser(item.modules.module_stat.like.count)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div >
+            {/* Comment or Forward Area */}
+            {comment && <Comment className="mt-2" type={item.basic.comment_type} oid={item.basic.comment_id_str} />}
+        </div>
+    )
 }
 
 export default DynamicList

@@ -1,13 +1,17 @@
+import { useEffect, useState } from "react";
+// APIs
 import { getDynamicList, getPerosnalDynamicList } from "@/api/biliApi";
+// Components
 import ChooseUP from "@/components/dynamic/chooseup";
 import DynamicList from "@/components/dynamic/dynamic_list";
 import DynamicTypeSelector from "@/components/dynamic/dynamic_type";
 import IsLive from "@/components/dynamic/is_live";
 import PersonalLetter from "@/components/dynamic/personal_letter";
 import SendDynamic from "@/components/dynamic/send_dynamic";
+// Store
 import { useBiliStore } from "@/store/biliStore";
+// Types
 import { DynamicItem, DynamicListResp, DynamicListRespCode, DynamicTypes } from "@/type/dynamic";
-import { useEffect, useState } from "react";
 
 export default function Dynamic() {
     // Store

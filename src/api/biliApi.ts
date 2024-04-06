@@ -1,3 +1,4 @@
+import { getWbiSign } from "@/lib/biliUtils"
 import { VideoZone } from "@/type/bili"
 import { DynamicTypes } from "@/type/dynamic"
 import { TimelineTypes } from "@/type/home"
@@ -26,12 +27,18 @@ const PGCRANKING = `${API_URL}pgc/season/rank/web/list`
 
 // User
 const PERSONAL_INFO = `${API_URL}x/space/myinfo`
-const USER_FOLLOWINGS = `${API_URL}x/relation/followings`
+// const USER_FOLLOWINGS = `${API_URL}x/relation/followings`
 
 // Dynamic
 const DYNAMIC_LIST = `${API_URL}x/polymer/web-dynamic/v1/feed/all`
 const PERSONAL_DYNAMIC_LIST = `${API_URL}x/polymer/web-dynamic/v1/feed/space`
 const RECENT_UPDATED = `${API_URL}x/polymer/web-dynamic/v1/portal`
+
+// Comment
+const COMMENT = `${API_URL}x/v2/reply/wbi/main`
+
+// Wbi
+const WBI_KEYS = `${API_URL}x/web-interface/nav`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -315,6 +322,41 @@ export async function getLatestUpdatesDynamicUpInfo() {
         try {
             return await invoke('request', {
                 url: RECENT_UPDATED,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getComment(params: object) {
+    // Get wbi sign
+    const wbiSign = await getWbiSign(params)
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${COMMENT}?${wbiSign}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getWbiKey() {
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: WBI_KEYS,
                 reqType: 'GET',
             })
         } catch (e) {

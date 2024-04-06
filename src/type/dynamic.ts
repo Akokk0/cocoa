@@ -146,8 +146,15 @@ export interface UpowerLotteryButtonCheck {
     toast: string
 }
 
+export interface UpowerLotteryButtonCheck {
+    icon_url: string,
+    text: string,
+    toast: string
+}
+
 export interface UpowerLotteryButton {
     check: UpowerLotteryButtonCheck,
+    uncheck: UpowerLotteryButtonCheck,
     status: number,
     jump_style: ButtonJumpStyle,
     jump_url: string,
