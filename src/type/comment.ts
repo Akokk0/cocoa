@@ -175,6 +175,7 @@ export interface EmoticonEscapeCharacter {
 // Define emote properties here, possibly including id, text, url, etc.
 export interface Emote {
     // [key: EmoticonEscapeCharacter]: object
+    [key: string]: EmoticonEscapeCharacter
 }
 
 export interface JumpUrl {

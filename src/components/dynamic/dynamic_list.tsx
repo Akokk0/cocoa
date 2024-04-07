@@ -17,6 +17,7 @@ import LikeIcon from "../icon/like"
 // Utils
 import { cn } from "@/lib/utils";
 import Comment from "../comment";
+import { open } from "@tauri-apps/api/shell";
 
 type DynamicListProps = {
     dynamicList: DynamicItem[]
@@ -45,26 +46,29 @@ const DynamicList: React.FC<DynamicListProps> = ({
 }
 
 const interactionParser = (interaction: ModuleInteraction) => {
-    const item = interaction.items[0].desc
     return (
-        <div className="flex space-x-3 items-center text-gray-400 border-l-2 border-bili_grey">
-            {/* Icon */}
-            <div className="ml-3">
-                {item.rich_text_nodes[item.rich_text_nodes.length - 1].orig_text.includes('赞了') ?
-                    <LikeIcon /> :
-                    <CommentIcon />
-                }
-            </div>
-            {/* Content */}
-            <div className="text-gray-400 text-xs">
-                {item.rich_text_nodes.map((v, i) => {
-                    if (i === item.rich_text_nodes.length - 1) {
-                        if (v.orig_text.includes('赞了')) return <span key={i}>&nbsp;{v.orig_text}</span>
-                        else return <span key={i}>{v.orig_text}</span>
-                    }
-                    if (v.type === RichTextNodeType.AT) return <span key={i} className=" text-gray-500">{v.orig_text}</span>
-                })}
-            </div>
+        <div className="flex flex-col space-y-1 border-l-2 border-bili_grey">
+            {interaction.items.map(({desc}, index) => (
+                <div key={index} className="flex space-x-3 items-center text-gray-400">
+                    {/* Icon */}
+                    <div className="ml-1">
+                        {desc.rich_text_nodes[desc.rich_text_nodes.length - 1].orig_text.includes('赞了') ?
+                            <LikeIcon /> :
+                            <CommentIcon />
+                        }
+                    </div>
+                    {/* Content */}
+                    <div className="text-gray-400 text-xs">
+                        {desc.rich_text_nodes.map((v, i) => {
+                            if (i === desc.rich_text_nodes.length - 1) {
+                                if (v.orig_text.includes('赞了')) return <span key={i}>&nbsp;{v.orig_text}</span>
+                                else return <span key={i}>{v.orig_text}</span>
+                            }
+                            if (v.type === RichTextNodeType.AT) return <span key={i} className=" text-gray-500">{v.orig_text}</span>
+                        })}
+                    </div>
+                </div>
+            ))}
         </div>
     )
 }
@@ -110,6 +114,7 @@ const dynamicTextParser = (desc: ModuleDynamicDesc) => {
                         </span>
                     );
                 }
+                if (node.type === RichTextNodeType.GOODS) return <span key={index} className="text-bili_blue hover:cursor-pointer" onClick={() => open(node.jump_url!)}>{node.text}</span>
                 if (node.type === RichTextNodeType.TOPIC) return <span key={index} className="text-bili_blue hover:cursor-pointer">{node.orig_text}</span>
                 if (node.type === RichTextNodeType.EMOJI) return <span key={index} className="inline-block"><Image className="w-7 h-7" url={node.emoji?.icon_url!} alt="emoji" /></span>
                 if (node.type === RichTextNodeType.WEB) return <span key={index} className="text-bili_blue hover:cursor-pointer"><Link className="w-5 h-5 inline-block" /> {node.text}</span>
@@ -253,9 +258,8 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward?: boolean
                         <div className="flex space-x-2">
                             {/* Img */}
                             <div className="w-20 h-20 bg-gray-300 rounded-lg bg-opacity-30">
-                                <CssImg className="w-20 h-20 bg-no-repeat bg-center bg-cover" url={item.cover} />
+                                <CssImg className="w-20 h-20 bg-no-repeat bg-center bg-cover rounded-lg" url={item.cover} />
                             </div>
-                            {/* <CssImg className="w-16 h-16 bg-no-repeat bg-cover bg-center" url={additional.goods?.items[0].cover!} /> */}
                             <div className="flex flex-col justify-around text-sm">
                                 {/* Goods name */}
                                 <span className="line-clamp-1">{item.name}</span>
@@ -270,7 +274,7 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward?: boolean
                             </div>
                         </div>
                         {/* Button */}
-                        <Button className="text-white ml-5">{additional.goods?.items[0].jump_desc}</Button>
+                        <Button className="text-white ml-5" onClick={() => open(additional.goods?.items[0].jump_url!)}>{additional.goods?.items[0].jump_desc}</Button>
                     </div>
                 </div>
             )
@@ -540,6 +544,8 @@ type DynamicParserProps = {
 const DynamicParser: React.FC<DynamicParserProps> = ({
     item
 }) => {
+    console.log(item);
+
     const [comment, setComment] = useState<boolean>()
     // Generic
     return (
@@ -593,7 +599,7 @@ const DynamicParser: React.FC<DynamicParserProps> = ({
                 </div>
             </div >
             {/* Comment or Forward Area */}
-            {comment && <Comment className="mt-2" type={item.basic.comment_type} oid={item.basic.comment_id_str} />}
+            {comment && <Comment className="mt-2" type={item.basic.comment_type} oid={item.basic.comment_id_str} count={item.modules.module_stat.comment.count} />}
         </div>
     )
 }

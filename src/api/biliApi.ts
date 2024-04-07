@@ -1,6 +1,7 @@
 import { getWbiSign } from "@/lib/biliUtils"
 import { VideoZone } from "@/type/bili"
 import { DynamicTypes } from "@/type/dynamic"
+import { HistoryType } from "@/type/history"
 import { TimelineTypes } from "@/type/home"
 import { invoke } from "@tauri-apps/api"
 
@@ -39,6 +40,9 @@ const COMMENT = `${API_URL}x/v2/reply/wbi/main`
 
 // Wbi
 const WBI_KEYS = `${API_URL}x/web-interface/nav`
+
+// History
+const HISTORY = `${API_URL}x/web-interface/history/cursor`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -357,6 +361,33 @@ export async function getWbiKey() {
         try {
             return await invoke('request', {
                 url: WBI_KEYS,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getHistory(
+    { ps, type, max, business, view_at }:
+        { ps?: number, type?: HistoryType, max?: number, business?: HistoryType, view_at?: number }
+) {
+    // Construct url
+    let url = `${HISTORY}?`
+    ps && (url += `ps=${ps}`)
+    type && (url += `type=${type}`)
+    max && (url += `max=${max}`)
+    business && (url += `business=${business}`)
+    view_at && (url += `view_at=${view_at}`)
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url,
                 reqType: 'GET',
             })
         } catch (e) {
