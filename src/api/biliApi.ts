@@ -376,12 +376,14 @@ export async function getHistory(
         { ps?: number, type?: HistoryType, max?: number, business?: HistoryType, view_at?: number }
 ) {
     // Construct url
-    let url = `${HISTORY}?`
-    ps && (url += `ps=${ps}`)
-    type && (url += `type=${type}`)
-    max && (url += `max=${max}`)
-    business && (url += `business=${business}`)
-    view_at && (url += `view_at=${view_at}`)
+    let params = [];
+    ps && params.push(`ps=${ps}`);
+    type && params.push(`type=${type}`);
+    max && params.push(`max=${max}`);
+    business && params.push(`business=${business}`);
+    view_at && params.push(`view_at=${view_at}`);
+
+    let url = `${HISTORY}?${params.join('&')}`;
     // Send request
     let attempts = 3
     for (let i = attempts; i > 0; i--) {

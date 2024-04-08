@@ -92,7 +92,7 @@ export default function Slide({
                             <a data-id={aid} key={aid} onClick={() => {
                                 jumpToCard(index)
                             }} href='#!' className="fresh-home-video-slides-cover">
-                                <Image url={pic} alt='封面' />
+                                <Image className="object-cover object-center" url={pic} alt="封面" />
                             </a>
                         )
                     })

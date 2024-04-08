@@ -99,7 +99,7 @@ export default function TypeTwo({
                             {
                                 pgcRanklingList &&
                                 <>
-                                    <Image className='w-80 h-48' url={pgcRanklingList[0].ss_horizontal_cover} alt='封面' />
+                                    <Image className='w-80 h-48 object-cover object-center' url={pgcRanklingList[0].ss_horizontal_cover} alt='封面' />
                                     <div className='absolute left-2 bottom-1 px-2 h-5 flex justify-center items-center text-xs text-white bg-transparent_black rounded-md hover:text-bili_blue transition'>
                                         {pgcRanklingList[0].new_ep.index_show}
                                     </div>
@@ -121,7 +121,7 @@ export default function TypeTwo({
                         <a className='fresh-home-rank-list-cover'>
                             {
                                 pgcRanklingList &&
-                                <Image className='w-36 h-24' url={pgcRanklingList[1].ss_horizontal_cover} alt='封面' />
+                                <Image className='w-36 h-24 object-cover object-center' url={pgcRanklingList[1].ss_horizontal_cover} alt='封面' />
                             }
                         </a>
                         <div className='fresh-home-rank-list-laser' data-number='2'></div>
@@ -135,7 +135,7 @@ export default function TypeTwo({
                         <a className='fresh-home-rank-list-cover'>
                             {
                                 pgcRanklingList &&
-                                <Image className='w-28 h-20' url={pgcRanklingList[2].ss_horizontal_cover} alt='封面' />
+                                <Image className='w-28 h-20 object-cover object-center' url={pgcRanklingList[2].ss_horizontal_cover} alt='封面' />
                             }
                         </a>
                         <div className='fresh-home-rank-list-laser' data-number='3'></div>

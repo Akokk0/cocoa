@@ -101,7 +101,7 @@ export default function TypeOne({
                             {
                                 regionRankingVideoList &&
                                 <>
-                                    <Image className='w-80 h-48' url={regionRankingVideoList[0].pic} alt='封面' />
+                                    <Image className='w-80 h-48 object-cover object-center' url={regionRankingVideoList[0].pic} alt='封面' />
                                     <div className='absolute left-2 bottom-1 px-2 h-5 flex justify-center items-center text-xs text-white bg-transparent_black rounded-md hover:text-bili_blue transition'>
                                         UP&nbsp;
                                         {regionRankingVideoList[0].owner.name}
@@ -120,7 +120,7 @@ export default function TypeOne({
                         <a className='fresh-home-rank-list-cover'>
                             {
                                 regionRankingVideoList &&
-                                <Image className='w-36 h-24' url={regionRankingVideoList[1].pic} alt='封面' />
+                                <Image className='w-36 h-24 object-cover object-center' url={regionRankingVideoList[1].pic} alt='封面' />
                             }
                         </a>
                         <div className='fresh-home-rank-list-laser' data-number='2'></div>
@@ -134,7 +134,7 @@ export default function TypeOne({
                         <a className='fresh-home-rank-list-cover'>
                             {
                                 regionRankingVideoList &&
-                                <Image className='w-28 h-20' url={regionRankingVideoList[2].pic} alt='封面' />
+                                <Image className='w-28 h-20 object-cover object-center' url={regionRankingVideoList[2].pic} alt='封面' />
                             }
                         </a>
                         <div className='fresh-home-rank-list-laser' data-number='3'></div>

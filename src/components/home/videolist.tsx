@@ -13,18 +13,20 @@ import { List, VideoListResp, VideoListRespCode } from "@/type/home"
 type VideoListProps = React.HTMLAttributes<HTMLDivElement>
 
 const VideoList: React.FC<VideoListProps> = ({ ...props }) => {
+    // State
     const [list, setList] = useState<List>()
-
+    // Func
+    const getPopularResp = async () => {
+        // Send request to get popular content
+        const popularResp = JSON.parse(await getPopular() as string) as VideoListResp
+        // Check if request is error
+        if (popularResp.code != VideoListRespCode.SUCCESS) return
+        //Set resp to state
+        setList(popularResp.data.list)
+    }
+    // Effect
     useEffect(() => {
-        const initial = async () => {
-            // Send request to get popular content
-            const popularResp = JSON.parse(await getPopular() as string) as VideoListResp
-            // Check if request is error
-            if (popularResp.code != VideoListRespCode.SUCCESS) return
-            //Set resp to state
-            setList(popularResp.data.list)
-        }
-        initial()
+        getPopularResp()
     }, [])
 
     return (

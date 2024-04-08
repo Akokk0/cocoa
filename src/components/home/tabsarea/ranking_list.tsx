@@ -15,7 +15,7 @@ export default function RankingList({
                 {list.map((item, i) => (
                     <div key={i} className="relative">
                         <div className="cover-scale">
-                            <Image className="w-28 h-[4.5rem] rounded-lg overflow-hidden" url={item.pic} alt="封面" />
+                            <Image className="w-28 h-[4.5rem] object-cover object-center rounded-lg" url={item.pic} alt="封面" />
                         </div>
                         <div className="absolute -left-3 -top-2 w-6 h-6 rounded-full bg-[#149fd6] text-white flex items-center justify-center">{i + 4}</div>
                         <div className="absolute z-0 left-[5.5rem] top-2 w-32 h-[4.5rem] flex flex-col justify-between rounded-lg pl-8 py-1 shadow-md">

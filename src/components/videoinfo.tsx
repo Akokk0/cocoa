@@ -67,7 +67,7 @@ export default function VideoInfo({
 
     return (
         <Card className="overflow-hidden" {...props}>
-            <Image url={item.pic} alt="封面" className="w-full h-48" />
+            <Image url={item.pic} alt="封面" className="w-full h-48 object-cover object-center" />
             <CardContent className="flex flex-col justify-start space-y-2">
                 <span className="mt-2 text-sm line-clamp-2 h-10 hover:text-bili_blue transition">{item.title}</span>
                 <div className="h-6 inline-flex w-fit items-center space-x-1 rounded-xl border border-border_color pr-2 hover:bg-bili_grey hover:text-bili_blue transition">
