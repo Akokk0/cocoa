@@ -9,9 +9,9 @@ export default function RankingList({
     list
 }: RankingListProps) {
     return (
-        <div className="rounded-xl w-full h-[12rem] border border-bili_grey shadow-sm">
+        <div className="rounded-xl w-full h-[12rem] mt-3">
             {/* Info */}
-            <div className="grid grid-cols-4 gap-y-6 gap-x-2 p-2">
+            <div className="grid grid-cols-4 gap-y-6 gap-x-5">
                 {list.map((item, i) => (
                     <div key={i} className="relative">
                         <div className="cover-scale">

@@ -133,7 +133,7 @@ function App() {
                             {
                                 !loginStatus &&
                                 <Button asChild>
-                                    <Link to='/login'>去登录</Link>
+                                    <Link to='/login' className="text-white">去登录</Link>
                                 </Button>
                             }
                         </div>
@@ -141,7 +141,7 @@ function App() {
                 </CardContent>
                 <CardFooter>
                     <Button disabled={!loginStatus} className="w-full">
-                        <Link to='/main' className="w-full">欢迎使用</Link>
+                        <Link to='/main' className="w-full text-white">欢迎使用</Link>
                     </Button>
                 </CardFooter>
             </Card>

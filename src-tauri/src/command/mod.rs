@@ -1,7 +1,7 @@
 use std::{fs, io::{BufReader, BufWriter, Read, Write}};
 
 use base64::Engine;
-use cocoa::{create_headers, AppState, CocoaConfig, RequestType};
+use cocoa::{checking_auth_folder_is_exist, create_headers, AppState, CocoaConfig, RequestType};
 use flate2::read::GzDecoder;
 use serde_json::Value;
 use tauri::State;
@@ -47,21 +47,6 @@ pub fn save_refresh_token(refresh_token: String, app_state: State<AppState>) -> 
         .map_err(|e| e.to_string())?
         .write_all(refresh_token.as_bytes())
         .map_err(|e| e.to_string())?;
-    // Return ok
-    Ok(())
-}
-
-fn checking_auth_folder_is_exist(app_data_path: &String) -> Result<(), String> {
-    // Define auth_folder_path
-    let auth_folder_path = format!("{}/auth/", app_data_path);
-    // Build auth folder Path
-    let path_auth_folder = std::path::Path::new(&auth_folder_path);
-    // Check if auth folder is exist
-    if !path_auth_folder.is_dir() {
-        // Creat auth folder
-        std::fs::create_dir(&auth_folder_path)
-            .map_err(|e| e.to_string())?;
-    }
     // Return ok
     Ok(())
 }
@@ -250,7 +235,7 @@ pub fn is_login(app_state: State<AppState>) -> Result<bool, String> {
     Ok(*login_status_guard)
 }
 
-#[tauri::command]
+/* #[tauri::command]
 pub fn logout(app_state: State<AppState>) -> Result<(), String> {
     // Define cookies file path
     let cookies_file_path = format!("{}/auth/cookies.json", &app_state.app_data_path);
@@ -290,7 +275,7 @@ pub fn logout(app_state: State<AppState>) -> Result<(), String> {
     *is_login_guard = false;
     // Return ok
     Ok(())
-}
+} */
 
 #[tauri::command]
 pub fn check_cookies_status(app_state: State<AppState>) -> Result<(), String> {
@@ -310,4 +295,38 @@ pub fn get_config(app_state: State<AppState>) -> Result<CocoaConfig, String> {
         .lock()
         .map_err(|e| e.to_string())?;
     Ok(config.clone())
+}
+
+#[tauri::command]
+pub async fn sign_out(app_state: State<'_, AppState>) -> Result<(), String> {
+    // Check if auth folder is exist
+    checking_auth_folder_is_exist(&app_state.app_data_path).map_err(|e| e.to_string())?;
+    // Define the cookies_file_path to save cookies
+    let login_info_folder_path = format!("{}/auth/", app_state.app_data_path);
+    // Delete login info folder
+    std::fs::remove_dir_all(&login_info_folder_path).map_err(|e| e.to_string())?;
+    // Build new cookie_store
+    let new_cookie_store = reqwest_cookie_store::CookieStore::default();
+    // Get lock of cookie_store
+    let mut cookie_store_guard = app_state.cookie_store
+        .lock()
+        .map_err(|e| e.to_string())?;
+    // Replace with new cookie_store
+    *cookie_store_guard = new_cookie_store;
+    // Build new client
+    let new_client = reqwest::Client::builder()
+        .cookie_provider(std::sync::Arc::clone(&app_state.cookie_store))
+        .default_headers(create_headers())
+        .build()
+        .unwrap();
+    // Get lock of client
+    let mut client_guard = app_state.client.lock().unwrap();
+    // Replace with new client
+    *client_guard = new_client;
+    // Get lock of is_login
+    let mut is_login_guard = app_state.is_login.lock().unwrap();
+    // Change login status
+    *is_login_guard = false;
+    // Return ok
+    Ok(())
 }

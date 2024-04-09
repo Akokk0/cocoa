@@ -214,3 +214,18 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     // Return success
     Ok(())
 }
+
+pub fn checking_auth_folder_is_exist(app_data_path: &String) -> Result<(), String> {
+    // Define auth_folder_path
+    let auth_folder_path = format!("{}/auth/", app_data_path);
+    // Build auth folder Path
+    let path_auth_folder = std::path::Path::new(&auth_folder_path);
+    // Check if auth folder is exist
+    if !path_auth_folder.is_dir() {
+        // Creat auth folder
+        std::fs::create_dir(&auth_folder_path)
+            .map_err(|e| e.to_string())?;
+    }
+    // Return ok
+    Ok(())
+}

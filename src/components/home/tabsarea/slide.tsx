@@ -106,7 +106,7 @@ export default function Slide({
                         <div className='fresh-home-video-slides-main-actions'>
                             <div className="flex space-x-2 mb-1">
                                 <div className="flex items-center justify-center space-x-2 text-white bg-bili_blue rounded-full w-24 h-8 text-sm">
-                                    <Play width="1rem" height="1rem" /> <span>播放</span>
+                                    <Play className='w-4 h-4' /> <span>播放</span>
                                 </div>
                                 <div className="border border-bili_grey p-1 rounded-full text-gray-800">
                                     <Clock />
@@ -127,7 +127,7 @@ export default function Slide({
                 <div className="fresh-home-video-slides-actions">
                     <button className="absolute right-[7.1rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
                             rotatingF hover:border-bili_blue" onClick={getNewVideoDate}>
-                        <RotateCw className="rotatingElement" width="1.2rem" height="1.2rem" />
+                        <RotateCw className="w-5 h-5 rotatingElement" />
                     </button>
                     <button className="absolute right-[4.5rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
                             popLeftArrow hover:border-bili_blue" onClick={handleClicPre} >
@@ -135,7 +135,7 @@ export default function Slide({
                     </button>
                     <button className="absolute right-4 bottom-4 flex items-center justify-center rounded-full border p-1 w-12 h-12 transition
                             popRightArrow hover:border-bili_blue" onClick={handleClicNext} >
-                        <ArrowRight className="arrow-right" width="2.8rem" height="2.8rem" />
+                        <ArrowRight className="w-8 h-8 arrow-right" />
                     </button>
                 </div>
             </div>

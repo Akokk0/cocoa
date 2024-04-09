@@ -114,7 +114,7 @@ export default function TypeOne({
                     <div className='fresh-home-rank-list-second-item animation z-20'>
                         <a className='fresh-home-rank-list-rank-item'>
                             <div className='fresh-home-rank-list-rank-item-title'></div>
-                            <a className='be-up-info fallback'></a>
+                            <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
                         <a className='fresh-home-rank-list-cover'>
@@ -128,7 +128,7 @@ export default function TypeOne({
                     <div className='fresh-home-rank-list-third-item animation z-40'>
                         <a className='fresh-home-rank-list-rank-item'>
                             <div className='fresh-home-rank-list-rank-item-title'></div>
-                            <a className='be-up-info fallback'></a>
+                            <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
                         <a className='fresh-home-rank-list-cover'>

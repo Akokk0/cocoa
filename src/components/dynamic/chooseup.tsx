@@ -68,7 +68,7 @@ export default function ChooseUP({
                             <div className={cn('w-16 h-16 rounded-full flex justify-center items-center hover:border hover:border-bili_blue', currentTab === 'all' ? 'border border-bili_blue': '')}>
                                 {/* Icon */}
                                 <div className="rounded-full w-14 h-14 bg-[#e0f6fd] flex justify-center items-center">
-                                    <Radar color="#1e9ed4" width="2.3rem" height="2.3rem" />
+                                    <Radar color="#1e9ed4" className="w-9 h-9" />
                                 </div>
                             </div>
                             <span className={cn('text-xs text-center', currentTab === 'all' ? 'text-bili_blue' : '')}>全部动态</span>
