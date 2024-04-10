@@ -11,6 +11,10 @@ export default function PersonalLetter({
     ...props
 }: PersonalLetterProps) {
     const my_info = useBiliStore(state => state.latestUpdatesData)?.my_info
+    console.log(my_info?.vip.status);
+    console.log(my_info?.vip.role);
+    console.log(my_info?.vip.label.text);
+    
     return (
         my_info &&
         <div className="flex flex-col space-y-4 w-80" {...props}>
@@ -24,8 +28,7 @@ export default function PersonalLetter({
                     <div className="flex space-x-2 items-center">
                         {/* Vip标签 */}
                         {
-                            my_info.vip.status === 0 ? '' :
-                            <span className="bg-[#FB7299] rounded-sm p-1 text-xs text-white">{my_info?.vip.label.text}</span>
+                            my_info.vip.status !== 0 ? <span className="bg-[#FB7299] rounded-sm p-1 text-xs text-white">{my_info?.vip.label.text}</span> : ''
                         }
                         {/* 等级标签 */}
                         <span className="text-sm">{levelParser(my_info.level_info.current_level)}</span>

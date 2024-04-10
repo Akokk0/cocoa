@@ -48,8 +48,8 @@ export default function Settings() {
                                         <h4 className="font-medium leading-none">是否确认登出账号</h4>
                                         <div className="flex justify-between text-white">
                                             <Button onClick={signOut}>确认</Button>
-                                            <Close>
-                                                <Button>取消</Button>
+                                            <Close className="py-1 px-4 rounded-md bg-primary text-sm font-bold">
+                                                取消
                                             </Close>
                                         </div>
                                     </div>
