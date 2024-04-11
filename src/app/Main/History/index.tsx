@@ -1,16 +1,19 @@
-import { getHistory } from "@/api/biliApi"
+import { getHistory, deleteHistory } from "@/api/biliApi"
 import { Button } from "@/components/ui/button"
 import { HistoryItem, HistoryListItem, HistoryResp, HistoryRespCode, HistoryType } from "@/type/history"
-import { AlarmClock, Chrome, Smartphone, Tablet, TabletSmartphone, Trash2, Tv } from "lucide-react"
+import { AlarmClock, Chrome, Rocket, Smartphone, Tablet, TabletSmartphone, Trash2, Tv } from "lucide-react"
 import React, { useEffect, useRef, useState } from "react"
 import Image from "@/components/image"
 import { DateTime } from "luxon"
 import InfiniteScroll from "react-infinite-scroll-component"
 import './index.css'
+import { invoke } from "@tauri-apps/api"
+import { toast } from "sonner"
+import { Toaster } from "@/components/ui/sonner"
+import autoAnimate from "@formkit/auto-animate"
 
 export default function History() {
     // State
-    const [timeNow, _] = useState<DateTime>(DateTime.local())
     const [history, setHistory] = useState<HistoryItem | undefined>(undefined)
     const [historyList, setHistoryList] = useState<HistoryListItem[]>([])
     const [shouldShowBadgeIndex, setShouldShowBadgeIndex] = useState<number[]>([])
@@ -35,18 +38,53 @@ export default function History() {
         // Concat list
         setHistoryList(prevHistoryList => prevHistoryList.concat(historyResp.data.list))
     }
+
+    const execDeleteHistory = async (index: number, id: number, business: string) => {
+        // Show toast
+        toast("删除历史记录", {
+            description: '正在删除历史记录'
+        })
+        // Get csrf from cookies
+        const csrf = await invoke('get_csrf') as string
+        // Send request to delete history
+        const resp = JSON.parse(
+            await deleteHistory(`${business}_${id}`, csrf) as string
+        ) as { code: number, message: string, ttl: number }
+        // Check if request is success
+        if (resp.code === 0) {
+            toast("成功", {
+                description: '已删除历史记录'
+            })
+        } else {
+            toast("失败", {
+                description: resp.message
+            })
+        }
+        // Delete item from list
+        setHistoryList(historyList.filter((_, i) => i !== index))
+    }
     // Refs
-    const refs = useRef<{[key: number]: HTMLDivElement | null}>({})
+    const refs = useRef<{ [key: number]: HTMLDivElement | null }>({})
+    const infiniteScrollRef = useRef<HTMLDivElement | null>(null)
+    const parent = useRef<HTMLDivElement | null>(null)
     // Effect
     useEffect(() => {
         getHistoryResp({})
+        const observer = new MutationObserver(() => {
+            if (parent.current) {
+                console.log(parent.current);
+                autoAnimate(parent.current);
+                observer.disconnect();
+            }
+        });
+        observer.observe(document, { childList: true, subtree: true });
+        return () => observer.disconnect();
     }, [])
 
     useEffect(() => {
         const newShouldShowBadgeIndex = historyList.map((item, index) => {
-            // Get item date
-            const itemDate = DateTime.fromSeconds(item.view_at);
-            const diffInDays = timeNow.diff(itemDate, 'days').days;
+            // Get diff in days
+            const diffInDays = getDiffInDays(item.view_at, DateTime.local().startOf('day'))
             // Get date label
             let dateLabel: string;
             if (diffInDays < 1) {
@@ -72,7 +110,6 @@ export default function History() {
         }).filter((index) => index !== undefined) as number[]
         // Set should show badge index
         setShouldShowBadgeIndex(newShouldShowBadgeIndex)
-        console.log(refs.current);
     }, [historyList])
 
     return (
@@ -92,82 +129,69 @@ export default function History() {
                     </div>
                 </div>
                 {history && historyList &&
-                    <div id="scroll-parent" className="flex justify-center mt-7 pb-9 w-[70rem] h-[56rem] overflow-y-auto relative">
+                    <div id="scroll-parent" ref={infiniteScrollRef} className="flex justify-center mt-7 pb-9 w-[70rem] h-[56rem] overflow-y-auto relative">
                         <InfiniteScroll
-                            // className="mt-7 pb-9 w-[60rem] h-[56rem] border-l border-bili_grey space-y-5"
-                            className="space-y-5 w-[60rem] border-l border-bili_grey"
+                            className="w-[60rem] border-l border-bili_grey"
                             scrollableTarget="scroll-parent"
                             dataLength={historyList.length}
                             next={() => getHistoryResp({ ps: 20, type: HistoryType.Archive, max: history.cursor.max, view_at: history.cursor.view_at })}
                             hasMore={true}
-                            loader={<>加载中...</>}
+                            loader={<h4 className="text-center text-lg">加载中...</h4>}
                             endMessage={
                                 <div className="history-end">
                                     <div className="w-64 h-60"></div>
                                 </div>
                             }
                         >
-                            {historyList.map((item, index) => (
-                                <HistoryContentItem
-                                    index={index}
-                                    refs={refs}
-                                    key={index}
-                                    item={item}
-                                />
-                            ))}
+                            <div ref={parent} className="space-y-5">
+                                {historyList.map((item, index) => (
+                                    <HistoryContentItem
+                                        key={item.kid}
+                                        index={index}
+                                        refs={refs}
+                                        item={item}
+                                        execDeleteHistory={execDeleteHistory}
+                                    />
+                                ))}
+                            </div>
                         </InfiniteScroll>
                         {/* Time Badge */}
-                        {shouldShowBadgeIndex.length >= 1 && refs.current[shouldShowBadgeIndex[0]]! &&
-                            <div
-                                className="absolute p-2 left-5 rounded-lg text-white bg-primary z-0"
-                                style={{
-                                    top: `${refs.current[shouldShowBadgeIndex[0]]!.getBoundingClientRect().top! - 80}px`,
-                                    // left: `${refs.current[shouldShowBadgeIndex[0]]!.getBoundingClientRect().left!}px`
-                                }}
-                            >
+                        {shouldShowBadgeIndex.length >= 1 && refs.current[shouldShowBadgeIndex[0]] &&
+                            <TimeBadge top={refs.current[shouldShowBadgeIndex[0]]!.offsetTop!} left={20}>
                                 今天
-                            </div>
+                            </TimeBadge>
                         }
-                        {/* {shouldShowBadgeIndex.length >= 2 && refs[shouldShowBadgeIndex[1]] &&
-                            <div
-                                className="absolute -left-16 p-2 rounded-lg text-white bg-primary z-10"
-                                style={{ top: `${refs[shouldShowBadgeIndex[1]].current?.offsetTop}px` }}
-                            >
+                        {shouldShowBadgeIndex.length >= 2 && refs.current[shouldShowBadgeIndex[1]] &&
+                            <TimeBadge top={refs.current[shouldShowBadgeIndex[1]]!.offsetTop} left={20}>
                                 昨天
-                            </div>
+                            </TimeBadge>
                         }
-                        {shouldShowBadgeIndex.length >= 3 && refs[shouldShowBadgeIndex[2]] &&
-                            <div
-                                className="absolute -left-20 p-2 rounded-lg text-white bg-primary z-20"
-                                style={{ top: `${refs[shouldShowBadgeIndex[2]].current?.offsetTop}px` }}
-                            >
+                        {shouldShowBadgeIndex.length >= 3 && refs.current[shouldShowBadgeIndex[2]] &&
+                            <TimeBadge top={refs.current[shouldShowBadgeIndex[2]]!.offsetTop} left={5}>
                                 一周内
-                            </div>
+                            </TimeBadge>
                         }
-                        {shouldShowBadgeIndex.length >= 4 && refs[shouldShowBadgeIndex[3]] &&
-                            <div
-                                className="absolute -left-20 p-2 rounded-lg text-white bg-primary z-30"
-                                style={{ top: `${refs[shouldShowBadgeIndex[3]].current?.offsetTop}px` }}
-                            >
+                        {shouldShowBadgeIndex.length >= 4 && refs.current[shouldShowBadgeIndex[3]] &&
+                            <TimeBadge top={refs.current[shouldShowBadgeIndex[3]]!.offsetTop} left={5}>
                                 一周前
+                            </TimeBadge>
+                        }
+                        {shouldShowBadgeIndex.length >= 5 && refs.current[shouldShowBadgeIndex[4]] &&
+                            <TimeBadge top={refs.current[shouldShowBadgeIndex[4]]!.offsetTop} left={0}>
+                                一个月前
+                            </TimeBadge>
+                        }
+                        {/* Rocket */}
+                        {infiniteScrollRef && infiniteScrollRef.current &&
+                            <div
+                                className="fixed bottom-7 right-12 flex justify-center items-center w-16 h-16 text-white bg-primary rounded-full z-50 transition hover:scale-110 hover:cursor-pointer"
+                                onClick={() => infiniteScrollRef.current!.scrollTo({ top: 0, behavior: 'smooth' })}
+                            >
+                                <Rocket className="w-7 h-7" />
                             </div>
                         }
-                        {shouldShowBadgeIndex.length >= 5 && refs[shouldShowBadgeIndex[4]] &&
-                            <div
-                                className="absolute -left-24 p-2 rounded-lg text-white bg-primary z-40"
-                                style={{ top: `${refs[shouldShowBadgeIndex[4]].current?.offsetTop}px` }}
-                            >
-                                一个月前
-                            </div>
-                        } */}
-                        {/* Rocket */}
-                        {/* {infiniteScrollRef.current &&
-                <div
-                    className="absolute bottom-7 -right-12 w-16 h-16 bg-primary rounded-full z-50"
-                    onClick={() => infiniteScrollRef.current.scrollTop = 0}
-                >
-                </div>
-            } */}
+                        {/* Toaster */}
+                        <Toaster />
                     </div>
                 }
             </div>
@@ -175,21 +199,39 @@ export default function History() {
     )
 }
 
+// Components
+type TimeBadgeProps = {
+    top: number,
+    left: number,
+} & React.HTMLAttributes<HTMLDivElement>
+
+const TimeBadge: React.FC<TimeBadgeProps> = ({ top, left, children }) => {
+    return (
+        <div
+            className="absolute p-2 rounded-lg text-white bg-primary z-1"
+            style={{ top: `${top}px`, left: `${left}px` }}
+        >
+            {children}
+        </div>
+    )
+}
+
 type HistoryContentItemProps = {
     index: number,
     item: HistoryListItem,
-    refs: React.MutableRefObject<{[key: number]: HTMLDivElement | null}>
+    refs: React.MutableRefObject<{ [key: number]: HTMLDivElement | null }>
+    execDeleteHistory: (index: number, id: number, business: string) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
-const HistoryContentItem: React.FC<HistoryContentItemProps> = ({ index, item, refs }) => {
+const HistoryContentItem: React.FC<HistoryContentItemProps> = ({ index, item, refs, execDeleteHistory }) => {
     return (
-        <div ref={el => refs.current[index] = el} className="grid grid-cols-[3rem_1.5fr_4fr_0.5fr] items-center relative">
+        <div ref={el => refs.current[index] = el} className="grid grid-cols-[7rem_1.5fr_4fr_0.5fr] items-center relative">
             {/* Timeline */}
             <div className="absolute top-11 left-0 w-0 h-0 border-solid border-l-4 border-t-4 border-b-4 border-r-0 border-transparent border-t-transparent border-l-current border-l-bili_gray"></div>
             {/* Time */}
-            <span className="text-sm ml-5 text-gray-400">{DateTime.fromSeconds(item.view_at).toFormat('HH:mm')}</span>
+            <span className="text-sm ml-5 text-gray-400">{watchInTimeFormater(item.view_at, DateTime.local().startOf('day'))}</span>
             {/* Cover */}
-            <div className="w-40 h-24 ml-20 rounded-lg overflow-hidden relative">
+            <div className="w-40 h-24 ml-10 rounded-lg overflow-hidden relative">
                 <Image className="w-40 h-24 object-center object-cover" url={item.cover} alt="Cover" />
                 {/* Progress */}
                 <div className="absolute left-0 bottom-0 h-2 bg-primary rounded-full" style={{ width: `${(item.progress! / item.duration!) * 100}%` }}></div>
@@ -217,11 +259,35 @@ const HistoryContentItem: React.FC<HistoryContentItemProps> = ({ index, item, re
                 </div>
             </div>
             {/* Delete Action */}
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" onClick={() => execDeleteHistory(index, item.kid, item.history.business)}>
                 <Trash2 className="w-5 h-5 text-gray-400" />
             </Button>
         </div>
     )
+}
+
+const getDiffInDays = (view_at: number, timeToday: DateTime) => {
+    const itemDate = DateTime.fromSeconds(view_at).startOf('day');
+    const diffInDays = timeToday.diff(itemDate, 'days').days;
+    return diffInDays
+}
+
+const watchInTimeFormater = (view_at: number, timeToday: DateTime) => {
+    // Get diff in days
+    const diffInDays = getDiffInDays(view_at, timeToday)
+    // Get format by diff in days
+    let format;
+    if (diffInDays < 1) {
+        // Today
+        format = 'HH:mm';
+    } else if (diffInDays < 2) {
+        // Yesterday
+        format = 'HH:mm';
+    } else {
+        // More than two days ago
+        format = 'yyyy-MM-dd';
+    }
+    return DateTime.fromSeconds(view_at).toFormat(format);
 }
 
 const timeFormater = (seconds: number) => {

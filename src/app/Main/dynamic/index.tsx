@@ -12,6 +12,7 @@ import SendDynamic from "@/components/dynamic/send_dynamic";
 import { useBiliStore } from "@/store/biliStore";
 // Types
 import { DynamicItem, DynamicListResp, DynamicListRespCode, DynamicTypes } from "@/type/dynamic";
+import Topic from "@/components/dynamic/topic";
 
 export default function Dynamic() {
     // Store
@@ -79,7 +80,9 @@ export default function Dynamic() {
                         <div className="h-40 rounded-md bg-white">
                             <PersonalLetter />
                         </div>
-                        <div className="flex-1 h-40 rounded-md bg-white">话题</div>
+                        <div className="flex-1 h-40 rounded-md bg-white">
+                            <Topic />
+                        </div>
                     </div>
                     <div className="h-32 rounded-md bg-white p-3">
                         {dynamicList && <ChooseUP />}

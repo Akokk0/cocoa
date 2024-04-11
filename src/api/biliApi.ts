@@ -43,6 +43,7 @@ const WBI_KEYS = `${API_URL}x/web-interface/nav`
 
 // History
 const HISTORY = `${API_URL}x/web-interface/history/cursor`
+const DEL_HISTORY = `${API_URL}x/v2/history/delete`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -391,6 +392,27 @@ export async function getHistory(
             return await invoke('request', {
                 url,
                 reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function deleteHistory(kid: string, csrf: string) {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('form_request', {
+                url: DEL_HISTORY,
+                reqType: 'POST',
+                form: {
+                    kid,
+                    csrf,
+                }
             })
         } catch (e) {
             if (i === 1) {

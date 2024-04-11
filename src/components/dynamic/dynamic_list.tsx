@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 // Component
 import Image from "../image"
 import CssImg from "../css_img"
@@ -18,6 +18,7 @@ import LikeIcon from "../icon/like"
 import { cn } from "@/lib/utils";
 import Comment from "../comment";
 import { open } from "@tauri-apps/api/shell";
+import autoAnimate from '@formkit/auto-animate'
 
 type DynamicListProps = {
     dynamicList: DynamicItem[]
@@ -544,12 +545,15 @@ type DynamicParserProps = {
 const DynamicParser: React.FC<DynamicParserProps> = ({
     item
 }) => {
-    console.log(item);
-
     const [comment, setComment] = useState<boolean>()
+    const parent = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        parent.current && autoAnimate(parent.current)
+    }, [parent])
     // Generic
     return (
-        <div className="bg-white p-5 rounded-lg mb-2">
+        <div ref={parent} className="bg-white p-5 rounded-lg mb-2">
             <div className="flex space-x-5">
                 {/* Avatar Area */}
                 <div className="w-12 h-12 rounded-full overflow-hidden">

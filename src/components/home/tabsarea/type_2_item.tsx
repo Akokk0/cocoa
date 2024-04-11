@@ -30,11 +30,6 @@ export default function TypeTwoItem({
     }
     // Value
     let weekIndex = getWeekIndex()
-    // Effect
-    useEffect(() => {
-        console.log(item);
-
-    }, [])
 
     return (
         <div className={cn('fresh-home-categories-bangumi-timeline-item', item.is_today ? 'h-28' : '')}>
@@ -53,8 +48,8 @@ export default function TypeTwoItem({
                 }
             </div>
             <div className='fresh-home-categories-bangumi-timeline-seasons-container scroll-top scroll-bottom not-empty flex overflow-auto scrollbar-hide'>
-                {item.episodes.map(episode => (
-                    <div className='fresh-home-categories-bangumi-timeline-seasons'>
+                {item.episodes.map((episode, index) => (
+                    <div key={index} className='fresh-home-categories-bangumi-timeline-seasons'>
                         <a href="" className='fresh-home-categories-bangumi-timeline-season'>
                             <div className='fresh-home-categories-bangumi-timeline-season-cover cover-scale'>
                                 <Image className='object-cover object-center' url={episode.square_cover} alt='square_cover' />

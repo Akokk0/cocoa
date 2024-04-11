@@ -52,8 +52,8 @@ export default function TypeTwo({
                     </div>
                 </div>
                 <div className='fresh-home-categories-bangumi-timeline-content scrolled snap scrollbar-hide w-[58rem]'>
-                    {timelineList && timelineList.map(item => (
-                        <TypeTwoItem item={item} />
+                    {timelineList && timelineList.map((item, index) => (
+                        <TypeTwoItem key={index} item={item} />
                     ))}
                 </div>
             </div>
@@ -115,7 +115,7 @@ export default function TypeTwo({
                     <div className='fresh-home-rank-list-second-item animation z-20'>
                         <a className='fresh-home-rank-list-rank-item'>
                             <div className='fresh-home-rank-list-rank-item-title'></div>
-                            <a className='be-up-info fallback'></a>
+                            <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
                         <a className='fresh-home-rank-list-cover'>
@@ -129,7 +129,7 @@ export default function TypeTwo({
                     <div className='fresh-home-rank-list-third-item animation z-40'>
                         <a className='fresh-home-rank-list-rank-item'>
                             <div className='fresh-home-rank-list-rank-item-title'></div>
-                            <a className='be-up-info fallback'></a>
+                            <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
                         <a className='fresh-home-rank-list-cover'>
