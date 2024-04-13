@@ -1,6 +1,6 @@
-import { deleteToView, getToView } from "@/api/biliApi"
+import { clearAllToView, deleteToView, getToView } from "@/api/biliApi"
 import { Button } from "@/components/ui/button"
-import { ToViewData, ToViewListItem, ToViewResp, ToViewRespCode } from "@/type/toview"
+import { ToViewListItem, ToViewResp, ToViewRespCode } from "@/type/toview"
 import { ListVideo, Trash2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import Image from "@/components/image"
@@ -11,21 +11,21 @@ import autoAnimate from "@formkit/auto-animate"
 
 export default function ToView() {
     // State
-    const [toViewData, setToViewData] = useState<ToViewData | null>(null)
+    const [toViewList, setToViewList] = useState<ToViewListItem[] | null>(null)
     // Func
     const getToViewResp = async () => {
         // Send request to get popular content
         const toViewResp = JSON.parse(await getToView() as string) as ToViewResp
         // Check if request is error
         if (toViewResp.code != ToViewRespCode.SUCCESS) return
-        // Concat list
-        setToViewData(toViewResp.data)
+        // Set to view data
+        setToViewList(toViewResp.data.list)
     }
 
-    const delToView = async (params?: { aid?: number, viewed?: number }) => {
+    const delToView = async (params?: { aid?: number, viewed?: boolean }) => {
         // Show toast
-        toast("删除历史记录", {
-            description: '正在删除历史记录'
+        toast("删除稍后再看", {
+            description: '正在删除稍后再看'
         })
         // Get csrf from cookies
         const csrf = await invoke('get_csrf') as string
@@ -35,19 +35,40 @@ export default function ToView() {
             ...(params && params)
         }
         // Send request to delete to view
-        const delResp = JSON.parse(await deleteToView(form) as string) as ToViewResp
+        const delResp = JSON.parse(await deleteToView(form) as string) as { code: number, message: string, ttl: number }
         console.log(delResp);
+        // Check if request is success
+        if (delResp.code === 0) {
+            // Update list
+            await getToViewResp()
+            // Show toast
+            toast("成功", {
+                description: '已删除稍后再看'
+            })
+        } else {
+            toast("失败", {
+                description: delResp.message
+            })
+        }
+    }
+
+    const clsAllToView = async () => {
+        // Show toast
+        toast("清空稍后再看", {
+            description: '正在清空稍后再看'
+        })
+        // Get csrf from cookies
+        const csrf = await invoke('get_csrf') as string
+        // Send request to delete to view
+        const delResp = JSON.parse(await clearAllToView(csrf) as string) as { code: number, message: string, ttl: number }
         // Check if request is success
         if (delResp.code === 0) {
             // Show toast
             toast("成功", {
-                description: '已删除历史记录'
+                description: '已清空稍后再看'
             })
             // Update list
-            toViewData && setToViewData({
-                ...toViewData,
-                list: toViewData.list.filter(item => item.aid !== params?.aid)
-            })
+            toViewList && setToViewList([])
         } else {
             toast("失败", {
                 description: delResp.message
@@ -58,23 +79,7 @@ export default function ToView() {
     useEffect(() => {
         // Get to view data
         getToViewResp()
-        // observer
-        /* const observer = new MutationObserver(() => {
-            if (parent.current) {
-                autoAnimate(parent.current)
-                observer.disconnect()
-            }
-        })
-        // Start observer
-        observer.observe(document, { childList: true, subtree: true })
-
-        return () => observer.disconnect() */
     }, [])
-
-    useEffect(() => {
-        console.log(toViewData);
-    }, [toViewData])
-    
     // Refs
     const parent = useRef<HTMLDivElement>(null)
 
@@ -90,16 +95,16 @@ export default function ToView() {
                     {/* Left */}
                     <div className="flex items-center space-x-3">
                         <ListVideo className="w-9 h-9" />
-                        <h1 className="text-xl">稍后再看({toViewData && toViewData.list.length})</h1>
+                        <h1 className="text-xl">稍后再看({toViewList ? toViewList.length : '0'})</h1>
                     </div>
                     {/* Right */}
                     <div className="flex space-x-7">
-                        <Button variant="outline">一键清空</Button>
-                        <Button variant="outline">移除已观看视频</Button>
+                        <Button variant="outline" onClick={clsAllToView}>一键清空</Button>
+                        <Button variant="outline" onClick={() => delToView({ viewed: true })}>移除已观看视频</Button>
                     </div>
                 </div>
                 <div ref={parent} className="flex flex-col items-center mt-7 w-[60rem] h-[55rem] space-y-5 overflow-y-auto scrollbar-hide relative">
-                    {toViewData && toViewData.list.map((item, index) => (
+                    {toViewList && toViewList.map((item, index) => (
                         <ToViewContentItem key={item.aid} index={index} item={item} delToView={delToView} />
                     ))}
                 </div>
@@ -113,7 +118,7 @@ export default function ToView() {
 type ToViewContentItemProps = {
     index: number
     item: ToViewListItem,
-    delToView: (params?: { aid?: number, viewed?: number }) => void
+    delToView: (params?: { aid?: number, viewed?: boolean }) => void
 } & React.HTMLAttributes<HTMLDivElement>
 
 const ToViewContentItem: React.FC<ToViewContentItemProps> = ({ index, item, delToView }) => {

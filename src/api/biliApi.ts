@@ -48,6 +48,7 @@ const DEL_HISTORY = `${API_URL}x/v2/history/delete`
 // ToView
 const TO_VIEW = `${API_URL}x/v2/history/toview`
 const DEL_TO_VIEW = `${API_URL}x/v2/history/toview/del`
+const CLEAR_ALL_TO_VIEW = `${API_URL}x/v2/history/toview/clear`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -454,7 +455,7 @@ export async function getToView() {
 
 export async function deleteToView(
     {csrf, aid, viewed }:
-        { csrf: string, aid?: number, viewed?: number }
+        { csrf: string, aid?: number, viewed?: boolean }
 ) {
     const form = {
         csrf,
@@ -467,6 +468,27 @@ export async function deleteToView(
         try {
             return await invoke('form_request', {
                 url: DEL_TO_VIEW,
+                reqType: 'POST',
+                form
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function clearAllToView(csrf: string) {
+    const form = {
+        csrf
+    }
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('form_request', {
+                url: CLEAR_ALL_TO_VIEW,
                 reqType: 'POST',
                 form
             })
