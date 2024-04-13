@@ -45,6 +45,10 @@ const WBI_KEYS = `${API_URL}x/web-interface/nav`
 const HISTORY = `${API_URL}x/web-interface/history/cursor`
 const DEL_HISTORY = `${API_URL}x/v2/history/delete`
 
+// ToView
+const TO_VIEW = `${API_URL}x/v2/history/toview`
+const DEL_TO_VIEW = `${API_URL}x/v2/history/toview/del`
+
 export async function getLoginQRCodeURL() {
     // try three times
     let attempts = 3
@@ -268,11 +272,14 @@ export async function getPGCRanking(season_type: TimelineTypes = TimelineTypes.A
 }
 
 export async function getDynamicList(
-    type: DynamicTypes = DynamicTypes.All,
-    offset?: number,
-    update_baseline?: string,
-    page?: number,
-    timezone_offset: string = '-408'
+    { type = DynamicTypes.All, offset, update_baseline, page, timezone_offset = '-408' }:
+        {
+            type: DynamicTypes,
+            offset?: number,
+            update_baseline?: string,
+            page?: number,
+            timezone_offset?: string
+        }
 ) {
     let url = `${DYNAMIC_LIST}?type=${type}`
     offset && (url += `&offset=${offset}`)
@@ -296,15 +303,21 @@ export async function getDynamicList(
 }
 
 export async function getPerosnalDynamicList(
-    host_mid: string,
-    offset?: number,
-    features?: string,
-    timezone_offset: string = '-408'
+    host_mid: string, { offset, features, update_baseline, page, timezone_offset = '-408' }:
+        {
+            offset?: number,
+            update_baseline?: string,
+            features?: string,
+            page?: number,
+            timezone_offset?: string
+        }
 ) {
     let url = `${PERSONAL_DYNAMIC_LIST}?host_mid=${host_mid}`
     offset && (url += `&offset=${offset}`)
     timezone_offset && (url += `&timezone_offset=${timezone_offset}`)
     features && (url += `&features=${features}`)
+    update_baseline && (url += `&update_baseline=${update_baseline}`)
+    page && (url += `&page=${page}`)
 
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
@@ -413,6 +426,49 @@ export async function deleteHistory(kid: string, csrf: string) {
                     kid,
                     csrf,
                 }
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getToView() {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: TO_VIEW,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function deleteToView(
+    {csrf, aid, viewed }:
+        { csrf: string, aid?: number, viewed?: number }
+) {
+    const form = {
+        csrf,
+        ...(aid && { aid }),
+        ...(viewed && { viewed }),
+    }
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('form_request', {
+                url: DEL_TO_VIEW,
+                reqType: 'POST',
+                form
             })
         } catch (e) {
             if (i === 1) {

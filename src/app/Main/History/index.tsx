@@ -52,16 +52,17 @@ export default function History() {
         ) as { code: number, message: string, ttl: number }
         // Check if request is success
         if (resp.code === 0) {
+            // Show toast
             toast("成功", {
                 description: '已删除历史记录'
             })
+            // Delete item from list
+            setHistoryList(historyList.filter((_, i) => i !== index))
         } else {
             toast("失败", {
                 description: resp.message
             })
         }
-        // Delete item from list
-        setHistoryList(historyList.filter((_, i) => i !== index))
     }
     // Refs
     const refs = useRef<{ [key: number]: HTMLDivElement | null }>({})
@@ -70,15 +71,17 @@ export default function History() {
     // Effect
     useEffect(() => {
         getHistoryResp({})
-        const observer = new MutationObserver(() => {
+
+        const observerAnimate = new MutationObserver(() => {
             if (parent.current) {
-                console.log(parent.current);
                 autoAnimate(parent.current);
-                observer.disconnect();
+                observerAnimate.disconnect();
             }
-        });
-        observer.observe(document, { childList: true, subtree: true });
-        return () => observer.disconnect();
+        })
+
+        observerAnimate.observe(document, { childList: true, subtree: true });
+
+        return () => observerAnimate.disconnect()
     }, [])
 
     useEffect(() => {
@@ -129,9 +132,9 @@ export default function History() {
                     </div>
                 </div>
                 {history && historyList &&
-                    <div id="scroll-parent" ref={infiniteScrollRef} className="flex justify-center mt-7 pb-9 w-[70rem] h-[56rem] overflow-y-auto relative">
+                    <div id="scroll-parent" ref={infiniteScrollRef} className="flex justify-center mt-7 pb-9 w-[70rem] h-[56rem] overflow-y-auto scrollbar-hide relative">
                         <InfiniteScroll
-                            className="w-[60rem] border-l border-bili_grey"
+                            className="w-[60rem] border-l border-bili_grey space-y-5 scrollbar-hide"
                             scrollableTarget="scroll-parent"
                             dataLength={historyList.length}
                             next={() => getHistoryResp({ ps: 20, type: HistoryType.Archive, max: history.cursor.max, view_at: history.cursor.view_at })}

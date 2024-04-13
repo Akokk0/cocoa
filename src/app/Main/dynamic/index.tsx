@@ -11,7 +11,7 @@ import SendDynamic from "@/components/dynamic/send_dynamic";
 // Store
 import { useBiliStore } from "@/store/biliStore";
 // Types
-import { DynamicItem, DynamicListResp, DynamicListRespCode, DynamicTypes } from "@/type/dynamic";
+import { DynamicData, DynamicItem, DynamicListResp, DynamicListRespCode, DynamicTypes } from "@/type/dynamic";
 import Topic from "@/components/dynamic/topic";
 
 export default function Dynamic() {
@@ -19,16 +19,19 @@ export default function Dynamic() {
     const currentUp = useBiliStore(state => state.dynamicUpCurrentTab)
     const currentType = useBiliStore(state => state.dynamicTypeCurrentTab)
     // State
+    const [dynamicResp, setDynamicResp] = useState<DynamicData>()
     const [dynamicList, setDynamicList] = useState<DynamicItem[]>()
     const [isLoading, setIsLoading] = useState<boolean>(true)
     // Func
-    const getDynamicListResp = async (type?: DynamicTypes) => {
+    const getDynamicListResp = async (type: DynamicTypes = DynamicTypes.All) => {
         // Set isLoading to true
         setIsLoading(true)
         // Send request to get popular content
-        const dynamicListResp = JSON.parse(await getDynamicList(type) as string) as DynamicListResp
+        const dynamicListResp = JSON.parse(await getDynamicList({ type }) as string) as DynamicListResp
         // Check if request is error
         if (dynamicListResp.code != DynamicListRespCode.SUCCESS) return
+        // Set resp to state
+        setDynamicResp(dynamicListResp.data)
         // Set resp to state
         setDynamicList(dynamicListResp.data.items)
         // Set isLoading to false
@@ -39,13 +42,36 @@ export default function Dynamic() {
         // Set isLoading to true
         setIsLoading(true)
         // Send request to get popular content
-        const dynamicListResp = JSON.parse(await getPerosnalDynamicList(uid) as string) as DynamicListResp
+        const dynamicListResp = JSON.parse(await getPerosnalDynamicList(uid, {}) as string) as DynamicListResp
         // Check if request is error
         if (dynamicListResp.code != DynamicListRespCode.SUCCESS) return
         //Set resp to state
         setDynamicList(dynamicListResp.data.items)
         // Set isLoading to false
         setIsLoading(false)
+    }
+
+    const getMoreDynamicListResp = async () => {
+        let params = {
+            type: currentType,
+            offset: parseInt(dynamicResp?.offset!),
+            update_baseline: dynamicResp?.update_baseline,
+        }
+        let dynamicListResp: DynamicListResp
+        if (currentUp === 'all') {
+            // Send request to get popular content
+            dynamicListResp = JSON.parse(await getDynamicList(params) as string) as DynamicListResp
+        } else {
+            dynamicListResp = JSON.parse(await getPerosnalDynamicList(currentUp, params) as string) as DynamicListResp
+        }
+        // Check if request is error
+        if (dynamicListResp.code != DynamicListRespCode.SUCCESS) return
+        // Set resp to state
+        setDynamicResp(dynamicListResp.data)
+        // Check if dynamicList is null
+        if (!dynamicList) return
+        // Set resp to state
+        setDynamicList([...dynamicList, ...dynamicListResp.data.items])
     }
     // Effect
     useEffect(() => {
@@ -57,6 +83,14 @@ export default function Dynamic() {
         getDynamicListResp(currentType)
     }, [currentType])
 
+    useEffect(() => {
+        console.log(dynamicList);
+    }, [dynamicList])
+
+    useEffect(() => {
+        console.log(dynamicResp);
+    }, [dynamicResp])
+
     return (
         /* BG */
         <div className="bg-[#d3e9e8] h-full">
@@ -66,8 +100,8 @@ export default function Dynamic() {
                 <div className="overflow-hidden rounded-lg">
                     {isLoading ?
                         <div className="w-[42rem] text-center bg-white p-2">正在玩命加载中...</div> :
-                        <div className="flex flex-col space-y-3 w-[42rem] h-[58.7rem] overflow-auto scrollbar-hide">
-                            {dynamicList && <DynamicList dynamicList={dynamicList} />}
+                        <div className="flex flex-col w-[42rem]">
+                            {dynamicList && <DynamicList hasMore={dynamicResp?.has_more!} dynamicList={dynamicList} getMoreData={getMoreDynamicListResp} />}
                         </div>
                     }
                 </div>

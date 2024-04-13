@@ -858,17 +858,19 @@ export enum DynamicListRespCode {
     NOT_LOGIN = -101
 }
 
+export interface DynamicData {
+    has_more: boolean,
+    items: DynamicItem[],
+    offset: string,
+    update_baseline: string,
+    update_num: number
+}
+
 export interface DynamicListResp {
     code: DynamicListRespCode,
     message: string,
     ttl: number,
-    data: {
-        has_more: boolean,
-        items: DynamicItem[],
-        offset: string,
-        update_baseline: string,
-        update_num: number
-    }
+    data: DynamicData
 }
 
 export enum LatestUpdatesDynamicUpInfoRespCode {

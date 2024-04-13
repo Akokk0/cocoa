@@ -21,18 +21,22 @@ import { open } from "@tauri-apps/api/shell";
 import autoAnimate from '@formkit/auto-animate'
 
 type DynamicListProps = {
+    hasMore: boolean
     dynamicList: DynamicItem[]
+    getMoreData: () => Promise<void>
 } & React.HTMLAttributes<HTMLDivElement>
 
 const DynamicList: React.FC<DynamicListProps> = ({
-    dynamicList
+    hasMore, dynamicList, getMoreData
 }) => {
     return (
         <InfiniteScroll
+            height={'58.5rem'}
+            className="scrollbar-hide"
             dataLength={dynamicList.length}
-            hasMore={true}
-            next={() => console.log('Loading')}
-            loader={<h4>Loading...</h4>}
+            hasMore={hasMore}
+            next={getMoreData}
+            loader={<h4 className="text-center">正在玩命加载中...</h4>}
             endMessage={
                 <p style={{ textAlign: 'center' }}>
                     <b>Yay! You have seen it all</b>
@@ -49,7 +53,7 @@ const DynamicList: React.FC<DynamicListProps> = ({
 const interactionParser = (interaction: ModuleInteraction) => {
     return (
         <div className="flex flex-col space-y-1 border-l-2 border-bili_grey">
-            {interaction.items.map(({desc}, index) => (
+            {interaction.items.map(({ desc }, index) => (
                 <div key={index} className="flex space-x-3 items-center text-gray-400">
                     {/* Icon */}
                     <div className="ml-1">
@@ -304,10 +308,17 @@ const additionalParser = (additional: ModuleDynamicAdditional, forward?: boolean
                             </div>
                         </div>
                         {/* Button */}
-                        <Button disabled={item.button.status !== 1} className="text-white">
-                            {item.button.status === 1 && <Zap className="w-5 h-5" />}
-                            {item.button.status === 1 ? item.button.uncheck.text : item.button.check.text}
-                        </Button>
+                        {item.button.jump_style &&
+                            <Button disabled={item.button.status !== 1} className="text-white">
+                                {item.button.jump_style.text}
+                            </Button>
+                        }
+                        {!item.button.jump_style &&
+                            <Button disabled={item.button.status !== 1} className="text-white">
+                                {item.button.status === 1 && <Zap className="w-5 h-5" />}
+                                {item.button.status === 1 ? item.button.uncheck.text : item.button.check.text}
+                            </Button>
+                        }
                     </div>
                 </div>
             )
@@ -547,6 +558,8 @@ const DynamicParser: React.FC<DynamicParserProps> = ({
 }) => {
     const [comment, setComment] = useState<boolean>()
     const parent = useRef<HTMLDivElement>(null)
+
+    // console.log(item);
 
     useEffect(() => {
         parent.current && autoAnimate(parent.current)

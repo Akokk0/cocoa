@@ -10,11 +10,8 @@ type PersonalLetterProps = {
 export default function PersonalLetter({
     ...props
 }: PersonalLetterProps) {
+    // Store
     const my_info = useBiliStore(state => state.latestUpdatesData)?.my_info
-    console.log(my_info?.vip.status);
-    console.log(my_info?.vip.role);
-    console.log(my_info?.vip.label.text);
-    
     return (
         my_info &&
         <div className="flex flex-col space-y-4 w-80" {...props}>
