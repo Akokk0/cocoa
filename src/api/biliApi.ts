@@ -50,6 +50,10 @@ const TO_VIEW = `${API_URL}x/v2/history/toview`
 const DEL_TO_VIEW = `${API_URL}x/v2/history/toview/del`
 const CLEAR_ALL_TO_VIEW = `${API_URL}x/v2/history/toview/clear`
 
+// Favorite
+const ALL_FAVORITE = `${API_URL}x/v3/fav/folder/created/list-all`
+const FAVORITE = `${API_URL}x/v3/fav/folder/info`
+
 export async function getLoginQRCodeURL() {
     // try three times
     let attempts = 3
@@ -491,6 +495,40 @@ export async function clearAllToView(csrf: string) {
                 url: CLEAR_ALL_TO_VIEW,
                 reqType: 'POST',
                 form
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getAllFavorite(up_mid: number) {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${ALL_FAVORITE}?up_mid=${up_mid}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getFavorite(media_id: number) {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${FAVORITE}?media_id=${media_id}`,
+                reqType: 'GET',
             })
         } catch (e) {
             if (i === 1) {
