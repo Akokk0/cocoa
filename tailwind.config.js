@@ -30,6 +30,7 @@ module.exports = {
         primary: '#fa749b',
         bili_blue: '#139fd6',
         bili_grey: '#efefef',
+        bili_green: '#25c561',
         transparent_black: 'rgba(0, 0, 0, 0.5)',
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

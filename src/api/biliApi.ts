@@ -52,7 +52,7 @@ const CLEAR_ALL_TO_VIEW = `${API_URL}x/v2/history/toview/clear`
 
 // Favorite
 const ALL_FAVORITE = `${API_URL}x/v3/fav/folder/created/list-all`
-const FAVORITE = `${API_URL}x/v3/fav/folder/info`
+const FAVORITE = `${API_URL}x/v3/fav/resource/list`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -521,13 +521,13 @@ export async function getAllFavorite(up_mid: number) {
     }
 }
 
-export async function getFavorite(media_id: number) {
+export async function getFavorite(media_id: number, pn: number = 1, ps: number = 20) {
     // Send request
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
-                url: `${FAVORITE}?media_id=${media_id}`,
+                url: `${FAVORITE}?media_id=${media_id}&ps=${ps}&pn=${pn}`,
                 reqType: 'GET',
             })
         } catch (e) {
