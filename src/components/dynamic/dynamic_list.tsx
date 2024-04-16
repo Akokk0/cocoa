@@ -432,7 +432,6 @@ const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, fo
                         {/* Cover */}
                         <div className="relative">
                             <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={video?.cover!} />
-                            {/* <Image  url={video?.cover!} alt="Cover" /> */}
                             <div className="absolute left-0 top-0 w-52 h-full" style={{ backgroundImage: 'linear-gradient(180deg, transparent 70%, black 100%)' }}></div>
                             <span className="absolute right-2 bottom-2 text-white text-sm opacity-80">{video?.duration_text}</span>
                         </div>

@@ -12,7 +12,7 @@ import SendDynamic from "@/components/dynamic/send_dynamic";
 import { useBiliStore } from "@/store/biliStore";
 // Types
 import { DynamicData, DynamicItem, DynamicListResp, DynamicListRespCode, DynamicTypes } from "@/type/dynamic";
-import Topic from "@/components/dynamic/topic";
+import BlockList from "@/components/dynamic/block_list";
 
 export default function Dynamic() {
     // Store
@@ -83,13 +83,13 @@ export default function Dynamic() {
         getDynamicListResp(currentType)
     }, [currentType])
 
-    useEffect(() => {
+    /* useEffect(() => {
         console.log(dynamicList);
     }, [dynamicList])
 
     useEffect(() => {
         console.log(dynamicResp);
-    }, [dynamicResp])
+    }, [dynamicResp]) */
 
     return (
         /* BG */
@@ -115,7 +115,7 @@ export default function Dynamic() {
                             <PersonalLetter />
                         </div>
                         <div className="flex-1 h-40 rounded-md bg-white">
-                            <Topic />
+                            <BlockList />
                         </div>
                     </div>
                     <div className="h-32 rounded-md bg-white p-3">

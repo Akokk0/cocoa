@@ -54,6 +54,9 @@ const CLEAR_ALL_TO_VIEW = `${API_URL}x/v2/history/toview/clear`
 const ALL_FAVORITE = `${API_URL}x/v3/fav/folder/created/list-all`
 const FAVORITE = `${API_URL}x/v3/fav/resource/list`
 
+// BlockList
+const BLOCK_LIST = `${API_URL}x/credit/blocked/list`
+
 export async function getLoginQRCodeURL() {
     // try three times
     let attempts = 3
@@ -528,6 +531,23 @@ export async function getFavorite(media_id: number, pn: number = 1, ps: number =
         try {
             return await invoke('request', {
                 url: `${FAVORITE}?media_id=${media_id}&ps=${ps}&pn=${pn}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getBlockList() {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: BLOCK_LIST,
                 reqType: 'GET',
             })
         } catch (e) {

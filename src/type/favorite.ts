@@ -46,7 +46,7 @@ export interface FavoriteInfoDataInfo {
     id: number; // 收藏夹 mlid（完整 id）
     fid: number; // 收藏夹原始 id
     mid: number; // 创建者 mid
-    attr: 0 | 1; // 属性，0：正常，1：失效
+    attr: number; // 属性，0：正常，1：失效
     title: string; // 收藏夹标题
     cover: string; // 收藏夹封面图片 url
     upper: UpperInfo; // 创建者信息
