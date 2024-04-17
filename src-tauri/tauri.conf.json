@@ -18,7 +18,13 @@
       },
       "fs": {
         "all": true,
-        "scope": ["$APPCONFIG/*", "$APPDATA/*"]
+        "scope": [
+          "$APPCONFIG/*",
+          "$APPDATA/*"
+        ]
+      },
+      "window": {
+        "all": true
       }
     },
     "windows": [

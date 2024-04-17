@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 // Import api
 import { checkIfCookiesNeedsRefresh, confirmRefresh, getRefreshCSRF, refreshCookie } from "@/api/biliApi";
-import { generateCorrespondPath, parseCSRFromHTML } from "@/lib/biliUtils";
+import { generateCorrespondPath, openPlayer, parseCSRFromHTML } from "@/lib/biliUtils";
 // Import types
 import { ConfirmRefreshResp, ConfirmRefreshRespCode, CookieRefreshResp, CookieRefreshRespCode, WebCookiesRefreshResp, WebCookiesRefreshRespCode } from "@/type/login";
 

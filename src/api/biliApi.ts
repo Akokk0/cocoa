@@ -57,6 +57,9 @@ const FAVORITE = `${API_URL}x/v3/fav/resource/list`
 // BlockList
 const BLOCK_LIST = `${API_URL}x/credit/blocked/list`
 
+// Video Stream
+const VIDEO_STREAM = `${API_URL}x/player/wbi/playurl`
+
 export async function getLoginQRCodeURL() {
     // try three times
     let attempts = 3
@@ -548,6 +551,23 @@ export async function getBlockList() {
         try {
             return await invoke('request', {
                 url: BLOCK_LIST,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getVideoStream(params: string) {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${VIDEO_STREAM}?${params}`,
                 reqType: 'GET',
             })
         } catch (e) {

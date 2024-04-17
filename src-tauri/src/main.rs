@@ -2,8 +2,17 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod command;
-use cocoa::set_up_func;
+use std::thread;
+
+use cocoa::{set_up_func, main as proxy_main};
 use command::*;
+
+async fn start_proxy() {
+    println!("Starting proxy server");
+    thread::spawn(|| {
+        proxy_main();
+    });
+}
 
 fn main() {
     tauri::Builder::default()
@@ -26,4 +35,6 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+    // Start proxy server
+    tokio::runtime::Runtime::new().unwrap().block_on(start_proxy());
 }

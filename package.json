@@ -21,6 +21,7 @@
     "@tauri-apps/api": "^1.5.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "dplayer": "^1.27.1",
     "embla-carousel-autoplay": "^8.0.1",
     "embla-carousel-react": "^8.0.1",
     "lucide-react": "^0.364.0",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.11",
+    "@types/dplayer": "^1",
     "@types/luxon": "^3.4.2",
     "@types/md5": "^2",
     "@types/node": "^20.12.4",

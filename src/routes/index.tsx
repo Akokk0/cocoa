@@ -1,8 +1,8 @@
 import { createHashRouter } from "react-router-dom";
 // Import pages
-import App from "@/app/App";
-import Login from "@/app/Login";
-import Mainlayout from '@/app/main/Layout'
+import App from "@/app/app";
+import Login from "@/app/login";
+import Mainlayout from '@/app/main/layout'
 import Home from '@/app/main/home'
 import History from "@/app/main/history";
 import Personal from "@/app/main/personal";
@@ -10,6 +10,7 @@ import Settings from "@/app/main/settings";
 import Dynamic from "@/app/main/dynamic";
 import Favorite from "@/app/main/favorite";
 import ToView from "@/app/main/toview";
+import Player from "@/app/player";
 
 const router = createHashRouter([
     {
@@ -53,6 +54,10 @@ const router = createHashRouter([
                 element: <Settings />
             }
         ]
+    },
+    {
+        path: '/player/:bvid/:cid',
+        element: <Player />
     }
 ])
 

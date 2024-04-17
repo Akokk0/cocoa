@@ -1,3 +1,4 @@
+import { openPlayer } from "@/lib/biliUtils";
 import Danmaku from "./icon/danmaku";
 import Like from "./icon/like";
 import PlayIcon from "./icon/play";
@@ -66,7 +67,7 @@ export default function VideoInfo({
     const stat = item.stat
 
     return (
-        <Card className="overflow-hidden" {...props}>
+        <Card className="overflow-hidden hover:cursor-pointer" {...props} onClick={() => openPlayer(item.bvid, item.cid)}>
             <Image url={item.pic} alt="封面" className="w-full h-48 object-cover object-center" />
             <CardContent className="flex flex-col justify-start space-y-2">
                 <span className="mt-2 text-sm line-clamp-2 h-10 hover:text-bili_blue transition">{item.title}</span>

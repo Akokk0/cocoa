@@ -1,5 +1,6 @@
 import { getWbiKey } from "@/api/biliApi";
 import { WbiResp } from "@/type/authentication";
+import { WebviewWindow, appWindow } from "@tauri-apps/api/window";
 import md5 from "md5";
 
 // generate CorrespondPath
@@ -87,4 +88,32 @@ export async function getWbiSign(params: { [key: string]: any }) {
     const img_key = web_keys.img_key,
         sub_key = web_keys.sub_key
     return encWbi(params, img_key, sub_key)
+}
+
+export async function openPlayer(bvid: string, cid: number, title: string = 'Player', scale: number = 1) {
+    console.log(bvid);
+    
+    const webview_root = appWindow
+    // 优化视频窗口的位置
+    const rootPos = await webview_root.outerPosition()
+    const titleHeight = (await webview_root.outerSize()).height - (await webview_root.innerSize()).height
+
+    const webview = new WebviewWindow('theUniqueVideo', {
+        title: title,
+        url: `/#/player/${bvid}/${cid}`,
+        width: 1280,
+        height: 720,
+        minHeight: 600,
+        minWidth: 800,
+        x: rootPos.x / scale + 100,
+        y: (rootPos.y + titleHeight) / scale
+    })
+
+    await webview.once('tauri://created', async () => {
+        // 成功打开新窗口后, 给主窗口发一条事件消息
+        await webview_root.emit("main-bbhouse", "new-video-window")
+    })
+    await webview.once('tauri://error', function (e) {
+        console.log(e)
+    })
 }

@@ -10,7 +10,10 @@ use reqwest_cookie_store::{CookieStore, CookieStoreMutex};
 use tauri::Manager;
 
 mod object;
+mod proxy;
+
 pub use object::*;
+pub use proxy::main;
 
 // Creates default request header
 pub fn create_headers() -> HeaderMap {
