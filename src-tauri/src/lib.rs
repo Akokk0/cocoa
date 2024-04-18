@@ -13,7 +13,7 @@ mod object;
 mod proxy;
 
 pub use object::*;
-pub use proxy::main;
+pub use proxy::run_proxy_server;
 
 // Creates default request header
 pub fn create_headers() -> HeaderMap {
@@ -174,6 +174,14 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     }
     // Load cookies
     let cookie_store = load_cookies(&app_data_path);
+    let cookie_store_move = Arc::clone(&cookie_store);
+    println!("Before start proxy server");
+    // Start proxy server
+    tokio::spawn(async move {
+        println!("Starting proxy server");
+        run_proxy_server(cookie_store_move).await;
+    });
+    println!("After start proxy server");
     // Get app config path
     let app_config_path = get_app_path(AppPath::CONFIG, &app.config()).unwrap();
     // Check if app config folder exist
@@ -218,6 +226,7 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+// Check if auth folder is exist
 pub fn checking_auth_folder_is_exist(app_data_path: &String) -> Result<(), String> {
     // Define auth_folder_path
     let auth_folder_path = format!("{}/auth/", app_data_path);

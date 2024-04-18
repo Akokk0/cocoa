@@ -1,6 +1,7 @@
 import { getVideoStream } from "@/api/biliApi"
 import { getWbiSign } from "@/lib/biliUtils"
 import { VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video_stream"
+import DPlayer from "dplayer"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
@@ -36,32 +37,53 @@ const Player: React.FC = () => {
         //Set resp to state
         setVideoStreamInfo(videoStreamResp.data)
     }
-    // Effect
-    useEffect(() => {
-        // Check if bvid and cid is valid
-        if (!bvid || !cid) return
-        // Get video stream info
-        getVideoStreamResp({
-            bvid,
-            cid: parseInt(cid),
-            qn: VideoQuality["720P_HD"],
-            fnval: 1,
-            fnver: 0,
-            fourk: 0,
-        })
-    }, [])
 
-    useEffect(() => {
-        console.log(videoStreamInfo);
-    }, [videoStreamInfo])
+    const initPlayer = () => {
+        if (!videoStreamInfo) return
+        new DPlayer({
+            container: document.getElementById('dplayer'),
+            live: false,
+            autoplay: true,
+            loop: true,
+            lang: 'zh-cn',
+            screenshot: false,
+            hotkey: true,
+            airplay: true,
+            video: {
+                url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url)}`,
+            },
+        });
+}
+// Effect
+useEffect(() => {
+    // Check if bvid and cid is valid
+    if (!bvid || !cid) return
+    // Get video stream info
+    getVideoStreamResp({
+        bvid,
+        cid: parseInt(cid),
+        qn: VideoQuality["720P_HD"],
+        fnval: 1,
+        fnver: 0,
+        fourk: 0,
+        platform: 'html5',
+    })
+}, [])
 
-    return (
-        <div>
-            <h1>Player</h1>
-            <p>bvid: {bvid}</p>
-            <p>cid: {cid}</p>
-        </div>
-    )
+useEffect(() => {
+    console.log(videoStreamInfo);
+    if (!videoStreamInfo) return
+    console.log(videoStreamInfo?.durl![0].url);
+    console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url)}`);
+    // Init player
+    initPlayer()
+}, [videoStreamInfo])
+
+return (
+    <div>
+        <div id="dplayer"></div>
+    </div>
+)
 }
 
 export default Player
