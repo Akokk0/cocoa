@@ -567,6 +567,7 @@ export async function getVideoStream(params: string) {
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
+                // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(VIDEO_STREAM + '?' + params)}`,
                 url: `${VIDEO_STREAM}?${params}`,
                 reqType: 'GET',
             })

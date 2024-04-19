@@ -1,15 +1,26 @@
 use reqwest::{
-    header::{HeaderMap, HeaderValue, HOST, ORIGIN, REFERER, USER_AGENT},
+    header::{HeaderMap, HeaderValue, ORIGIN, REFERER, USER_AGENT},
     Client,
 };
 use reqwest_cookie_store::CookieStoreMutex;
-use tauri::Url;
+use urlencoding::decode;
 use warp::Filter;
 
-use std::{
-    error::Error,
-    sync::Arc,
-};
+use std::{error::Error, fmt, sync::Arc};
+
+use futures_util::StreamExt;
+
+// 创建一个新的错误类型
+#[derive(Debug)]
+struct StreamError;
+
+impl fmt::Display for StreamError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Stream Error")
+    }
+}
+
+impl Error for StreamError {}
 
 // Creates default request header
 fn create_proxy_headers() -> HeaderMap {
@@ -17,10 +28,6 @@ fn create_proxy_headers() -> HeaderMap {
     headers.insert(
         USER_AGENT,
         HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (HTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36"));
-    headers.insert(
-        HOST,
-        HeaderValue::from_static("upos-sz-mirrorcoso1.bilivideo.com"),
-    );
     headers.insert(
         ORIGIN,
         HeaderValue::from_static("https://space.bilibili.com"),
@@ -49,7 +56,6 @@ fn proxy_set_up_func(
 }
 
 pub async fn run_proxy_server(cookie_store: Arc<CookieStoreMutex>) {
-    println!("Proxy server starting");
     let client = proxy_set_up_func(cookie_store).unwrap();
     // 创建一个代理路由
     let proxy_route =
@@ -58,36 +64,37 @@ pub async fn run_proxy_server(cookie_store: Arc<CookieStoreMutex>) {
             .and_then(move |url: String| {
                 let client = Arc::clone(&client);
                 async move {
-                    // println!("Proxying: {}", &url);
-                    let url = "https://upos-hz-mirrorakam.akamaized.net/upgcxcode/44/90/1510469044/1510469044-1-16.mp4?e=ig8euxZM2rNcNbRVhwdVhwdlhWdVhwdVhoNvNC8BqJIzNbfq9rVEuxTEnE8L5F6VnEsSTx0vkX8fqJeYTj_lta53NCM=&uipk=5&nbs=1&deadline=1713459780&gen=playurlv2&os=akam&oi=1558149421&trid=e5aa7d46f8254939bbdcd40e4e959e6bh&mid=22916310&platform=html5&upsig=dc8ad14fcce1e920990507fb1c38c495&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&hdnts=exp=1713459780~hmac=4af4fb3ea6f4936274239ab87ef0c26db3f703ec70966c3aca16af5791543008&bvc=vod&nettype=0&f=h_0_0&bw=46911&logo=80000000";
                     // 解码 URL
-                    let decoded_url = match Url::parse(&url) {
-                        Ok(url) => url,
+                    let decoded_url = match decode(&url) {
+                        Ok(decoded_url) => decoded_url,
                         Err(_) => return Err(warp::reject::not_found()),
                     };
+                    println!("Proxying: {}", decoded_url.to_string());
                     // 使用 client 发送 GET 请求到视频流服务器
-                    let resp = client.get(decoded_url.as_str()).send().await;
+                    let resp = client.get(decoded_url.to_string()).send().await;
                     println!("resp received");
+                    println!("{:#?}", resp);
                     match resp {
-                        Ok(mut resp) => {
-                            /* let mut body = Vec::new();
-                            while let Some(chunk) = resp.chunk().await.unwrap() {
-                                body.extend_from_slice(&chunk);
+                        Ok(resp) => {
+                            /* for key in &["content-type", "access-control-allow-origin"] {
+                                resp.headers_mut().remove(*key);
                             } */
-                            let body = resp.bytes().await.unwrap();
+                            // let body = resp.bytes().await.unwrap();
+                            let body = resp.bytes_stream();
+                            let body = warp::hyper::Body::wrap_stream(body.map(|b| b.map_err(|_| StreamError)));
                             // 将 Body 转换为 `impl warp::Reply`
                             let reply = warp::http::Response::builder()
                                 .header("content-type", "video/mp4")
+                                .header("access-control-allow-origin", "*")
                                 .body(body)
                                 .unwrap();
+                            // let reply = convert_response(resp).await.unwrap();
                             Ok::<_, warp::Rejection>(reply)
                         }
                         Err(_) => Err(warp::reject::not_found()),
                     }
                 }
             });
-    println!("Proxy route created");
     // 启动服务器
     warp::serve(proxy_route).run(([127, 0, 0, 1], 3030)).await;
-    println!("Proxy server started at");
 }

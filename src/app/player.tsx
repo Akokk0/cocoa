@@ -1,6 +1,6 @@
 import { getVideoStream } from "@/api/biliApi"
 import { getWbiSign } from "@/lib/biliUtils"
-import { VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video_stream"
+import { VideoFormat, VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video_stream"
 import DPlayer from "dplayer"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -32,6 +32,7 @@ const Player: React.FC = () => {
         const wbi = await getWbiSign(params)
         // Send request to get popular content
         const videoStreamResp = JSON.parse(await getVideoStream(wbi) as string) as VideoStreamResp
+        console.log(videoStreamResp);
         // Check if request is error
         if (videoStreamResp.code != VideoStreamRespCode.Success) return
         //Set resp to state
@@ -40,6 +41,12 @@ const Player: React.FC = () => {
 
     const initPlayer = () => {
         if (!videoStreamInfo) return
+        /* const quality = videoStreamInfo?.accept_description.map((item, index) => {
+            return {
+                name: item,
+                url: videoStreamInfo.durl![index].url
+            }
+        }) */
         new DPlayer({
             container: document.getElementById('dplayer'),
             live: false,
@@ -50,7 +57,9 @@ const Player: React.FC = () => {
             hotkey: true,
             airplay: true,
             video: {
-                url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url)}`,
+                url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
+                // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
+                // url: videoStreamInfo.dash?.video[0].baseUrl!
             },
         });
 }
@@ -62,19 +71,20 @@ useEffect(() => {
     getVideoStreamResp({
         bvid,
         cid: parseInt(cid),
-        qn: VideoQuality["720P_HD"],
-        fnval: 1,
+        qn: VideoQuality["1080P_HD"],
+        fnval: VideoFormat.MP4,
         fnver: 0,
         fourk: 0,
-        platform: 'html5',
+        platform: "html5",
     })
 }, [])
 
 useEffect(() => {
     console.log(videoStreamInfo);
     if (!videoStreamInfo) return
-    console.log(videoStreamInfo?.durl![0].url);
-    console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url)}`);
+    // console.log(videoStreamInfo?.durl![0].url);
+    // console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`);
+    console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`);
     // Init player
     initPlayer()
 }, [videoStreamInfo])
@@ -82,6 +92,7 @@ useEffect(() => {
 return (
     <div>
         <div id="dplayer"></div>
+        {/* {videoStreamInfo && <video src={`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`}></video>} */}
     </div>
 )
 }

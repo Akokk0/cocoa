@@ -32,7 +32,7 @@ const BlockList: React.FC = () => {
                     {/* Up Name */}
                     <span className="line-clamp-1 h-5">{item.uname}</span>
                     {/* Block Reason */}
-                    <span>{item.reasonTypeName}</span>
+                    <span className="line-clamp-1">{item.reasonTypeName}</span>
                     {/* Block date */}
                     <span>{item.blockedDays === 0 ? '永' : item.blockedDays}</span>
                 </div>
