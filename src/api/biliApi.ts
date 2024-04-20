@@ -59,6 +59,7 @@ const BLOCK_LIST = `${API_URL}x/credit/blocked/list`
 
 // Video Stream
 const VIDEO_STREAM = `${API_URL}x/player/wbi/playurl`
+const VIDEO_PAGELIST = `${API_URL}x/player/pagelist`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -562,6 +563,7 @@ export async function getBlockList() {
 }
 
 export async function getVideoStream(params: string) {
+    console.log(`${VIDEO_STREAM}?${params}`);
     // Send request
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
@@ -569,6 +571,23 @@ export async function getVideoStream(params: string) {
             return await invoke('request', {
                 // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(VIDEO_STREAM + '?' + params)}`,
                 url: `${VIDEO_STREAM}?${params}`,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getVideoPageList(bvid: string) {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${VIDEO_PAGELIST}?bvid=${bvid}`,
                 reqType: 'GET',
             })
         } catch (e) {

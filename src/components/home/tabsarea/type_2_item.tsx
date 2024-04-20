@@ -1,7 +1,6 @@
 // Styles
 import { Result } from '@/type/home'
 import './styles.css'
-import { useEffect } from 'react'
 import Image from '../../image'
 import { cn } from '@/lib/utils'
 import { AlarmClockCheck } from 'lucide-react'

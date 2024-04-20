@@ -1,9 +1,15 @@
 import { getVideoStream } from "@/api/biliApi"
 import { getWbiSign } from "@/lib/biliUtils"
-import { VideoFormat, VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video_stream"
+import { VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video"
 import DPlayer from "dplayer"
+import dashjs from "dashjs"
+import '@vidstack/react/player/styles/base.css'
+/* import XGPlayer from 'xgplayer'
+import 'xgplayer/dist/index.min.css' */
+// import ShakaPlugin from 'xgplayer-shaka'
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+// import { MediaPlayer, MediaProvider } from '@vidstack/react';
 
 const Player: React.FC = () => {
     // Params
@@ -11,6 +17,7 @@ const Player: React.FC = () => {
     // State
     const [videoStreamInfo, setVideoStreamInfo] = useState<VideoStreamData>()
     // Func
+
     const getVideoStreamResp = async (
         params:
             {
@@ -32,14 +39,13 @@ const Player: React.FC = () => {
         const wbi = await getWbiSign(params)
         // Send request to get popular content
         const videoStreamResp = JSON.parse(await getVideoStream(wbi) as string) as VideoStreamResp
-        console.log(videoStreamResp);
         // Check if request is error
         if (videoStreamResp.code != VideoStreamRespCode.Success) return
         //Set resp to state
         setVideoStreamInfo(videoStreamResp.data)
     }
 
-    const initPlayer = () => {
+    const initPlayer = async () => {
         if (!videoStreamInfo) return
         /* const quality = videoStreamInfo?.accept_description.map((item, index) => {
             return {
@@ -47,8 +53,18 @@ const Player: React.FC = () => {
                 url: videoStreamInfo.durl![index].url
             }
         }) */
+        /* let player = new XGPlayer({
+            id: 'player',
+            url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
+            // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
+            // url: videoStreamInfo.dash?.video[0].baseUrl!,
+            // plugins: [ShakaPlugin],
+            autoplay: true,
+            height: '100%',
+            width: '100%',
+        }) */
         new DPlayer({
-            container: document.getElementById('dplayer'),
+            container: document.getElementById('player'),
             live: false,
             autoplay: true,
             loop: true,
@@ -57,44 +73,55 @@ const Player: React.FC = () => {
             hotkey: true,
             airplay: true,
             video: {
-                url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
-                // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
+                type: 'customDash',
+                // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
+                url: `/api/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
                 // url: videoStreamInfo.dash?.video[0].baseUrl!
-            },
+                customType: {
+                    customDash: function (video: any) {
+                        dashjs.MediaPlayer().create().initialize(video, video.src, false);
+                    }
+                }
+            }
         });
-}
-// Effect
-useEffect(() => {
-    // Check if bvid and cid is valid
-    if (!bvid || !cid) return
-    // Get video stream info
-    getVideoStreamResp({
-        bvid,
-        cid: parseInt(cid),
-        qn: VideoQuality["1080P_HD"],
-        fnval: VideoFormat.MP4,
-        fnver: 0,
-        fourk: 0,
-        platform: "html5",
-    })
-}, [])
+        // const resp = await fetch(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`)
+        // console.log(resp);
+    }
+    // Effect
+    useEffect(() => {
+        // Check if bvid and cid is valid
+        if (!bvid || !cid) return
+        // Get video stream info
+        getVideoStreamResp({
+            bvid,
+            cid: parseInt(cid),
+            qn: VideoQuality["8K_UltraHighDefinition"],
+            fnval: 1,
+            fnver: 0,
+            fourk: 1,
+        })
+    }, [])
 
-useEffect(() => {
-    console.log(videoStreamInfo);
-    if (!videoStreamInfo) return
-    // console.log(videoStreamInfo?.durl![0].url);
-    // console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`);
-    console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`);
-    // Init player
-    initPlayer()
-}, [videoStreamInfo])
+    useEffect(() => {
+        console.log(videoStreamInfo);
+        if (!videoStreamInfo) return
+        // console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`);
+        // console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`);
+        // Init player
+        initPlayer()
+    }, [videoStreamInfo])
 
-return (
-    <div>
-        <div id="dplayer"></div>
-        {/* {videoStreamInfo && <video src={`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`}></video>} */}
-    </div>
-)
+    return (
+        <div className="w-sreen h-screen bg-pink-100">
+            <div id="player"></div>
+            {/* {videoStreamInfo &&
+                <MediaPlayer title="Sprite Fight" src={`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`}>
+                    <MediaProvider />
+                </MediaPlayer>
+            } */}
+            {/* {videoStreamInfo && <video src={`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`}></video>} */}
+        </div>
+    )
 }
 
 export default Player

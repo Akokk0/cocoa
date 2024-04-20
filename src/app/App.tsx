@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 // Import api
 import { checkIfCookiesNeedsRefresh, confirmRefresh, getRefreshCSRF, refreshCookie } from "@/api/biliApi";
-import { generateCorrespondPath, openPlayer, parseCSRFromHTML } from "@/lib/biliUtils";
+import { generateCorrespondPath, parseCSRFromHTML } from "@/lib/biliUtils";
 // Import types
 import { ConfirmRefreshResp, ConfirmRefreshRespCode, CookieRefreshResp, CookieRefreshRespCode, WebCookiesRefreshResp, WebCookiesRefreshRespCode } from "@/type/login";
 
@@ -64,15 +64,6 @@ function App() {
             switch (refreshCookieResp.code) {
                 case CookieRefreshRespCode.SUCCESS: {
                     break
-                }
-                case CookieRefreshRespCode.NOT_LOGIN: {
-                    // todo!
-                }
-                case CookieRefreshRespCode.CSRF_VERIFICATION_FAILED: {
-                    // todo!
-                }
-                case CookieRefreshRespCode.REFRESH_CSRF_ERROR_OR_MISMATCH_WITH_COOKIE: {
-                    // todo!
                 }
                 default: {
                     // todo!

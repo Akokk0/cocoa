@@ -56,45 +56,60 @@ fn proxy_set_up_func(
 }
 
 pub async fn run_proxy_server(cookie_store: Arc<CookieStoreMutex>) {
+    // Create a new client
     let client = proxy_set_up_func(cookie_store).unwrap();
-    // 创建一个代理路由
-    let proxy_route =
-        warp::path!("proxy" / String)
-            .and(warp::get())
-            .and_then(move |url: String| {
-                let client = Arc::clone(&client);
-                async move {
-                    // 解码 URL
-                    let decoded_url = match decode(&url) {
-                        Ok(decoded_url) => decoded_url,
-                        Err(_) => return Err(warp::reject::not_found()),
-                    };
-                    println!("Proxying: {}", decoded_url.to_string());
-                    // 使用 client 发送 GET 请求到视频流服务器
-                    let resp = client.get(decoded_url.to_string()).send().await;
-                    println!("resp received");
-                    println!("{:#?}", resp);
-                    match resp {
-                        Ok(resp) => {
-                            /* for key in &["content-type", "access-control-allow-origin"] {
-                                resp.headers_mut().remove(*key);
+    // Create a new route
+    let proxy_route = warp::path!("proxy" / String)
+        .and(warp::get())
+        .and_then(move |url: String| {
+            let client = Arc::clone(&client);
+            async move {
+                // 解码 URL
+                let decoded_url = match decode(&url) {
+                    Ok(decoded_url) => decoded_url,
+                    Err(_) => return Err(warp::reject::not_found()),
+                };
+                println!("Proxying: {}", decoded_url.to_string());
+                // Send request to URL
+                let resp = client.get(decoded_url.to_string()).send().await;
+                println!("{:#?}", resp);
+                match resp {
+                    Ok(resp) => {
+                        // Create a new response
+                        let mut reply = warp::http::Response::builder();
+                        // Get response headers
+                        let headers = reply.headers_mut().unwrap();
+                        // Copy headers from response to reply
+                        for (key, value) in resp.headers().clone() {
+                            /* let key = key.unwrap();
+                            if key.to_string() == "host" {
+                                continue;
                             } */
-                            // let body = resp.bytes().await.unwrap();
-                            let body = resp.bytes_stream();
-                            let body = warp::hyper::Body::wrap_stream(body.map(|b| b.map_err(|_| StreamError)));
-                            // 将 Body 转换为 `impl warp::Reply`
-                            let reply = warp::http::Response::builder()
-                                .header("content-type", "video/mp4")
-                                .header("access-control-allow-origin", "*")
-                                .body(body)
-                                .unwrap();
-                            // let reply = convert_response(resp).await.unwrap();
-                            Ok::<_, warp::Rejection>(reply)
+                            headers.insert(key.unwrap(), value.clone());
                         }
-                        Err(_) => Err(warp::reject::not_found()),
+                        // let body = resp.bytes().await.unwrap();
+                        // Convert response body to stream
+                        let body = resp.bytes_stream();
+                        // Wrap stream in warp::hyper::Body
+                        let body = warp::hyper::Body::wrap_stream(
+                            body.map(|b| b.map_err(|_| StreamError)),
+                        );
+                        // Set response body
+                        let reply = reply.body(body).unwrap();
+                        println!("{:#?}", reply);
+                        // Return response
+                        Ok::<_, warp::Rejection>(reply)
                     }
+                    Err(_) => Err(warp::reject::not_found()),
                 }
-            });
+            }
+        })
+        .with(
+            warp::cors()
+                .allow_any_origin()
+                .allow_headers(vec!["Content-Type"]) // 允许Content-Type头部
+                .allow_methods(vec!["GET", "POST", "DELETE", "PUT", "OPTIONS"]) // 允许GET和OPTIONS方法
+        );
     // 启动服务器
     warp::serve(proxy_route).run(([127, 0, 0, 1], 3030)).await;
 }

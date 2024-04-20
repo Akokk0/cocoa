@@ -147,3 +147,20 @@ export interface VideoStreamResp {
     message: string
     ttl: number
 }
+
+export enum VideoPageListRespCode {
+    Success = 0,
+    Error = -400,
+    NoVideo = -404,
+}
+
+export interface VideoPageListDataItem {
+    
+}
+
+export interface VideoPageListResp {
+    code: VideoPageListRespCode
+    message: string
+    ttl: number
+    data: VideoPageListDataItem[]
+}
