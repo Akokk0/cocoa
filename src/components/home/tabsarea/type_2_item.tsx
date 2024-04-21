@@ -4,6 +4,7 @@ import './styles.css'
 import Image from '../../image'
 import { cn } from '@/lib/utils'
 import { AlarmClockCheck } from 'lucide-react'
+import { openPgcPlayer } from '@/lib/biliUtils'
 
 type TypeTwoItemProps = {
     item: Result
@@ -49,7 +50,10 @@ export default function TypeTwoItem({
             <div className='fresh-home-categories-bangumi-timeline-seasons-container scroll-top scroll-bottom not-empty flex overflow-auto scrollbar-hide'>
                 {item.episodes.map((episode, index) => (
                     <div key={index} className='fresh-home-categories-bangumi-timeline-seasons'>
-                        <a href="" className='fresh-home-categories-bangumi-timeline-season'>
+                        <div className='fresh-home-categories-bangumi-timeline-season' onClick={async () => {
+                            // const ep_id = await getPgcSessionInfo({ season_id: item.episodes[0].episode_id })
+                            openPgcPlayer(item.episodes[0].episode_id!)
+                        }}>
                             <div className='fresh-home-categories-bangumi-timeline-season-cover cover-scale'>
                                 <Image className='object-cover object-center' url={episode.square_cover} alt='square_cover' />
                             </div>
@@ -61,7 +65,7 @@ export default function TypeTwoItem({
                                 </div>
                                 <div className='fresh-home-categories-bangumi-timeline-season-time-text'> {episode.pub_time}</div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 ))}
             </div>

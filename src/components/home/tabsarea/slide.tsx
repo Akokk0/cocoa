@@ -10,6 +10,7 @@ import './styles.css'
 import './button_animation.css'
 // Icons
 import { ArrowLeft, ArrowRight, Clock, Play, RotateCw } from 'lucide-react';
+import { openPlayer } from '@/lib/biliUtils';
 
 type SlideProps = {
     list: List,
@@ -87,12 +88,16 @@ export default function Slide({
         <div className="fresh-home-video-slides">
             <div className="fresh-home-video-slides-covers" ref={containerRef}>
                 {
-                    items.map(({ pic, aid }, index) => {
+                    items.map((item, index) => {
                         return (
-                            <a data-id={aid} key={aid} onClick={() => {
+                            <a data-id={item.aid} key={item.aid} onClick={e => {
+                                e.preventDefault()
+                                if (index === 1) {
+                                    openPlayer(item.bvid, item.cid)
+                                }
                                 jumpToCard(index)
-                            }} href='#!' className="fresh-home-video-slides-cover">
-                                <Image className="object-cover object-center" url={pic} alt="封面" />
+                            }} href='#' className="fresh-home-video-slides-cover">
+                                <Image className="object-cover object-center" url={item.pic} alt="封面" />
                             </a>
                         )
                     })

@@ -3,6 +3,7 @@ import { VideoZone } from "@/type/bili"
 import { DynamicTypes } from "@/type/dynamic"
 import { HistoryType } from "@/type/history"
 import { TimelineTypes } from "@/type/home"
+import { VideoQuality } from "@/type/video"
 import { invoke } from "@tauri-apps/api"
 
 // Login
@@ -60,6 +61,10 @@ const BLOCK_LIST = `${API_URL}x/credit/blocked/list`
 // Video Stream
 const VIDEO_STREAM = `${API_URL}x/player/wbi/playurl`
 const VIDEO_PAGELIST = `${API_URL}x/player/pagelist`
+
+// PGC Stream
+const PGC_STREAM = `${API_URL}pgc/player/web/playurl`
+const GET_PGC_SESSION_INFO = `${API_URL}pgc/view/web/season`
 
 export async function getLoginQRCodeURL() {
     // try three times
@@ -465,7 +470,7 @@ export async function getToView() {
 }
 
 export async function deleteToView(
-    {csrf, aid, viewed }:
+    { csrf, aid, viewed }:
         { csrf: string, aid?: number, viewed?: boolean }
 ) {
     const form = {
@@ -563,7 +568,6 @@ export async function getBlockList() {
 }
 
 export async function getVideoStream(params: string) {
-    console.log(`${VIDEO_STREAM}?${params}`);
     // Send request
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
@@ -598,12 +602,30 @@ export async function getVideoPageList(bvid: string) {
     }
 }
 
-/* export async function getUserFollowings(uid: string) {
+export async function getPgcStream(
+    { avid, bvid, ep_id, cid, qn, fnval, fnver, fourk, session, from_client, drm_tech_type }:
+        { avid?: number, bvid?: string, ep_id?: number, cid?: number, qn?: VideoQuality, fnval?: number, fnver?: number, fourk?: number, session?: string, from_client?: string, drm_tech_type?: number }
+) {
+    // Construct url
+    let url = `${PGC_STREAM}?ep_id=${ep_id}`
+    avid && (url += `&avid=${avid}`)
+    bvid && (url += `&bvid=${bvid}`)
+    cid && (url += `&cid=${cid}`)
+    qn && (url += `&qn=${qn}`)
+    fnval && (url += `&fnval=${fnval}`)
+    fnver && (url += `&fnver=${fnver}`)
+    fourk && (url += `&fourk=${fourk}`)
+    session && (url += `&session=${session}`)
+    from_client && (url += `&from_client=${from_client}`)
+    drm_tech_type && (url += `&drm_tech_type=${drm_tech_type}`)
+    console.log(url);
+    
+    // Send request
     let attempts = 3
     for (let i = attempts; i > 0; i--) {
         try {
             return await invoke('request', {
-                url: RECENT_UPDATED,
+                url,
                 reqType: 'GET',
             })
         } catch (e) {
@@ -612,4 +634,28 @@ export async function getVideoPageList(bvid: string) {
             }
         }
     }
-} */
+}
+
+export async function getSessionInfo(
+    { season_id, ep_id }:
+        { season_id?: number, ep_id?: number }
+) {
+    // Construct url
+    let url = GET_PGC_SESSION_INFO
+    season_id && (url += `?season_id=${season_id}`)
+    ep_id && (url += `&ep_id=${ep_id}`)
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}

@@ -98,20 +98,36 @@ export async function openPlayer(bvid: string, cid: number, title: string = 'Pla
     const rootPos = await webview_root.outerPosition()
     const titleHeight = (await webview_root.outerSize()).height - (await webview_root.innerSize()).height
 
-    const webview = new WebviewWindow('theUniqueVideo', {
-        title: title,
+    const webview = new WebviewWindow('VideoPlayer', {
+        title,
         url: `/#/player/${bvid}/${cid}`,
         width: 1280,
-        height: 720,
-        minHeight: 600,
-        minWidth: 800,
+        height: 745,
+        minWidth: 1280,
+        minHeight: 745,
         x: rootPos.x / scale + 100,
         y: (rootPos.y + titleHeight) / scale
     })
+    await webview.once('tauri://error', function (e) {
+        console.log(e)
+    })
+}
 
-    await webview.once('tauri://created', async () => {
-        // 成功打开新窗口后, 给主窗口发一条事件消息
-        await webview_root.emit("main-bbhouse", "new-video-window")
+export async function openPgcPlayer(ep_id: number, title: string = 'Player', scale: number = 1) {
+    const webview_root = appWindow
+    // 优化视频窗口的位置
+    const rootPos = await webview_root.outerPosition()
+    const titleHeight = (await webview_root.outerSize()).height - (await webview_root.innerSize()).height
+
+    const webview = new WebviewWindow('VideoPlayer', {
+        title,
+        url: `/#/pgcplayer/${ep_id}`,
+        width: 1280,
+        height: 745,
+        minWidth: 1280,
+        minHeight: 745,
+        x: rootPos.x / scale + 100,
+        y: (rootPos.y + titleHeight) / scale
     })
     await webview.once('tauri://error', function (e) {
         console.log(e)

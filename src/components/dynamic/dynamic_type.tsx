@@ -39,9 +39,9 @@ const DynamicTypeSelector: React.FC<DynamicTypeProps> = ({
             left: `${tabElement.offsetLeft}px`,
         };
         // Set the new style
-        setIndicatorStyle(newIndicatorStyle); // 更新下划线样式
+        setIndicatorStyle(newIndicatorStyle);
         // Update current tab
-        setDynamicTypeCurrentTab(tab.type); // 更新状态管理器中的当前Tab
+        setDynamicTypeCurrentTab(tab.type);
     };
 
     useEffect(() => {

@@ -11,6 +11,7 @@ import Dynamic from "@/app/main/dynamic";
 import Favorite from "@/app/main/favorite";
 import ToView from "@/app/main/toview";
 import Player from "@/app/player";
+import PGCPlayer from "@/app/pgcplayer";
 
 const router = createHashRouter([
     {
@@ -58,6 +59,10 @@ const router = createHashRouter([
     {
         path: '/player/:bvid/:cid',
         element: <Player />
+    },
+    {
+        path: '/pgcplayer/:ep_id',
+        element: <PGCPlayer />
     }
 ])
 

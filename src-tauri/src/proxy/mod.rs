@@ -71,8 +71,9 @@ pub async fn run_proxy_server(cookie_store: Arc<CookieStoreMutex>) {
                 };
                 println!("Proxying: {}", decoded_url.to_string());
                 // Send request to URL
-                let resp = client.get(decoded_url.to_string()).send().await;
-                println!("{:#?}", resp);
+                let req = client.get(decoded_url.to_string()).build().unwrap();
+                println!("{:#?}", req);
+                let resp = client.execute(req).await;
                 match resp {
                     Ok(resp) => {
                         // Create a new response
@@ -81,11 +82,10 @@ pub async fn run_proxy_server(cookie_store: Arc<CookieStoreMutex>) {
                         let headers = reply.headers_mut().unwrap();
                         // Copy headers from response to reply
                         for (key, value) in resp.headers().clone() {
-                            /* let key = key.unwrap();
-                            if key.to_string() == "host" {
-                                continue;
-                            } */
-                            headers.insert(key.unwrap(), value.clone());
+                            match key {
+                                Some(v) => headers.insert(v, value.clone()),
+                                None => continue,
+                            };
                         }
                         // let body = resp.bytes().await.unwrap();
                         // Convert response body to stream

@@ -1,15 +1,9 @@
 import { getVideoStream } from "@/api/biliApi"
 import { getWbiSign } from "@/lib/biliUtils"
-import { VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video"
+import { VideoFormat, VideoQuality, VideoStreamData, VideoStreamResp, VideoStreamRespCode } from "@/type/video"
 import DPlayer from "dplayer"
-import dashjs from "dashjs"
-import '@vidstack/react/player/styles/base.css'
-/* import XGPlayer from 'xgplayer'
-import 'xgplayer/dist/index.min.css' */
-// import ShakaPlugin from 'xgplayer-shaka'
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-// import { MediaPlayer, MediaProvider } from '@vidstack/react';
 
 const Player: React.FC = () => {
     // Params
@@ -17,7 +11,6 @@ const Player: React.FC = () => {
     // State
     const [videoStreamInfo, setVideoStreamInfo] = useState<VideoStreamData>()
     // Func
-
     const getVideoStreamResp = async (
         params:
             {
@@ -47,22 +40,6 @@ const Player: React.FC = () => {
 
     const initPlayer = async () => {
         if (!videoStreamInfo) return
-        /* const quality = videoStreamInfo?.accept_description.map((item, index) => {
-            return {
-                name: item,
-                url: videoStreamInfo.durl![index].url
-            }
-        }) */
-        /* let player = new XGPlayer({
-            id: 'player',
-            url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
-            // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
-            // url: videoStreamInfo.dash?.video[0].baseUrl!,
-            // plugins: [ShakaPlugin],
-            autoplay: true,
-            height: '100%',
-            width: '100%',
-        }) */
         new DPlayer({
             container: document.getElementById('player'),
             live: false,
@@ -73,19 +50,10 @@ const Player: React.FC = () => {
             hotkey: true,
             airplay: true,
             video: {
-                type: 'customDash',
-                // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
-                url: `/api/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
-                // url: videoStreamInfo.dash?.video[0].baseUrl!
-                customType: {
-                    customDash: function (video: any) {
-                        dashjs.MediaPlayer().create().initialize(video, video.src, false);
-                    }
-                }
+                url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
+                // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
             }
         });
-        // const resp = await fetch(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`)
-        // console.log(resp);
     }
     // Effect
     useEffect(() => {
@@ -96,7 +64,7 @@ const Player: React.FC = () => {
             bvid,
             cid: parseInt(cid),
             qn: VideoQuality["8K_UltraHighDefinition"],
-            fnval: 1,
+            fnval: VideoFormat.MP4,
             fnver: 0,
             fourk: 1,
         })
@@ -105,8 +73,7 @@ const Player: React.FC = () => {
     useEffect(() => {
         console.log(videoStreamInfo);
         if (!videoStreamInfo) return
-        // console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`);
-        // console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`);
+        console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`);
         // Init player
         initPlayer()
     }, [videoStreamInfo])
@@ -114,12 +81,6 @@ const Player: React.FC = () => {
     return (
         <div className="w-sreen h-screen bg-pink-100">
             <div id="player"></div>
-            {/* {videoStreamInfo &&
-                <MediaPlayer title="Sprite Fight" src={`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`}>
-                    <MediaProvider />
-                </MediaPlayer>
-            } */}
-            {/* {videoStreamInfo && <video src={`http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`}></video>} */}
         </div>
     )
 }

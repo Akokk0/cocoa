@@ -1,3 +1,4 @@
+import { openPlayer } from "@/lib/biliUtils"
 import Image from "../../image"
 import { List } from "@/type/home"
 
@@ -13,7 +14,7 @@ export default function RankingList({
             {/* Info */}
             <div className="grid grid-cols-4 gap-y-6 gap-x-5">
                 {list.map((item, i) => (
-                    <div key={i} className="relative">
+                    <div key={i} className="relative hover:cursor-pointer" onClick={() => openPlayer(item.bvid, item.cid)}>
                         <div className="cover-scale">
                             <Image className="w-28 h-[4.5rem] object-cover object-center rounded-lg" url={item.pic} alt="封面" />
                         </div>

@@ -2,9 +2,11 @@ import TypeTwoItem from './type_2_item'
 import './styles.css'
 import { PGCRankingItem, PGCRankingResp, PGCRankingRespCode, Result, TimelineResp, TimelineRespCode, TimelineTypes } from '@/type/home'
 import { useEffect, useState } from 'react'
-import { getPGCRanking, getTimeLine } from '@/api/biliApi'
+import { getPGCRanking, getSessionInfo, getTimeLine } from '@/api/biliApi'
 import { Star } from 'lucide-react'
 import Image from '../../image'
+import { PGCInfoResp, PGCInfoRespCode } from '@/type/pgc'
+import { openPgcPlayer } from '@/lib/biliUtils'
 
 type TypeTwoProps = {
     timelineType: TimelineTypes
@@ -39,6 +41,15 @@ export default function TypeTwo({
         if (pgcRakingResp.code !== PGCRankingRespCode.SUCCESS) return
         // Set resp to state
         setPGCRankingList(pgcRakingResp.data.list)
+    }
+
+    const getPgcSessionInfo = async (params: { season_id?: number, ep_id?: number }) => {
+        // Send request to get popular content
+        const pgcSessionInfoResp = JSON.parse(await getSessionInfo(params) as string) as PGCInfoResp
+        // Check if request is error
+        if (pgcSessionInfoResp.code != PGCInfoRespCode.SUCCESS) return
+        // Return value
+        return pgcSessionInfoResp.result.new_ep?.id
     }
 
     return (
@@ -98,7 +109,10 @@ export default function TypeTwo({
                         <a className='fresh-home-rank-list-cover relative'>
                             {
                                 pgcRanklingList &&
-                                <>
+                                <div onClick={async () => {
+                                    const ep_id = await getPgcSessionInfo({ season_id: pgcRanklingList[1].season_id })
+                                    openPgcPlayer(ep_id!)
+                                }}>
                                     <Image className='w-80 h-48 object-cover object-center' url={pgcRanklingList[0].ss_horizontal_cover} alt='封面' />
                                     <div className='absolute left-2 bottom-1 px-2 h-5 flex justify-center items-center text-xs text-white bg-transparent_black rounded-md hover:text-bili_blue transition'>
                                         {pgcRanklingList[0].new_ep.index_show}
@@ -107,7 +121,7 @@ export default function TypeTwo({
                                         <Star className='w-3 h-3' />
                                         <span>{pgcRanklingList[0].rating}</span>
                                     </div>
-                                </>
+                                </div>
                             }
                         </a>
                         <div className='fresh-home-rank-list-laser' data-number='1'></div>
@@ -118,12 +132,15 @@ export default function TypeTwo({
                             <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
-                        <a className='fresh-home-rank-list-cover'>
-                            {
-                                pgcRanklingList &&
+                        {
+                            pgcRanklingList &&
+                            <div className='fresh-home-rank-list-cover' onClick={async () => {
+                                const ep_id = await getPgcSessionInfo({ season_id: pgcRanklingList[1].season_id })
+                                openPgcPlayer(ep_id!)
+                            }}>
                                 <Image className='w-36 h-24 object-cover object-center' url={pgcRanklingList[1].ss_horizontal_cover} alt='封面' />
-                            }
-                        </a>
+                            </div>
+                        }
                         <div className='fresh-home-rank-list-laser' data-number='2'></div>
                     </div>
                     <div className='fresh-home-rank-list-third-item animation z-40'>
@@ -132,12 +149,16 @@ export default function TypeTwo({
                             <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
-                        <a className='fresh-home-rank-list-cover'>
-                            {
-                                pgcRanklingList &&
+                        {
+                            pgcRanklingList &&
+                            <div className='fresh-home-rank-list-cover' onClick={async () => {
+                                const ep_id = await getPgcSessionInfo({ season_id: pgcRanklingList[2].season_id })
+                                openPgcPlayer(ep_id!)
+                            }}>
                                 <Image className='w-28 h-20 object-cover object-center' url={pgcRanklingList[2].ss_horizontal_cover} alt='封面' />
-                            }
-                        </a>
+
+                            </div>
+                        }
                         <div className='fresh-home-rank-list-laser' data-number='3'></div>
                     </div>
                 </div>

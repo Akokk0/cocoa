@@ -12,6 +12,7 @@ import { List, RankingResp, RankingRespCode, RegionNewResp, VideoListRespCode } 
 import './styles.css'
 import { Youtube } from 'lucide-react';
 import RankingList from './ranking_list';
+import { openPlayer } from '@/lib/biliUtils';
 
 type TypeOneProps = {
     videoZone: VideoZone
@@ -93,6 +94,7 @@ export default function TypeOne({
                             </div>
                         </div>
                     }
+
                     <div className='fresh-home-rank-list-first-item animation absolute top-0 left-0'>
                         <div className='fresh-home-rank-list-rank-item'></div>
                         <div className='fresh-home-rank-list-rank-item-title'></div>
@@ -100,13 +102,13 @@ export default function TypeOne({
                         <a className='fresh-home-rank-list-cover relative'>
                             {
                                 regionRankingVideoList &&
-                                <>
+                                <div className='hover:cursor-pointer' onClick={() => openPlayer(regionRankingVideoList[0].bvid, regionRankingVideoList[0].cid)}>
                                     <Image className='w-80 h-48 object-cover object-center' url={regionRankingVideoList[0].pic} alt='封面' />
                                     <div className='absolute left-2 bottom-1 px-2 h-5 flex justify-center items-center text-xs text-white bg-transparent_black rounded-md hover:text-bili_blue transition'>
                                         UP&nbsp;
                                         {regionRankingVideoList[0].owner.name}
                                     </div>
-                                </>
+                                </div>
                             }
                         </a>
                         <div className='fresh-home-rank-list-laser' data-number='1'></div>
@@ -117,12 +119,11 @@ export default function TypeOne({
                             <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
-                        <a className='fresh-home-rank-list-cover'>
-                            {
-                                regionRankingVideoList &&
+                        {regionRankingVideoList &&
+                            <div className='fresh-home-rank-list-cover hover:cursor-pointer' onClick={() => openPlayer(regionRankingVideoList[1].bvid, regionRankingVideoList[1].cid)}>
                                 <Image className='w-36 h-24 object-cover object-center' url={regionRankingVideoList[1].pic} alt='封面' />
-                            }
-                        </a>
+                            </div>
+                        }
                         <div className='fresh-home-rank-list-laser' data-number='2'></div>
                     </div>
                     <div className='fresh-home-rank-list-third-item animation z-40'>
@@ -131,12 +132,11 @@ export default function TypeOne({
                             <div className='be-up-info fallback'></div>
                             <div className='fresh-home-rank-list-stats'></div>
                         </a>
-                        <a className='fresh-home-rank-list-cover'>
-                            {
-                                regionRankingVideoList &&
+                        {regionRankingVideoList &&
+                            <div className='fresh-home-rank-list-cover hover:cursor-pointer' onClick={() => openPlayer(regionRankingVideoList[2].bvid, regionRankingVideoList[2].cid)}>
                                 <Image className='w-28 h-20 object-cover object-center' url={regionRankingVideoList[2].pic} alt='封面' />
-                            }
-                        </a>
+                            </div>
+                        }
                         <div className='fresh-home-rank-list-laser' data-number='3'></div>
                     </div>
                 </div>
