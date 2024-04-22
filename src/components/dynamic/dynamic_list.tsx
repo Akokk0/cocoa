@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import Comment from "../comment";
 import { open } from "@tauri-apps/api/shell";
 import autoAnimate from '@formkit/auto-animate'
+import { openPlayer } from "@/lib/biliUtils";
 
 type DynamicListProps = {
     hasMore: boolean
@@ -134,7 +135,7 @@ const dynamicPicRender = (pics: DrawItem[]) => {
     // pics num
     const picItemsLength = pics.length
     // Adjust the style according to the number of images
-    if (picItemsLength === 1) return <Image className="w-96 rounded-lg" url={pics[0].src} alt="Cover" />
+    if (picItemsLength === 1) return <Image className="w-52 rounded-lg" url={`${pics[0].src}@500h_`} alt="Cover" />
     if (picItemsLength > 1 && picItemsLength <= 3) return (
         <div className="flex space-x-1">
             {pics.map((pic, index) => (
@@ -426,33 +427,30 @@ const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, fo
         case DynamicType.AV: {
             const video = modules.module_dynamic.major?.archive
             return (
-                <div>
-                    {/* Video Area */}
-                    <div className={cn('w-full h-28 flex rounded-lg overflow-hidden', forward ? 'bg-white' : '')}>
-                        {/* Cover */}
-                        <div className="relative">
-                            <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={video?.cover!} />
-                            <div className="absolute left-0 top-0 w-52 h-full" style={{ backgroundImage: 'linear-gradient(180deg, transparent 70%, black 100%)' }}></div>
-                            <span className="absolute right-2 bottom-2 text-white text-sm opacity-80">{video?.duration_text}</span>
+                <div className={cn('w-full h-28 flex rounded-lg overflow-hidden hover:cursor-pointer', forward ? 'bg-white' : '')} onClick={() => openPlayer(video?.bvid!)}> {/* Video Area */}
+                    {/* Cover */}
+                    <div className="relative">
+                        <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={video?.cover!} />
+                        <div className="absolute left-0 top-0 w-52 h-full" style={{ backgroundImage: 'linear-gradient(180deg, transparent 70%, black 100%)' }}></div>
+                        <span className="absolute right-2 bottom-2 text-white text-sm opacity-80">{video?.duration_text}</span>
+                    </div>
+                    {/* Info */}
+                    <div className={cn('flex-1 flex flex-col justify-between rounded-r-lg p-3', forward ? '' : 'border border-l-0')}>
+                        <div className="flex flex-col space-y-1">
+                            {/* Title */}
+                            <span className="text-sm line-clamp-2">{video?.title}</span>
+                            {/* Desc */}
+                            <span className="text-xs line-clamp-1 text-gray-500">{video?.desc}</span>
                         </div>
-                        {/* Info */}
-                        <div className={cn('flex-1 flex flex-col justify-between rounded-r-lg p-3', forward ? '' : 'border border-l-0')}>
-                            <div className="flex flex-col space-y-1">
-                                {/* Title */}
-                                <span className="text-sm line-clamp-2">{video?.title}</span>
-                                {/* Desc */}
-                                <span className="text-xs line-clamp-1 text-gray-500">{video?.desc}</span>
-                            </div>
-                            {/* Stat */}
-                            <div className="ml-2 flex space-x-9 text-gray-500 text-xs items-center">
-                                {/* Play */}
-                                <div className="flex space-x-1 items-center"><PlayIcon /> <span>{video?.stat.play}</span></div>
-                                {/* Danmaku */}
-                                <div className="flex space-x-1 items-center"><Danmaku /> <span>{video?.stat.danmaku}</span></div>
-                            </div>
+                        {/* Stat */}
+                        <div className="ml-2 flex space-x-9 text-gray-500 text-xs items-center">
+                            {/* Play */}
+                            <div className="flex space-x-1 items-center"><PlayIcon /> <span>{video?.stat.play}</span></div>
+                            {/* Danmaku */}
+                            <div className="flex space-x-1 items-center"><Danmaku /> <span>{video?.stat.danmaku}</span></div>
                         </div>
-                    </div >
-                </div>
+                    </div>
+                </div >
             )
         }
         case DynamicType.ARTICLE: {
@@ -477,30 +475,31 @@ const dynamicMainContentParser = (modules: DynamicModules, type: DynamicType, fo
         case DynamicType.LIVE: {
             const live = modules.module_dynamic.major?.live!
             return (
-                <div>
-                    {/* Live Area */}
-                    <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2">
-                        {/* Cover */}
-                        <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live.cover} />
-                        {/* Info */}
-                        <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
-                            <div className="flex flex-col space-y-1">
-                                {/* Title */}
-                                <span className="text-balance line-clamp-2">{live?.title}</span>
-                            </div>
-                            {/* Info */}
-                            <div className="text-gray-500 text-xs items-center">
-                                <span>{live.desc_first} · {live.desc_second}</span>
-                            </div>
+                <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2 hover:cursor-pointer" onClick={() => {
+                    open(live.jump_url)
+                }}>
+                    {/* Cover */}
+                    <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live.cover} />
+                    {/* Info */}
+                    <div className="flex-1 flex flex-col justify-between border border-l-0 rounded-r-lg p-3">
+                        <div className="flex flex-col space-y-1">
+                            {/* Title */}
+                            <span className="text-balance line-clamp-2">{live?.title}</span>
                         </div>
-                    </div >
-                </div>
+                        {/* Info */}
+                        <div className="text-gray-500 text-xs items-center">
+                            <span>{live.desc_first} · {live.desc_second}</span>
+                        </div>
+                    </div>
+                </div >
             )
         }
         case DynamicType.LIVE_RCMD: {
             const live_play_info = (JSON.parse(modules.module_dynamic.major?.live_rcmd?.content!) as LiveRCMDContent).live_play_info
             return (
-                <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2"> {/* Live Area */}
+                <div className="w-full h-28 flex rounded-lg overflow-hidden mt-2 hover:cursor-pointer" onClick={() => {
+                    open(`https://live.bilibili.com/${live_play_info.room_id}`)
+                }}> {/* Live Area */}
                     {/* Cover */}
                     <CssImg className="w-52 h-full bg-center bg-no-repeat bg-cover" url={live_play_info.cover} />
                     {/* Info */}
@@ -568,9 +567,7 @@ const DynamicParser: React.FC<DynamicParserProps> = ({
         <div ref={parent} className="bg-white p-5 rounded-lg mb-2">
             <div className="flex space-x-5">
                 {/* Avatar Area */}
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                    <Image url={item.modules.module_author.face} alt="Avatar" />
-                </div>
+                <Image className="w-12 h-12 rounded-full" url={item.modules.module_author.face} alt="Avatar" />
                 {/* Dynamic main */}
                 <div className="flex flex-col flex-1 space-y-2">
                     <div className="flex flex-col space-y-1">

@@ -17,7 +17,9 @@ export default function Image({
 
     return (
         <>
-            {img && <img src={`data:image/jpg;base64,${img}`} alt={alt} {...props} />}
+            {!img ? <div {...props}></div> :
+                <img src={`data:image/jpg;base64,${img}`} alt={alt} {...props} />
+            }
         </>
     )
 }

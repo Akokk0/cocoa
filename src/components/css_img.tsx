@@ -15,7 +15,8 @@ const CssImg: React.FC<CssImgProps> = ({
     }, [url])
 
     return (
-        img && <div style={{ backgroundImage: `url(data:image/jpg;base64,${img})` }} {...props}></div>
+        !img ? <div {...props}></div> :
+            <div style={{ backgroundImage: `url(data:image/jpg;base64,${img})` }} {...props}></div>
     )
 }
 

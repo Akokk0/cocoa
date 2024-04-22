@@ -174,11 +174,6 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     }
     // Load cookies
     let cookie_store = load_cookies(&app_data_path);
-    let cookie_store_move = Arc::clone(&cookie_store);
-    // Start proxy server
-    tokio::spawn(async move {
-        run_proxy_server(cookie_store_move).await;
-    });
     // Get app config path
     let app_config_path = get_app_path(AppPath::CONFIG, &app.config()).unwrap();
     // Check if app config folder exist
@@ -204,6 +199,11 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     // Wrap client as Arc<Mutex<Client>>
     let client = Mutex::new(client);
     let client = Arc::new(client);
+    let client_move = Arc::clone(&client);
+    // Start proxy server
+    tokio::spawn(async move {
+        run_proxy_server(client_move).await;
+    });
     // Get login status and wrap it as Arc<Mutex<bool>>
     let is_login =
         !is_file_empty(format!("{}/auth/cookies.json", &app_data_path).as_str()).unwrap();

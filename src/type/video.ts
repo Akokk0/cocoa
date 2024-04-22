@@ -164,3 +164,59 @@ export interface VideoPageListResp {
     ttl: number
     data: VideoPageListDataItem[]
 }
+
+export enum VideoInfoRespCode {
+    Success = 0,
+    Error = -400,
+    NoAccess = -403,
+    NoVideo = -404,
+    Invisible = 62002,
+    UnderReview = 62004,
+}
+
+export interface VideoInfoData {
+    bvid: string;
+    aid: number;
+    videos: number;
+    tid: number;
+    tname: string;
+    copyright: number; // 1: Original, 2: Reprinted
+    pic: string;
+    title: string;
+    pubdate: number; // Unix timestamp in seconds
+    ctime: number; // Unix timestamp in seconds
+    desc: string;
+    desc_v2: [];
+    state: number;
+    duration: number;
+    forward?: number;
+    mission_id?: number;
+    redirect_url?: string;
+    rights: object;
+    owner: object;
+    stat: object;
+    dynamic: string;
+    cid: number;
+    dimension: object;
+    premiere?: null; // Assuming null type, adjust if there's specific type
+    teenage_mode: number;
+    is_chargeable_season: boolean;
+    is_story: boolean;
+    no_cache: boolean;
+    pages: [];
+    subtitle: object;
+    staff: [];
+    is_season_display: boolean;
+    user_garb: object;
+    honor_reply: object;
+    like_icon?: string;
+    argue_info?: object;
+
+}
+
+export interface VideoInfoResp {
+    code: VideoInfoRespCode
+    message: string
+    ttl: number
+    data: VideoInfoData
+}

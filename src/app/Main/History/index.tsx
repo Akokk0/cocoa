@@ -11,6 +11,7 @@ import { invoke } from "@tauri-apps/api"
 import { toast } from "sonner"
 import { Toaster } from "@/components/ui/sonner"
 import autoAnimate from "@formkit/auto-animate"
+import { openPlayer } from "@/lib/biliUtils"
 
 export default function History() {
     // State
@@ -234,7 +235,7 @@ const HistoryContentItem: React.FC<HistoryContentItemProps> = ({ index, item, re
             {/* Time */}
             <span className="text-sm ml-5 text-gray-400">{watchInTimeFormater(item.view_at, DateTime.local().startOf('day'))}</span>
             {/* Cover */}
-            <div className="w-40 h-24 ml-10 rounded-lg overflow-hidden relative">
+            <div className="w-40 h-24 ml-10 rounded-lg overflow-hidden relative hover:cursor-pointer" onClick={() => openPlayer(item.history.bvid!, item.history.cid)}>
                 <Image className="w-40 h-24 object-center object-cover" url={item.cover} alt="Cover" />
                 {/* Progress */}
                 <div className="absolute left-0 bottom-0 h-2 bg-primary rounded-full" style={{ width: `${(item.progress! / item.duration!) * 100}%` }}></div>
@@ -242,7 +243,7 @@ const HistoryContentItem: React.FC<HistoryContentItemProps> = ({ index, item, re
             {/* Info */}
             <div className="flex flex-col flex-1 justify-between ml-7 h-full py-2 border-b border-bili_grey">
                 {/* Title */}
-                <h1 className="text-sm font-bold">{item.title}</h1>
+                <h1 className="text-sm font-bold hover:cursor-pointer" onClick={() => openPlayer(item.history.bvid!, item.history.cid)}>{item.title}</h1>
                 {/* Bottom Info */}
                 <div className="grid grid-cols-2 grid-rows-1">
                     {/* Device */}

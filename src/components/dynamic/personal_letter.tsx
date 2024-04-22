@@ -1,7 +1,7 @@
 import { useBiliStore } from "@/store/biliStore"
 import { Avatar, AvatarFallback } from "../ui/avatar"
 import Image from "../image"
-import levelParser from "../level_selector"
+import LevelParser from "../level_selector"
 
 type PersonalLetterProps = {
 
@@ -28,7 +28,9 @@ export default function PersonalLetter({
                             my_info.vip.status !== 0 ? <span className="bg-[#FB7299] rounded-sm p-1 text-xs text-white">{my_info?.vip.label.text}</span> : ''
                         }
                         {/* 等级标签 */}
-                        <span className="text-sm">{levelParser(my_info.level_info.current_level)}</span>
+                        <span className="text-sm">
+                            <LevelParser level={my_info.level_info.current_level} width={30} height={30} />
+                        </span>
                     </div>
                 </div>
             </div>

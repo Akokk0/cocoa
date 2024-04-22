@@ -5,8 +5,8 @@ import { useEffect, useState } from "react"
 import Image from "./image"
 import { Input } from "./ui/input"
 import { cn } from "@/lib/utils"
-import levelParser from "./level_selector"
 import LikeIcon from "./icon/like"
+import LevelParser from "./level_selector"
 
 type CommentProps = {
     type: number, oid: string, count: number
@@ -76,7 +76,7 @@ const Comment: React.FC<CommentProps> = ({
                                     {/* Up Name */}
                                     <span className={cn('text-xs', item.member.vip.vipStatus !== 0 ? 'text-primary' : '')}>{item.member.uname}</span>
                                     {/* Lv Badge */}
-                                    {levelParser(item.member.level_info.current_level)}
+                                    <LevelParser level={item.member.level_info.current_level} width={24} height={24} />
                                 </div>
                                 {/* Comment Content */}
                                 <div className="mt-4 text-sm">
@@ -98,19 +98,16 @@ const Comment: React.FC<CommentProps> = ({
                                 <div className="mt-5 space-y-5">
                                     {item.replies?.map((reply, index) => (
                                         <div key={index}>
-                                            <div className="flex space-x-3 items-center">
+                                            <div className="flex space-x-3 items-start">
                                                 {/* Avatar */}
                                                 <Image className="w-6 h-6 object-cover object-center rounded-full" url={reply.member.avatar} alt="Avatar" />
-                                                {/* Up Info */}
-                                                <div className="flex items-center space-x-1">
+                                                <div className="space-x-1">
                                                     {/* Up Name */}
                                                     <span className={cn('text-xs', reply.member.vip.vipStatus !== 0 ? 'text-primary' : '')}>{reply.member.uname}</span>
                                                     {/* Lv Badge */}
-                                                    {levelParser(reply.member.level_info.current_level)}
-                                                </div>
-                                                {/* Comment Content */}
-                                                <div className="text-sm">
-                                                    {commentParser(reply.content)}
+                                                    <LevelParser level={reply.member.level_info.current_level} width={17} height={17} className="inline-block" />
+                                                    {/* Comment Content */}
+                                                    <span className="text-sm">{commentParser(reply.content)}</span>
                                                 </div>
                                             </div>
                                             {/* Action Area */}
@@ -148,14 +145,14 @@ const commentParser = (content: CommentContent) => {
     const parts = str.split(reg);
 
     return (
-        <div className="flex">
+        <span>
             {parts.map((item, index) => {
                 if (reg.test(item)) {
-                    return <Image key={index} className="w-5 h-5 object-cover object-center" url={content.emote[item].url} alt="emoji" />
+                    return <Image key={index} className="w-5 h-5 object-cover object-center inline-block" url={content.emote[item].url} alt="emoji" />
                 }
                 return <span key={index}>{item}</span>
             })}
-        </div>
+        </span>
     )
 }
 

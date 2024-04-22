@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/pagination"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { openPlayer } from "@/lib/biliUtils"
 
 export default function Favorite() {
     // Store
@@ -166,7 +167,7 @@ const FavoriteDetail: React.FC<FavoriteDetailProps> = ({
             {isLoading ? <div className="text-center">Loading...</div> :
                 <div className="w-full h-full grid grid-cols-5 grid-rows-4  rounded-lg mt-5">
                     {favoriteDetail?.medias && favoriteDetail.medias.map((item, index) => (
-                        <div key={index} className="w-44 h-40">
+                        <div key={index} className="w-44 h-40 hover:cursor-pointer" onClick={() => openPlayer(item.bvid!)}>
                             {/* Cover */}
                             <Image className="w-44 h-24 object-cover object-center rounded-lg" url={item.cover} alt="Cover" />
                             {/* Info */}

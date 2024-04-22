@@ -61,6 +61,7 @@ const BLOCK_LIST = `${API_URL}x/credit/blocked/list`
 // Video Stream
 const VIDEO_STREAM = `${API_URL}x/player/wbi/playurl`
 const VIDEO_PAGELIST = `${API_URL}x/player/pagelist`
+const GET_VIDEO_INFO = `${API_URL}x/web-interface/view`
 
 // PGC Stream
 const PGC_STREAM = `${API_URL}pgc/player/web/playurl`
@@ -650,6 +651,23 @@ export async function getSessionInfo(
         try {
             return await invoke('request', {
                 url,
+                reqType: 'GET',
+            })
+        } catch (e) {
+            if (i === 1) {
+                throw new Error('network error')
+            }
+        }
+    }
+}
+
+export async function getVideoInfo(bvid: string) {
+    // Send request
+    let attempts = 3
+    for (let i = attempts; i > 0; i--) {
+        try {
+            return await invoke('request', {
+                url: `${GET_VIDEO_INFO}?bvid=${bvid}`,
                 reqType: 'GET',
             })
         } catch (e) {

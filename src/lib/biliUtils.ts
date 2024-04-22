@@ -1,5 +1,6 @@
-import { getWbiKey } from "@/api/biliApi";
+import { getVideoInfo, getWbiKey } from "@/api/biliApi";
 import { WbiResp } from "@/type/authentication";
+import { VideoInfoResp, VideoInfoRespCode } from "@/type/video";
 import { WebviewWindow, appWindow } from "@tauri-apps/api/window";
 import md5 from "md5";
 
@@ -90,9 +91,15 @@ export async function getWbiSign(params: { [key: string]: any }) {
     return encWbi(params, img_key, sub_key)
 }
 
-export async function openPlayer(bvid: string, cid: number, title: string = 'Player', scale: number = 1) {
-    console.log(bvid);
-    
+export async function openPlayer(bvid: string, cid?: number, title: string = 'Cocoa', scale: number = 1) {
+    if (!cid) {
+        // Send request to get popular content
+        const videoInfoResp = JSON.parse(await getVideoInfo(bvid) as string) as VideoInfoResp
+        // Check if request is error
+        if (videoInfoResp.code != VideoInfoRespCode.Success) return
+        // Set cid
+        cid = videoInfoResp.data.cid
+    }
     const webview_root = appWindow
     // 优化视频窗口的位置
     const rootPos = await webview_root.outerPosition()
@@ -113,7 +120,7 @@ export async function openPlayer(bvid: string, cid: number, title: string = 'Pla
     })
 }
 
-export async function openPgcPlayer(ep_id: number, title: string = 'Player', scale: number = 1) {
+export async function openPgcPlayer(ep_id: number, title: string = 'Cocoa', scale: number = 1) {
     const webview_root = appWindow
     // 优化视频窗口的位置
     const rootPos = await webview_root.outerPosition()

@@ -8,6 +8,7 @@ import { invoke } from "@tauri-apps/api"
 import { toast } from "sonner"
 import { Toaster } from "@/components/ui/sonner"
 import autoAnimate from "@formkit/auto-animate"
+import { openPlayer } from "@/lib/biliUtils"
 
 export default function ToView() {
     // State
@@ -36,7 +37,6 @@ export default function ToView() {
         }
         // Send request to delete to view
         const delResp = JSON.parse(await deleteToView(form) as string) as { code: number, message: string, ttl: number }
-        console.log(delResp);
         // Check if request is success
         if (delResp.code === 0) {
             // Update list
@@ -129,13 +129,13 @@ const ToViewContentItem: React.FC<ToViewContentItemProps> = ({ index, item, delT
             {/* Count */}
             <span className="text-2xl ml-5">{index + 1}</span>
             {/* Cover */}
-            <div className="w-40 h-24 ml-10 rounded-lg overflow-hidden relative">
+            <div className="w-40 h-24 ml-10 rounded-lg overflow-hidden relative hover:cursor-pointer" onClick={() => openPlayer(item.bvid, item.cid)}>
                 <Image className="w-40 h-24 object-center object-cover" url={item.pic} alt="Cover" />
             </div>
             {/* Info */}
             <div className="flex flex-col flex-1 justify-between ml-7 h-full py-2 border-b border-bili_grey">
                 {/* Title */}
-                <h1 className="text-sm font-bold">{item.title}</h1>
+                <h1 className="text-sm font-bold hover:cursor-pointer" onClick={() => openPlayer(item.bvid, item.cid)}>{item.title}</h1>
                 {/* Bottom Info */}
                 <div className="grid grid-cols-2 grid-rows-1">
                     {/* UP Info */}
