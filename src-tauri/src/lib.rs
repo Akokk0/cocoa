@@ -3,6 +3,7 @@ use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::Path;
 use std::sync::{Arc, Mutex};
+use std::thread;
 
 use reqwest::header::{HeaderMap, HeaderValue, ORIGIN, REFERER, USER_AGENT};
 use reqwest::Client;
@@ -13,7 +14,10 @@ mod object;
 mod proxy;
 
 pub use object::*;
-pub use proxy::run_proxy_server;
+pub use proxy::{
+    video_proxy::run_video_proxy_server,
+    danmaku_proxy::run_danmaku_proxy_server
+};
 
 // Creates default request header
 pub fn create_headers() -> HeaderMap {
@@ -200,9 +204,13 @@ pub fn set_up_func(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
     let client = Mutex::new(client);
     let client = Arc::new(client);
     let client_move = Arc::clone(&client);
-    // Start proxy server
+    // Start video proxy server
     tokio::spawn(async move {
-        run_proxy_server(client_move).await;
+        run_video_proxy_server(client_move).await;
+    });
+    // Start danmaku proxy server
+    thread::spawn(|| {
+        run_danmaku_proxy_server().unwrap();
     });
     // Get login status and wrap it as Arc<Mutex<bool>>
     let is_login =

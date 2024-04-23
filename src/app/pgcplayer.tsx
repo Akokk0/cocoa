@@ -10,6 +10,8 @@ import { toast } from "sonner"
 const PGCPlayer: React.FC = () => {
     // Params
     const { ep_id } = useParams()
+
+    console.log(ep_id);
     // State
     const [pgcStreamInfo, setPgcStreamInfo] = useState<PGCResult>()
     // Func
@@ -31,11 +33,18 @@ const PGCPlayer: React.FC = () => {
     ) => {
         // Send request to get popular content
         const pgcStreamResp = JSON.parse(await getPgcStream(params) as string) as PGCResp
+
         console.log(pgcStreamResp);
         // Check if request is error
         if (pgcStreamResp.code != PGCRespCode.SUCCESS) {
             if (pgcStreamResp.code === PGCRespCode.NOT_ALLOW_AT_YOUR_REGION) {
-                toast("抱歉您所在地区不可观看！", {
+                toast(pgcStreamResp.message, {
+                    description: "错误码:" + pgcStreamResp.code,
+                })
+                return
+            }
+            if (pgcStreamResp.code === PGCRespCode.NO_VIDEO) {
+                toast(pgcStreamResp.message, {
                     description: "错误码:" + pgcStreamResp.code,
                 })
                 return
@@ -59,6 +68,16 @@ const PGCPlayer: React.FC = () => {
             video: {
                 url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(pgcStreamInfo.durl![0].url!)}`,
                 // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
+            },
+            danmaku: {
+                id: `${ep_id}`,
+                api: 'http://127.0.0.1:3031/',
+                addition: [`http://127.0.0.1:3031/v3/bilibili?cid=${ep_id}`],
+                user: 'cocoa',//弹幕作者
+                bottom: "10%",
+                unlimited: true,
+                // @ts-ignore
+                maximum: 1000
             }
         });
     }
@@ -77,9 +96,7 @@ const PGCPlayer: React.FC = () => {
     }, [])
 
     useEffect(() => {
-        console.log(pgcStreamInfo);
         if (!pgcStreamInfo) return
-        console.log(`http://127.0.0.1:3030/proxy/${encodeURIComponent(pgcStreamInfo.durl![0].url!)}`);
         // Init player
         initPlayer()
     }, [pgcStreamInfo])

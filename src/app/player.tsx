@@ -52,6 +52,16 @@ const Player: React.FC = () => {
             video: {
                 url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.durl![0].url!)}`,
                 // url: `http://127.0.0.1:3030/proxy/${encodeURIComponent(videoStreamInfo.dash?.video[0].baseUrl!)}`,
+            },
+            danmaku: {
+                id: `${bvid}#${cid}`,
+                api: 'http://127.0.0.1:3031/',
+                addition: [`http://127.0.0.1:3031/v3/bilibili?cid=${cid}`],
+                user: 'cocoa',//弹幕作者
+                bottom: "10%",
+                unlimited: true,
+                // @ts-ignore
+                maximum: 1000
             }
         });
     }

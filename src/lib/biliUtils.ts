@@ -105,9 +105,12 @@ export async function openPlayer(bvid: string, cid?: number, title: string = 'Co
     const rootPos = await webview_root.outerPosition()
     const titleHeight = (await webview_root.outerSize()).height - (await webview_root.innerSize()).height
 
+    let url = `/#/player/${bvid}`
+    cid && (url += `/${cid}`)
+
     const webview = new WebviewWindow('VideoPlayer', {
         title,
-        url: `/#/player/${bvid}/${cid}`,
+        url,
         width: 1280,
         height: 745,
         minWidth: 1280,
