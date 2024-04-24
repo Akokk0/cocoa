@@ -110,40 +110,40 @@ export default function Slide({
                         <div className="cover-placeholder-horizontal"></div>
                         <div className='fresh-home-video-slides-main-actions'>
                             <div className="flex space-x-2 mb-1">
-                                <div className="flex items-center justify-center space-x-2 text-white bg-bili_blue rounded-full w-24 h-8 text-sm">
+                                <div className="flex items-center justify-center space-x-2 text-white bg-bili_blue rounded-full w-24 h-8 text-sm hover:cursor-pointer" onClick={() => openPlayer(items[1].bvid, items[1].cid)}>
                                     <Play className='w-4 h-4' /> <span>播放</span>
                                 </div>
-                                <div className="border border-bili_grey p-1 rounded-full text-gray-800">
-                                    <Clock />
-                                </div>
-                            </div>
-                            <div>
-                                <UPInfo up={items[1].owner} />
+                            <div className="border border-bili_grey p-1 rounded-full text-gray-800">
+                                <Clock />
                             </div>
                         </div>
+                        <div>
+                            <UPInfo up={items[1].owner} />
+                        </div>
                     </div>
-                    <a target="_blank" className="fresh-home-video-slides-main-title">
-                        {items[1].title}
-                    </a>
                 </div>
-                <div className='fresh-home-video-slides-main-description scrollbar-hide'>
-                    <div className='description-text w-72'>{items[1].desc}</div>
-                </div>
-                <div className="fresh-home-video-slides-actions">
-                    <button className="absolute right-[7.1rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
+                <a target="_blank" className="fresh-home-video-slides-main-title">
+                    {items[1].title}
+                </a>
+            </div>
+            <div className='fresh-home-video-slides-main-description scrollbar-hide'>
+                <div className='description-text w-72'>{items[1].desc}</div>
+            </div>
+            <div className="fresh-home-video-slides-actions">
+                <button className="absolute right-[7.1rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
                             rotatingF hover:border-bili_blue" onClick={getNewVideoDate}>
-                        <RotateCw className="w-5 h-5 rotatingElement" />
-                    </button>
-                    <button className="absolute right-[4.5rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
+                    <RotateCw className="w-5 h-5 rotatingElement" />
+                </button>
+                <button className="absolute right-[4.5rem] bottom-4 rounded-full border flex items-center justify-center p-1 w-8 h-8 transition
                             popLeftArrow hover:border-bili_blue" onClick={handleClicPre} >
-                        <ArrowLeft className="arrow-left" />
-                    </button>
-                    <button className="absolute right-4 bottom-4 flex items-center justify-center rounded-full border p-1 w-12 h-12 transition
+                    <ArrowLeft className="arrow-left" />
+                </button>
+                <button className="absolute right-4 bottom-4 flex items-center justify-center rounded-full border p-1 w-12 h-12 transition
                             popRightArrow hover:border-bili_blue" onClick={handleClicNext} >
-                        <ArrowRight className="w-8 h-8 arrow-right" />
-                    </button>
-                </div>
+                    <ArrowRight className="w-8 h-8 arrow-right" />
+                </button>
             </div>
         </div>
+        </div >
     )
 }

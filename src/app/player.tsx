@@ -63,7 +63,7 @@ const Player: React.FC = () => {
                 // @ts-ignore
                 maximum: 1000
             }
-        });
+        })
     }
     // Effect
     useEffect(() => {
