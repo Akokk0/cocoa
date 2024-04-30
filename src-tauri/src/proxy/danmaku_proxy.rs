@@ -73,8 +73,8 @@ async fn bilibili_handler(info: web::Query<HashMap<String, String>>) -> Result<H
         .collect();
 
     // 在控制台输出请求的URL和响应的内容
-    println!("请求链接: {}", url);
-    println!("响应内容: {:?}", result.len());
+    println!("Request url: {}", url);
+    println!("Response content: {:?}", result.len());
 
     // 定义返回数据
     let resp_data = ResponseData {
@@ -97,7 +97,6 @@ async fn default() -> impl Responder {
 
 #[actix_web::main]
 pub async fn run_danmaku_proxy_server() -> Result<(), Box<dyn Error>> {
-    println!("bbb");
     HttpServer::new(|| App::new().service(bilibili_handler).default_service(web::to(default)))
         .bind("127.0.0.1:3031")?
         .run()
